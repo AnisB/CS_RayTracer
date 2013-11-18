@@ -34,9 +34,9 @@ IF(UNIX AND NOT APPLE)
 add_definitions( -D__posix__ )
 add_definitions( -D LINUX )
 find_package(OpenGL REQUIRED)
-find_package(GLEW REQUIRED)
+#find_package(GLEW REQUIRED)
 FIND_PACKAGE (X11 REQUIRED)
-set(CORELIBS  ${GLEW_LIBRARY} ${OPENGL_LIBRARIES}
+set(CORELIBS ${OPENGL_LIBRARIES}
  ${X11_Xxf86vm_LIB} ${X11_Xrandr_LIB} ${X11_Xi_LIB} )
 include_directories(${SOURCES} ${OPENGL_INCLUDE_DIRS} ${GLFW_INCLUDE_DIR} )
 ENDIF()
