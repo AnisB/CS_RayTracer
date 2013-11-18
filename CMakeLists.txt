@@ -33,11 +33,12 @@ file(
 IF(UNIX AND NOT APPLE)
 add_definitions( -D__posix__ )
 add_definitions( -D LINUX )
+add_definitions( -DGLFW_EXPOSE_NATIVE_X11 )
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 FIND_PACKAGE (X11 REQUIRED)
 set(CORELIBS  ${GLEW_LIBRARY} ${OPENGL_LIBRARIES}
- ${X11_Xxf86vm_LIB} ${X11_Xrandr_LIB} ${X11_Xi_LIB} "${PROJECT_SOURCE_DIR}/external/libglfw3.a")
+ ${X11_Xxf86vm_LIB} ${X11_Xrandr_LIB} ${X11_Xi_LIB} "${PROJECT_SOURCE_DIR}/external/libglfw3.a" pthread)
 include_directories(${SOURCES} ${OPENGL_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/external/GLFW)
 ENDIF()
 

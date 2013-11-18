@@ -3,6 +3,8 @@
 
 int main()
 {
-	Renderer theRenderer();
+	Renderer theRenderer;
+	theRenderer.Init();
+	theRenderer.Run();
 	return 0;
 }
