@@ -37,8 +37,8 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 FIND_PACKAGE (X11 REQUIRED)
 set(CORELIBS  ${GLEW_LIBRARY} ${OPENGL_LIBRARIES}
- ${X11_Xxf86vm_LIB} ${X11_Xrandr_LIB} ${X11_Xi_LIB} )
-include_directories(${SOURCES} ${OPENGL_INCLUDE_DIRS} )
+ ${X11_Xxf86vm_LIB} ${X11_Xrandr_LIB} ${X11_Xi_LIB} "${PROJECT_SOURCE_DIR}/external/libglfw3.a")
+include_directories(${SOURCES} ${OPENGL_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/external/GLFW)
 ENDIF()
 
 add_subdirectory(program)
