@@ -1,4 +1,6 @@
-Parser::Parser()
+#include "Parser.h"
+
+Parser::Parser(std::string sceneName)
 {
     
 }

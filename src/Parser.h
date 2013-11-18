@@ -1,13 +1,12 @@
-#pragma once
-
+#ifndef PARSER_IO
+#define PARSER_IO
 #include <string>
-
-using namespace std;
-
 
 class Parser
 {
  public:
-    Parser(string sceneName);
+    Parser(std::string sceneName);
     ~Parser();    
-}
+};
+
+#endif //PARSER_IO
