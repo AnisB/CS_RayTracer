@@ -38,9 +38,8 @@ find_package(GLEW REQUIRED)
 FIND_PACKAGE (X11 REQUIRED)
 set(CORELIBS  ${GLEW_LIBRARY} ${OPENGL_LIBRARIES}
  ${X11_Xxf86vm_LIB} ${X11_Xrandr_LIB} ${X11_Xi_LIB} )
-include_directories(${SOURCES} ${OPENGL_INCLUDE_DIRS} ${GLFW_INCLUDE_DIR} )
+include_directories(${SOURCES} ${OPENGL_INCLUDE_DIRS} )
 ENDIF()
 
-
-add_executable(CS_RayTracer ${PROGRAM}/main.cpp ${Source_File})
-TARGET_LINK_LIBRARIES(CS_RayTracer ${CORELIBS})
+add_subdirectory(program)
+add_subdirectory(test)
