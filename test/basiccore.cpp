@@ -5,6 +5,7 @@
 
 int main () 
 {
+	
     if(!glfwInit())
     {
         PRINT_RED<<"The glfw init failed"<<END_PRINT_COLOR;
@@ -78,15 +79,16 @@ int main ()
 	glAttachShader (shader_programme, fs);
 	glAttachShader (shader_programme, vs);
 	glLinkProgram (shader_programme);
+
 	while (!glfwWindowShouldClose (window)) 
 	{
-	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glUseProgram (shader_programme);
-	glBindVertexArray (vao);
-	glDrawArrays (GL_TRIANGLES, 0, 3);
-	glfwPollEvents ();
-	glfwSwapBuffers (window);
-}
-  glfwTerminate();
-  return 0;
+		glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glUseProgram (shader_programme);
+		glBindVertexArray (vao);
+		glDrawArrays (GL_TRIANGLES, 0, 3);
+		glfwPollEvents ();
+		glfwSwapBuffers (window);
+    }
+	glfwTerminate();
+	return 0;
 }
