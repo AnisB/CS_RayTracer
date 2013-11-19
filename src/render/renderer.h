@@ -2,6 +2,7 @@
 #define CSR_RENDERER
 
 
+#include "shadermanager.h"
 #include "defines.h"
 
 class Renderer
@@ -19,10 +20,13 @@ class Renderer
 	protected:
 		bool FIsRendering;
 		GLFWwindow* FWindow;
+
+		ShaderManager FManager;
 		
 		// RenderToQuad
 		GLuint FVertexArrayID;
 		GLuint FVertexbuffer;
+		GLuint FShaderID;
 };
 
 

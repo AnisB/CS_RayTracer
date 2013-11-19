@@ -4,7 +4,7 @@
 int main()
 {
 	Renderer theRenderer;
-	theRenderer.Init();
-	theRenderer.Run();
+	if(theRenderer.Init())
+		theRenderer.Run();
 	return 0;
 }

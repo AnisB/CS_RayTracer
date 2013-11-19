@@ -11,6 +11,10 @@ class ShaderManager
 		ShaderManager();
 		~ShaderManager();
 		
-		GLuint CreateProgram( const std::string& parVertex,const std::string& parFragment);
+		GLuint CreateProgramVF( const std::string& parVertex,const std::string& parFragment);
+		GLuint CreateProgramCF( const std::string& parCompute,const std::string& parFragment);
+		void BindProgram( GLuint parProgram);
 };
+
+
 #endif // SHADER_MANAGER
