@@ -12,7 +12,13 @@ class Renderer
 		~Renderer();
 
 		bool Init();
+		void InitShaders();
+
 		void Run();
+
+		void RayTracing();
+		void RenderResultToScreen();
+
 		
 	protected:
 		void CreateRenderQuad();
@@ -26,7 +32,11 @@ class Renderer
 		// RenderToQuad
 		GLuint FVertexArrayID;
 		GLuint FVertexbuffer;
-		GLuint FShaderID;
+		GLuint FVertexCoord;
+		GLuint FPipelineShaderID;
+
+		GLuint FComputeShader;
+
 };
 
 

@@ -98,50 +98,47 @@ GLuint ShaderManager::CreateProgramVF(const std::string& parVertex,const std::st
 }
 
 
-GLuint ShaderManager::GenerateTexture() 
+GLuint ShaderManager::GenerateTexture(size_t parW, size_t parH) 
 {
-    GLuint texHandle;
-    glGenTextures(1, &texHandle);
+    GLuint newTexture;
+    glGenTextures(1, &newTexture);
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texHandle);
+    glBindTexture(GL_TEXTURE_2D, newTexture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, 512, 512, 0, GL_RED, GL_FLOAT, NULL);
-
-    glBindImageTexture(0, texHandle, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_R32F);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, parW, parH, 0, GL_RED, GL_FLOAT, NULL);
+    #ifndef MACOSX
+    glBindImageTexture(0, newTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_R32F);
+    #endif
     CheckGLState("GenerateTexture"); 
-    return texHandle;
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    return newTexture;
 }
 
-
-        
-GLuint ShaderManager::CreateProgramCF(const std::string& parCompute,const std::string& parFragment)
+void ShaderManager::BindTexture(GLuint parShaderID, size_t parIndexTex, const std::string& parName)
 {
-    
+    glBindTexture(GL_TEXTURE_2D, parIndexTex);
+    glUniform1i(glGetUniformLocation(parShaderID, parName.c_str()), 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+}
+        
+GLuint ShaderManager::CreateProgramC(const std::string& parCompute)
+{
     GLuint computeShaderID = glCreateShader(GL_COMPUTE_SHADER);
     std::string computeShaderCode = ReadFile(parCompute);
     const char *csc_str = computeShaderCode.c_str();
     glShaderSource(computeShaderID, 1, &csc_str, NULL);
     glCompileShader(computeShaderID);
     CheckShader(computeShaderID);
-    
-    GLuint fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-    std::string FragmentShaderCode = ReadFile(parFragment);
-    const char *fsc_str = FragmentShaderCode.c_str();
-    glShaderSource(fragmentShaderID, 1, (&fsc_str) , NULL);
-    glCompileShader(fragmentShaderID);
-    CheckShader(fragmentShaderID);
 
     GLuint programID = glCreateProgram();
     glAttachShader(programID, computeShaderID);
-    glAttachShader(programID, fragmentShaderID);
     glLinkProgram(programID);
  
     CheckProgram(programID);
- 
-    glDeleteShader(computeShaderID);
-    glDeleteShader(fragmentShaderID);
     return 0;
 }
 

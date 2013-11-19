@@ -1,8 +1,12 @@
 
 #include "renderer.h"
 
+
+#include "helper.h"
+
 #include <common/defines.h>
 
+#define BUFFER_OFFSET(i) ((void*)(i))
 
 static void error_callback(int error, const char* description)
 {
@@ -82,8 +86,11 @@ bool Renderer::Init()
 	// Everything went ok let's render
 	FIsRendering = true;
 
+	InitShaders();
+
 	//Creating the render to quad
 	CreateRenderQuad();
+
 	
 	PRINT_GREEN<<"The renderer was created succesfully"<<END_PRINT_COLOR;
     return true;
@@ -92,28 +99,64 @@ bool Renderer::Init()
 
 void Renderer::CreateRenderQuad()
 {
+	glGenVertexArrays (1, &FVertexArrayID);
+	glBindVertexArray (FVertexArrayID);
 	glGenBuffers(1, &FVertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, FVertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(mainQuadArray), mainQuadArray, GL_STATIC_DRAW);
+	GLuint posAtt = glGetAttribLocation(FPipelineShaderID, "Vertex_Pos");
+	GLuint texAtt = glGetAttribLocation(FPipelineShaderID, "Vertex_TexCoord");
+	glEnableVertexAttribArray (posAtt);
+	glEnableVertexAttribArray (texAtt);
+	glVertexAttribPointer (posAtt, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer (texAtt, 2, GL_FLOAT, GL_TRUE, sizeof (GLfloat) * 3, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray (0);
+}
+void Renderer::InitShaders()
+{
+	//Création de la texture
+	GLuint renderTexture = FManager.GenerateTexture(512,512);
+	//Création du shader de la pipline fixe
+	FPipelineShaderID = FManager.CreateProgramVF("data/shader/vertex.glsl","data/shader/fragment.glsl");
+	//Mappage de la texturepour dessin
+	FManager.BindTexture(FPipelineShaderID,renderTexture,"displaySource");
 
-	glGenVertexArrays (1, &FVertexArrayID);
-	glBindVertexArray (FVertexArrayID);
-	glEnableVertexAttribArray (0);
-	glBindBuffer (GL_ARRAY_BUFFER, FVertexbuffer);
-	glVertexAttribPointer (0, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte*)NULL);
-	FShaderID = FManager.CreateProgramVF("data/shader/vertex.glsl","data/shader/fragment.glsl");
+	#ifndef MACOSX
+	//Création du shader de calcul
+	FComputeShader = FManager.CreateProgramC("data/shader/basecompute.glsl");
+	//Mappage de la texture pour écriture
+	FManager.BindTexture(FComputeShader,renderTexture,"renderCanvas");
+	#endif
+
 	
 }
+void Renderer::RayTracing()
+{
+	#ifndef MACOSX
+	FManager.BindProgram(FComputeShader);
+	glDispatchCompute(512/16, 512/16, 1); // 512^2 threads in blocks of 16^2
+	CheckGLState("RayTracing");
+	#endif
+}
+
+void Renderer::RenderResultToScreen()
+{
+	  FManager.BindProgram(FPipelineShaderID);
+	  glBindVertexArray (FVertexArrayID);
+	  glDrawArrays (GL_TRIANGLE_STRIP, 0, 4);
+	  glBindVertexArray (0);
+}
+
 void Renderer::Run()
 {
 	glColor4f(1.0,1.0,1.0,1.0);
-	FManager.BindProgram(FShaderID);
+	FManager.BindProgram(FPipelineShaderID);
 	while (!glfwWindowShouldClose (FWindow)) 
 	{
 	  glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	  FManager.BindProgram(FShaderID);
-	  glBindVertexArray (FVertexArrayID);
-	  glDrawArrays (GL_TRIANGLES, 0, 6);
+	  RayTracing();
+	  RenderResultToScreen();
 	  glfwPollEvents ();
 	  glfwSwapBuffers (FWindow);
 	}
