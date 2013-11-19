@@ -91,9 +91,7 @@ GLuint ShaderManager::CreateProgramVF(const std::string& parVertex,const std::st
  
     CheckProgram(programID);
  
-    glDeleteShader(vertexShaderID);
-    glDeleteShader(fragmentShaderID);
-    return 0;
+    return programID;
 }
 
 

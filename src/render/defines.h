@@ -6,11 +6,14 @@
 #include <glfw3.h>
 
 
-static const GLfloat mainQuadArray[] = {
-     -1.0f, -1.0f,
-     1.0f, -1.0f,
-     1.0f,  1.0f,
-     -1.0f,  1.0f,
+const GLfloat mainQuadArray[] = {
+     -1.0f, -1.0f,0.0,
+     1.0f, -1.0f,0.0,
+     1.0f,  1.0f,0.0,
+     1.0f,  1.0f,0.0,
+     -1.0f,  1.0f,0.0,
+     -1.0f, -1.0f,0.0,
+
 };
 
 #endif //RENDER_DEFINES

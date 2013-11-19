@@ -74,10 +74,14 @@ bool Renderer::Init()
 	{
 	    PRINT_RED<<"Glew returned: "<<glewGetErrorString(glewReturn)<<END_PRINT_COLOR;
 	}
-	
+	// Pour vérifier la version
+	const GLubyte* renderer = glGetString (GL_RENDERER); 
+	const GLubyte* version = glGetString (GL_VERSION); 
+	PRINT_ORANGE<<"Renderer: "<<renderer<<END_PRINT_COLOR;
+	PRINT_ORANGE<<"Version: "<<version<<END_PRINT_COLOR;
 	// Everything went ok let's render
 	FIsRendering = true;
-	
+
 	//Creating the render to quad
 	CreateRenderQuad();
 	
@@ -88,15 +92,15 @@ bool Renderer::Init()
 
 void Renderer::CreateRenderQuad()
 {
-	glGenVertexArrays(1, &FVertexArrayID);
-	
-	glBindVertexArray(FVertexArrayID);
-	 
 	glGenBuffers(1, &FVertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, FVertexbuffer);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(mainQuadArray), mainQuadArray, GL_STATIC_DRAW);
-	glVertexAttribPointer(0,2, GL_FLOAT,GL_FALSE,0,0);
-	glEnableVertexAttribArray(0);
+
+	glGenVertexArrays (1, &FVertexArrayID);
+	glBindVertexArray (FVertexArrayID);
+	glEnableVertexAttribArray (0);
+	glBindBuffer (GL_ARRAY_BUFFER, FVertexbuffer);
+	glVertexAttribPointer (0, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte*)NULL);
 	FShaderID = FManager.CreateProgramVF("data/shader/vertex.glsl","data/shader/fragment.glsl");
 	
 }
@@ -104,12 +108,13 @@ void Renderer::Run()
 {
 	glColor4f(1.0,1.0,1.0,1.0);
 	FManager.BindProgram(FShaderID);
-	while (!glfwWindowShouldClose(FWindow))
+	while (!glfwWindowShouldClose (FWindow)) 
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, FVertexbuffer);
-		 
-		glDrawArrays(GL_TRIANGLES, 0, 4);
-		 
-		glDisableVertexAttribArray(0);
+	  glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	  FManager.BindProgram(FShaderID);
+	  glBindVertexArray (FVertexArrayID);
+	  glDrawArrays (GL_TRIANGLES, 0, 6);
+	  glfwPollEvents ();
+	  glfwSwapBuffers (FWindow);
 	}
 }
