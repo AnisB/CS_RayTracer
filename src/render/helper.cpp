@@ -11,6 +11,6 @@ void CheckGLState(const std::string& desc)
 	}
 	else
 	{
-		PRINT_ORANGE<<"No OpenGL errors."<<END_PRINT_COLOR;
+		PRINT_ORANGE<<"No OpenGL errors@"<<desc<<END_PRINT_COLOR;
 	}
 }

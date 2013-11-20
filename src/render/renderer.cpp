@@ -10,7 +10,7 @@
 
 static void error_callback(int error, const char* description)
 {
-    fputs(description, stderr);
+    //fputs(description, stderr);
 }
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -60,7 +60,7 @@ bool Renderer::Init()
 	
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
 	// Open a window and create its OpenGL context
-	FWindow = glfwCreateWindow(640, 480, "CS_RayTracer", NULL, NULL);
+	FWindow = glfwCreateWindow(512, 512, "CS_RayTracer", NULL, NULL);
 	if(FWindow == NULL)
 	{
 		PRINT_RED<<"The glfw open windows failed"<<END_PRINT_COLOR;
@@ -87,10 +87,9 @@ bool Renderer::Init()
 	FIsRendering = true;
 
 	InitShaders();
-
 	//Creating the render to quad
 	CreateRenderQuad();
-
+	glClearColor(0.0,0.0,0.0,0.0);
 	
 	PRINT_GREEN<<"The renderer was created succesfully"<<END_PRINT_COLOR;
     return true;
@@ -99,6 +98,7 @@ bool Renderer::Init()
 
 void Renderer::CreateRenderQuad()
 {
+	CheckGLState("CreateRenderQuad b");
 	glGenVertexArrays (1, &FVertexArrayID);
 	glBindVertexArray (FVertexArrayID);
 	glGenBuffers(1, &FVertexbuffer);
@@ -112,31 +112,39 @@ void Renderer::CreateRenderQuad()
 	glVertexAttribPointer (texAtt, 2, GL_FLOAT, GL_TRUE, sizeof (GLfloat) * 3, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray (0);
+	CheckGLState("CreateRenderQuad e");
 }
 void Renderer::InitShaders()
 {
-	//Création de la texture
-	GLuint renderTexture = FManager.GenerateTexture(512,512);
+
+	CheckGLState("InitShaders b");
 	//Création du shader de la pipline fixe
 	FPipelineShaderID = FManager.CreateProgramVF("data/shader/vertex.glsl","data/shader/fragment.glsl");
-	//Mappage de la texturepour dessin
-	FManager.BindTexture(FPipelineShaderID,renderTexture,"displaySource");
 
 	#ifndef MACOSX
 	//Création du shader de calcul
 	FComputeShader = FManager.CreateProgramC("data/shader/basecompute.glsl");
-	//Mappage de la texture pour écriture
-	FManager.BindTexture(FComputeShader,renderTexture,"renderCanvas");
 	#endif
-
+	//Création de la texture
+	GLuint renderTexture = FManager.GenerateTexture(512,512);
 	
+	//Activtion de la texture
+	FManager.BindTexture(renderTexture);
+	
+	//Mappage de la texturepour dessin
+	FManager.InjectToShader(FPipelineShaderID,renderTexture,"displaySource");
+	#ifndef MACOSX
+	//Mappage de la texture pour écriture
+	FManager.InjectToShader(FComputeShader,renderTexture,"renderCanvas");
+	#endif
+	CheckGLState("InitShaders e");
 }
 void Renderer::RayTracing()
 {
 	#ifndef MACOSX
 	FManager.BindProgram(FComputeShader);
 	glDispatchCompute(512/16, 512/16, 1); // 512^2 threads in blocks of 16^2
-	CheckGLState("RayTracing");
+	//CheckGLState("RayTracing");
 	#endif
 }
 
@@ -150,11 +158,10 @@ void Renderer::RenderResultToScreen()
 
 void Renderer::Run()
 {
-	glColor4f(1.0,1.0,1.0,1.0);
-	FManager.BindProgram(FPipelineShaderID);
+	
 	while (!glfwWindowShouldClose (FWindow)) 
 	{
-	  glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	  glClear (GL_COLOR_BUFFER_BIT);
 	  RayTracing();
 	  RenderResultToScreen();
 	  glfwPollEvents ();

@@ -17,7 +17,12 @@ class ShaderManager
 
 
 		GLuint GenerateTexture(size_t parW, size_t parH);
-		void BindTexture(GLuint parShaderID, size_t parIndex, const std::string& parName);
+		void InjectToShader(GLuint parShaderID, size_t parIndex, const std::string& parName);
+
+		void BindTexture(size_t parIndexTex);
+		void UnbindTexture();
+  
+
 };
 
 
