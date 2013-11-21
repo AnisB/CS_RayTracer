@@ -166,7 +166,7 @@ GLuint ShaderManager::CreateProgramC(const std::string& parCompute)
  	CheckGLState("CreateProgramC m5");
     //CheckProgram(programID);
     CheckGLState("CreateProgramC e");
-    return 0;
+    return programID;
 }
 
 
