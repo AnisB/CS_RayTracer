@@ -3,9 +3,10 @@
 
 #include <string>
 #include "defines.h"
+#include "common/singleton.h"
 
 
-class ShaderManager
+class ShaderManager : public Singleton<ShaderManager>
 {
 	public:
 		ShaderManager();
