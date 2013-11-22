@@ -98,7 +98,6 @@ bool Renderer::Init()
 
 void Renderer::CreateRenderQuad()
 {
-	CheckGLState("CreateRenderQuad b");
 	glGenVertexArrays (1, &FVertexArrayID);
 	glBindVertexArray (FVertexArrayID);
 	glGenBuffers(1, &FVertexbuffer);
@@ -112,18 +111,16 @@ void Renderer::CreateRenderQuad()
 	glVertexAttribPointer (texAtt, 2, GL_FLOAT, GL_TRUE, sizeof (GLfloat) * 3, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray (0);
-	CheckGLState("CreateRenderQuad e");
 }
 void Renderer::InitShaders()
 {
 
-	CheckGLState("InitShaders b");
 	//Création du shader de la pipline fixe
 	FPipelineShaderID = FManager.CreateProgramVF("data/shader/vertex.glsl","data/shader/fragment.glsl");
 
 	#ifndef MACOSX
 	//Création du shader de calcul
-	FComputeShader = FManager.CreateProgramC("data/shader/basecompute.glsl");
+	FComputeShader = FManager.CreateProgramC("data/shader/raytracercompute.glsl");
 	#endif
 	//Création de la texture
 	GLuint renderTexture = FManager.GenerateTexture(512,512);
@@ -137,7 +134,6 @@ void Renderer::InitShaders()
 	//Mappage de la texture pour écriture
 	FManager.InjectToShader(FComputeShader,renderTexture,"renderCanvas");
 	#endif
-	CheckGLState("InitShaders e");
 }
 void Renderer::RayTracing()
 {
