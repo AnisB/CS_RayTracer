@@ -37,7 +37,14 @@ Vector3& Vector3::operator*=(double parFactor)
 	return *this;
 }
 
-
+Vector3 Vector3::operator*(const Matrix3& parMatrix)
+{
+	Vector3 result;
+	result.x = x* parMatrix.m[0][0] + y* parMatrix.m[1][0] + z* parMatrix.m[2][0];
+	result.y = x* parMatrix.m[0][1] + y* parMatrix.m[1][1] + z* parMatrix.m[2][1];
+	result.z = x* parMatrix.m[0][2] + y* parMatrix.m[1][2] + z* parMatrix.m[2][2];
+	return result;	
+}
 double Vector3::dotProduct(const Vector3& parV1, const Vector3& parV2)
 {
 	return ( parV1.x*parV2.x + parV1.y*parV2.y +parV1.z*parV2.z);
