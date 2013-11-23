@@ -2,6 +2,7 @@
 #define VECTOR3
 
 #include <math/matrix3.h>
+#include <iostream>
 
 class Matrix3;
 class Vector3
@@ -27,5 +28,5 @@ class Vector3
 		double z;
 	
 };
-
+std::ostream& operator<< (std::ostream& os, const Vector3& obj); 
 #endif

@@ -87,13 +87,13 @@ struct ObjectQ
 
 struct ObjectT
 {
-	Quadrique quadric;
+	Triangle triangle;
 	Materiau material;
 };
 
 struct ObjectP
 {
-	Quadrique quadric;
+	Plan plan;
 	Materiau material;
 };
 
@@ -112,11 +112,26 @@ vec4 computeBRDF(Ray parRay, Intersection parIntersect)
 vec4 Reflect(Ray parRay, Intersection parIntersect)
 {
 	vec4 color;
+	if(parIntersect.isValid)
+	{
+		Ray reflected;
+		reflected.origin = parIntersect.point - EPSILON*parIntersect.normal;		
+		refracted.direction = reflect(parRay.direction,parIntersect.normal);
+		color = CouleurPixel(refracted);
+	}
 	return color;
 }
 vec4 Refract(Ray parRay, Intersection parIntersect)
 {
 	vec4 color;
+	if(parIntersect.isValid)
+	{
+		Ray refracted;
+		refracted.origin = parIntersect.point + EPSILON*parIntersect.normal;	
+		// Indice de réraction a changer	
+		refracted.direction = refract(parRay.direction,parIntersect.normal,0.5);
+		color = CouleurPixel(refracted);
+	}
 	return color;
 }
 
@@ -153,7 +168,3 @@ void main()
      ivec2 storePos = ivec2(gl_GlobalInvocationID.xy);
      imageStore(renderCanvas, storePos, RayTrace(storePos));
 }
-
-
-
-

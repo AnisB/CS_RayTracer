@@ -11,15 +11,13 @@ class Camera
 		Camera();
 		~Camera();
 
+		void Yaw(double parAngle);
+		void Pitch(double parAngle);
 		void InjectFixedValues(GLuint parShaderID);
 		void UpdateValues(GLuint parShaderID);
 
 	protected:
 		Matrix4 FTransformation;
-		Vector3 FPosition;
-		Vector3 FDirection;
-		Vector3 FUpAxis;
-		Vector3 FXAxis;
 		double FLens;
 		double FAngleView;
 		double FHauteurEcran;

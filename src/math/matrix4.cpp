@@ -1,14 +1,20 @@
 #include "matrix4.h"
 
+#include <math.h>
 
-Matrix4::Matrix4()
+Matrix4::Matrix4(MatrixInit::Type reset)
 {
 	m = new double*[4];
 	for(int i = 0; i<4; ++i)
 	{
 		m[i] = new double[4];
 	}
-	resetToZero();
+	if (reset == MatrixInit::Zero)
+		resetToZero();
+	else if (reset == MatrixInit::Identity)
+	{
+		setIdentity();
+	}
 }
 
 Matrix4::~Matrix4()
@@ -74,21 +80,152 @@ Vector3 Matrix4::getTranslate()
 	return Vector3(m[0][3],m[1][3],m[2][3]);
 }
 
-Vector3 Matrix4::getXAxis()
+Vector3 Matrix4::xAxis()
 {
 	return Vector3(m[0][0],m[1][0],m[2][0]);
 }
-Vector3 Matrix4::getYAxis()
+Vector3 Matrix4::yAxis()
 {
 	return Vector3(m[0][1],m[1][1],m[2][1]);
 }
-Vector3 Matrix4::getZAxis()
+Vector3 Matrix4::zAxis()
 {
 	return Vector3(m[0][2],m[1][2],m[2][2]);
 }
 Vector4 operator*(const Vector4& parFactor)
 {
 	Vector4 result;
+	return result;
+}
+Matrix4 Matrix4::translate(const Vector4& parVector)
+{
+	Matrix4 result(MatrixInit::None);
+	result.m[0][0] = 0.0;
+	result.m[0][1] = 0.0;
+	result.m[0][2] = 0.0;
+	result.m[0][3] = 0.0;
+
+	result.m[1][0] = 0.0;
+	result.m[1][1] = 0.0;
+	result.m[1][2] = 0.0;
+	result.m[1][3] = 0.0;
+	
+	result.m[2][0] = 0.0;
+	result.m[2][1] = 0.0;
+	result.m[2][2] = 0.0;
+	result.m[2][3] = 0.0;
+
+	result.m[3][0] = parVector.x;
+	result.m[3][1] = parVector.y;
+	result.m[3][2] = parVector.z;
+	result.m[3][3] = parVector.w;
+	return result;
+}
+
+
+Matrix4 Matrix4::translate(const Vector3& parVector)
+{
+	Matrix4 result(MatrixInit::None);
+	result.m[0][0] = 0.0;
+	result.m[0][1] = 0.0;
+	result.m[0][2] = 0.0;
+	result.m[0][3] = 0.0;
+
+	result.m[1][0] = 0.0;
+	result.m[1][1] = 0.0;
+	result.m[1][2] = 0.0;
+	result.m[1][3] = 0.0;
+	
+	result.m[2][0] = 0.0;
+	result.m[2][1] = 0.0;
+	result.m[2][2] = 0.0;
+	result.m[2][3] = 0.0;
+
+	result.m[3][0] = parVector.x;
+	result.m[3][1] = parVector.y;
+	result.m[3][2] = parVector.z;
+	result.m[3][3] = 1.0;
+	return result;
+}
+
+Matrix4 Matrix4::rotateXAxis(double parAngle)
+{
+	double cosVal = cos(parAngle);
+	double sinVal = sin(parAngle);
+	Matrix4 result(MatrixInit::None);
+	result.m[0][0] = 1.0;
+	result.m[0][1] = 0.0;
+	result.m[0][2] = 0.0;
+	result.m[0][3] = 0.0;
+
+	result.m[1][0] = 0.0;
+	result.m[1][1] = cosVal;
+	result.m[1][2] = -sinVal;
+	result.m[1][3] = 0.0;
+	
+	result.m[2][0] = 0.0;
+	result.m[2][1] = 0.0;
+	result.m[2][2] = sinVal;
+	result.m[2][3] = cosVal;
+
+	result.m[3][0] = 0.0;
+	result.m[3][1] = 0.0;
+	result.m[3][2] = 0.0;
+	result.m[3][3] = 1.0;
+	return result;
+}
+
+Matrix4 Matrix4::rotateYAxis(double parAngle)
+{
+	double cosVal = cos(parAngle);
+	double sinVal = sin(parAngle);
+	Matrix4 result(MatrixInit::None);
+	result.m[0][0] = cosVal;
+	result.m[0][1] = 0.0;
+	result.m[0][2] = sinVal;
+	result.m[0][3] = 0.0;
+
+	result.m[1][0] = 0.0;
+	result.m[1][1] = 1.0;
+	result.m[1][2] = 0.0;
+	result.m[1][3] = 0.0;
+	
+	result.m[2][0] = -sinVal;
+	result.m[2][1] = 0.0;
+	result.m[2][2] = cosVal;
+	result.m[2][3] = 0.0;
+
+	result.m[3][0] = 0.0;
+	result.m[3][1] = 0.0;
+	result.m[3][2] = 0.0;
+	result.m[3][3] = 1.0;
+	return result;
+}
+
+Matrix4 Matrix4::rotateZAxis(double parAngle)
+{
+	double cosVal = cos(parAngle);
+	double sinVal = sin(parAngle);
+	Matrix4 result(MatrixInit::None);
+	result.m[0][0] = cosVal;
+	result.m[0][1] = -sinVal;
+	result.m[0][2] = 0.0;
+	result.m[0][3] = 0.0;
+
+	result.m[1][0] = sinVal;
+	result.m[1][1] = cosVal;
+	result.m[1][2] = 0.0;
+	result.m[1][3] = 0.0;
+	
+	result.m[2][0] = 0.0;
+	result.m[2][1] = 0.0;
+	result.m[2][2] = 1.0;
+	result.m[2][3] = 0.0;
+
+	result.m[3][0] = 0.0;
+	result.m[3][1] = 0.0;
+	result.m[3][2] = 0.0;
+	result.m[3][3] = 1.0;
 	return result;
 }
 

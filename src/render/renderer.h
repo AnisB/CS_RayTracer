@@ -5,8 +5,9 @@
 #include "shadermanager.h"
 #include "camera.h"
 #include "defines.h"
+#include "common/singleton.h"
 
-class Renderer
+class Renderer : public Singleton<Renderer>
 {
 	public:
 		Renderer();
@@ -19,6 +20,8 @@ class Renderer
 
 		void RayTracing();
 		void RenderResultToScreen();
+
+		void HandleKey(int parKey, int parAction);
 
 		
 	protected:

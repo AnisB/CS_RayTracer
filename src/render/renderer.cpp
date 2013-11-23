@@ -6,16 +6,16 @@
 
 #include <common/defines.h>
 
-#define BUFFER_OFFSET(i) ((void*)(i))
 
 static void error_callback(int error, const char* description)
 {
-    //fputs(description, stderr);
+    PRINT_RED<<error<<" "<<description<<END_PRINT_COLOR;
 }
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
+    Renderer::Instance().HandleKey(key,action);
 }
 
 Renderer::Renderer()
@@ -32,6 +32,31 @@ Renderer::~Renderer()
 	
 }
 
+void Renderer::HandleKey(int parKey, int parAction)
+{
+	if(parKey == GLFW_KEY_LEFT && parAction == GLFW_PRESS)
+	{
+		FCamera.Yaw(MathTools::PI/20);
+		FCamera.UpdateValues(FComputeShader);
+
+	}
+	if(parKey == GLFW_KEY_RIGHT && parAction == GLFW_PRESS)
+	{
+		FCamera.Yaw(-MathTools::PI/20);
+		FCamera.UpdateValues(FComputeShader);
+	}
+	if(parKey == GLFW_KEY_UP && parAction == GLFW_PRESS)
+	{
+		FCamera.Pitch(MathTools::PI/20);
+		FCamera.UpdateValues(FComputeShader);
+
+	}
+	if(parKey == GLFW_KEY_DOWN && parAction == GLFW_PRESS)
+	{
+		FCamera.Pitch(-MathTools::PI/20);
+		FCamera.UpdateValues(FComputeShader);
+	}
+}
 
 bool Renderer::Init()
 {
@@ -154,11 +179,10 @@ void Renderer::RenderResultToScreen()
 
 void Renderer::Run()
 {
-	
+	FCamera.UpdateValues(FComputeShader);
 	while (!glfwWindowShouldClose (FWindow)) 
 	{
 	  glClear (GL_COLOR_BUFFER_BIT);
-	  FCamera.UpdateValues(FComputeShader);
 	  RayTracing();
 	  RenderResultToScreen();
 	  glfwPollEvents ();

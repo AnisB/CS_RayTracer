@@ -131,6 +131,7 @@ void ShaderManager::Injectd(GLuint parShaderID, double parValue, const std::stri
 }
 void ShaderManager::InjectVec3(GLuint parShaderID, const Vector3& parValue, const std::string& parName)
 {
+    PRINT_ORANGE <<"Injected "<<parValue<<END_PRINT_COLOR;
     BindProgram(parShaderID);
     glUniform3f(glGetUniformLocation(parShaderID, parName.c_str()), parValue.x, parValue.y, parValue.z);
 }

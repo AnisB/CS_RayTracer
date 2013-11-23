@@ -84,3 +84,9 @@ Vector3 Vector3::crossProduct(const Vector3& parV1, const Vector3& parV2)
 	result.z = parV1.x * parV2.y - parV2.x * parV1.y; 
 	return result;
 }
+
+std::ostream& operator<< (std::ostream& os, const Vector3& obj) 
+{
+       os << "Vec3("<<obj.x <<", " <<obj.y<<", "<<obj.z << ")";
+       return os;
+}     
