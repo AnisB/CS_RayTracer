@@ -37,6 +37,31 @@ Vector3& Vector3::operator*=(double parFactor)
 	return *this;
 }
 
+Vector3 Vector3::operator*(double parFactor) const
+{
+	Vector3 result;
+	result.x= parFactor*x;
+	result.y= parFactor*y;
+	result.z= parFactor*z;
+	return result;
+}
+		
+Vector3 Vector3::operator+(const Vector3& parVect) const
+{
+	Vector3 result;
+	result.x= parVect.x+x;
+	result.y= parVect.y+y;
+	result.z= parVect.z+z;
+	return result;
+}
+Vector3 Vector3::operator-(const Vector3& parVect) const
+{
+	Vector3 result;
+	result.x= x-parVect.x;
+	result.y= y-parVect.y;
+	result.z= z-parVect.z;
+	return result;
+}
 Vector3 Vector3::operator*(const Matrix3& parMatrix)
 {
 	Vector3 result;

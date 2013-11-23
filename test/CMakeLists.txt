@@ -4,8 +4,8 @@
 #TARGET_LINK_LIBRARIES(testFile ${CORELIBS})
 
 
-add_executable(basicwindow ${TEST}/basicwindow.cpp ${Source_File})
+add_executable(basicwindow ${TEST}/basicwindow.cpp )
 TARGET_LINK_LIBRARIES(basicwindow ${CORELIBS})
 
-add_executable(basiccore ${TEST}/basiccore.cpp ${Source_File})
+add_executable(basiccore ${TEST}/basiccore.cpp )
 TARGET_LINK_LIBRARIES(basiccore ${CORELIBS})

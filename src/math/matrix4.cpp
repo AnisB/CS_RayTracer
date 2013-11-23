@@ -69,11 +69,26 @@ void Matrix4::resetToZero()
 	m[3][3] = 0.0;
 }
 
+Vector3 Matrix4::getTranslate()
+{
+	return Vector3(m[0][3],m[1][3],m[2][3]);
+}
 
-Vector4 Matrix4::operator*=(const Vector4& parFactor)
+Vector3 Matrix4::getXAxis()
+{
+	return Vector3(m[0][0],m[1][0],m[2][0]);
+}
+Vector3 Matrix4::getYAxis()
+{
+	return Vector3(m[0][1],m[1][1],m[2][1]);
+}
+Vector3 Matrix4::getZAxis()
+{
+	return Vector3(m[0][2],m[1][2],m[2][2]);
+}
+Vector4 operator*(const Vector4& parFactor)
 {
 	Vector4 result;
-
 	return result;
 }
 

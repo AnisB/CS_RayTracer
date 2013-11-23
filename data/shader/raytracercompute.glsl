@@ -1,18 +1,28 @@
 #version 430
 
 
-// Constantes numériques utiles
-
+//Destination du rendu
 layout(rgba8) uniform image2D renderCanvas;
 
 layout (local_size_x = 16, local_size_y = 16) in;
 
+
 // Camera informations
 uniform vec3 cameraPosition;
+//Z axis
 uniform vec3 cameraDirection;
+// Up axis
 uniform vec3 cameraUpAxis;
+// Third Axis
+uniform vec3 cameraXAxis;
+//View Angle
 uniform float viewAngle;
+// Distance focale
 uniform float focalDistance;
+//Attributs précalcules pour soucis de perf
+uniform vec3 coinSupGauche;
+uniform float unitX;
+uniform float unitY;
 
 // Primitives
 struct Triangle
@@ -51,6 +61,17 @@ struct Ray
 	vec3 direction;				
 };
 
+// Rayon
+struct Intersection
+{
+	bool isValid;
+	vec3 point;
+	float distance;				
+	vec3 normale;
+	int typeObj;
+	int index;			
+};
+
 //Materiau
 
 struct Materiau
@@ -76,9 +97,42 @@ struct ObjectP
 	Materiau material;
 };
 
-vec4 Intersect(Ray parRayon)
+
+Intersection IntersectWithScene(Ray parRay)
 {
-	return vec4(0.3,0.4,0.8,1.0);
+	Intersection intersect;
+	return intersect
+}
+vec4 computeBRDF(Ray parRay, Intersection parIntersect)
+{
+	vec4 color;
+	return color;
+}
+
+vec4 Reflect(Ray parRay, Intersection parIntersect)
+{
+	vec4 color;
+	return color;
+}
+vec4 Refract(Ray parRay, Intersection parIntersect)
+{
+	vec4 color;
+	return color;
+}
+
+vec4 computeBRDF(Ray parRay, Intersection parIntersect)
+{
+	vec4 color;
+	return color;
+}
+vec4 CouleurPixel(Ray parRayon)
+{
+	vec4 finalColor;
+	Intersection intersect = IntersectWithScene(parRayon);
+	finalColor = computeBRDF(Ray, intersect);
+	finalColor*=Reflect(Ray, Intersection);
+	finalColor*=Refract(Ray, Intersection);
+	return finalColor;
 }
 
 vec4 RayTrace(vec2 storePos)
@@ -86,9 +140,9 @@ vec4 RayTrace(vec2 storePos)
 	//Calcul du rayon a lancer
 	Ray rayon;
 	rayon.origin = cameraPosition;
-	//rayon.direction =...
-	
-	return Intersect(rayon);
+	vec3 screenPoint = coinSupGauche + unitX * storePos.x + unitY * storePos.y;
+	rayon.direction = screenPoint - cameraPosition;
+	return CouleurPixel(rayon);
 }
 void main() 
 {

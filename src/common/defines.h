@@ -7,6 +7,21 @@
 #include <iostream>
 
 
+namespace MathTools
+{
+        static const double PI = 3.14159265359;
+        static const double FULL_ANGLE = 360.0;
+}
+
+
+static int USCREEN_X  = 512;
+static int USCREEN_Y  = 512;
+static double SCREEN_X  = USCREEN_X*1.0;
+static double SCREEN_Y  = USCREEN_Y*1.0;
+static double RATIO = SCREEN_X/SCREEN_Y;
+ 
+
+#define DegreeToRadian(Angle) (Angle*MathTools::PI/MathTools::FULL_ANGLE)
 #define foreach(IT,X) for ( typeof( X.begin() ) IT = X.begin(); IT != X.end(); ++IT )
 #define tryget(IT,LIST, ELEM) typeof( LIST.begin()) IT = LIST.find(ELEM);
 
@@ -22,11 +37,6 @@
 #define END_PRINT_COLOR DEFAULT_COLOR<<std::endl
 
 
-namespace MathTools
-{
-        static const double PI = 3.14159265359;
-        static const double FULL_ANGLE = 360.0;
-}
 
 
 #endif //COMMON_DEFINES

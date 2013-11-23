@@ -13,9 +13,6 @@ set(PROGRAM "${PROJECT_SOURCE_DIR}/program/")
 #Test directory
 set(TEST "${PROJECT_SOURCE_DIR}/test/")
 
-#Debug flag
-SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
-
 #Cmake module path
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/;${CMAKE_MODULE_PATH}")
 
