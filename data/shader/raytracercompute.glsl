@@ -6,7 +6,7 @@ layout(rgba8) uniform image2D renderCanvas;
 
 layout (local_size_x = 16, local_size_y = 16) in;
 
-
+const int MAX_PRIM = 20;
 // Camera informations
 uniform vec3 cameraPosition;
 //Z axis
@@ -68,8 +68,7 @@ struct Intersection
 	vec3 point;
 	float distance;				
 	vec3 normale;
-	int typeObj;
-	int index;			
+	Primitive obj;	
 };
 
 //Materiau
@@ -77,6 +76,11 @@ struct Intersection
 struct Materiau
 {
 	vec4 color;
+};
+struct Primitive
+{
+	int type;
+	int index;
 };
 // Objets
 struct ObjectQ
@@ -98,7 +102,7 @@ struct ObjectP
 };
 
 
-Intersection IntersectWithScene(Ray parRay)
+Intersection IntersectWithScene(Ray parRay, Primitive[MAX_PRIM] parPrim)
 {
 	Intersection intersect;
 	return intersect
@@ -107,6 +111,12 @@ vec4 computeBRDF(Ray parRay, Intersection parIntersect)
 {
 	vec4 color;
 	return color;
+}
+
+Primitive[MAX_PRIM] getPrimitives(Ray parRay)
+{
+	Primitive listePrim[MAX_PRIM]
+	return  listePrim;
 }
 
 vec4 Reflect(Ray parRay, Intersection parIntersect)
@@ -121,7 +131,7 @@ vec4 Reflect(Ray parRay, Intersection parIntersect)
 	}
 	return color;
 }
-vec4 Refract(Ray parRay, Intersection parIntersect)
+vec4 Refract(Ray parRay, Intersection parIntersect,)
 {
 	vec4 color;
 	if(parIntersect.isValid)
@@ -135,6 +145,7 @@ vec4 Refract(Ray parRay, Intersection parIntersect)
 	return color;
 }
 
+
 vec4 computeBRDF(Ray parRay, Intersection parIntersect)
 {
 	vec4 color;
@@ -143,7 +154,8 @@ vec4 computeBRDF(Ray parRay, Intersection parIntersect)
 vec4 CouleurPixel(Ray parRayon)
 {
 	vec4 finalColor;
-	Intersection intersect = IntersectWithScene(parRayon);
+	Primitive listePrim[MAX_PRIM] = getPrimitives(parRayon);
+	Intersection intersect = IntersectWithScene(parRayon,listePrim);
 	finalColor = computeBRDF(Ray, intersect);
 	finalColor*=Reflect(Ray, Intersection);
 	finalColor*=Refract(Ray, Intersection);
@@ -157,6 +169,7 @@ vec4 RayTrace(vec2 storePos)
 	rayon.origin = cameraPosition;
 	vec3 screenPoint = coinSupGauche + unitX * storePos.x + unitY * storePos.y;
 	rayon.direction = screenPoint - cameraPosition;
+	// Lancer
 	return CouleurPixel(rayon);
 }
 void main() 
