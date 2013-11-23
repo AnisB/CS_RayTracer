@@ -44,10 +44,6 @@ void Camera::UpdateValues(GLuint parShaderID)
 	const Vector3& yAxis = FTransformation.yAxis();
 	const Vector3& xAxis = FTransformation.xAxis();
 	ShaderManager::Instance().InjectVec3(parShaderID, FTransformation.getTranslate(), "cameraPos");
-	ShaderManager::Instance().InjectVec3(parShaderID, FTransformation.zAxis(), "cameraDir");
-	ShaderManager::Instance().InjectVec3(parShaderID, FTransformation.yAxis(), "cameraUpAxis");
-	ShaderManager::Instance().InjectVec3(parShaderID, FTransformation.xAxis(), "cameraPos");
-
 
 	// Precalcules 
 	const Vector3& centreEcran = pos+zAxis*FLens;

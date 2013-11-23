@@ -7,18 +7,8 @@ layout(rgba8) uniform image2D renderCanvas;
 layout (local_size_x = 16, local_size_y = 16) in;
 
 const int MAX_PRIM = 20;
-// Camera informations
+// Camera Pos
 uniform vec3 cameraPosition;
-//Z axis
-uniform vec3 cameraDirection;
-// Up axis
-uniform vec3 cameraUpAxis;
-// Third Axis
-uniform vec3 cameraXAxis;
-//View Angle
-uniform float viewAngle;
-// Distance focale
-uniform float focalDistance;
 //Attributs précalcules pour soucis de perf
 uniform vec3 coinSupGauche;
 uniform float unitX;
@@ -72,7 +62,6 @@ struct Intersection
 };
 
 //Materiau
-
 struct Materiau
 {
 	vec4 color;
