@@ -3,6 +3,7 @@
 
 
 #include "shadermanager.h"
+#include "camera.h"
 #include "defines.h"
 
 class Renderer
@@ -28,6 +29,7 @@ class Renderer
 		GLFWwindow* FWindow;
 
 		ShaderManager FManager;
+		Camera FCamera;
 		
 		// RenderToQuad
 		GLuint FVertexArrayID;

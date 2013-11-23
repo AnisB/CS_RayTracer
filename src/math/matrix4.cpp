@@ -43,23 +43,30 @@ void Matrix4::setIdentity()
 
 double Matrix4::det() const
 {
-	return (m[0][0]*m[1][1]*m[2][2]-m[2][1]*m[1][2])
-           -m[0][1]*(m[1][0]*m[2][2]-m[1][2]*m[2][0])
-           +m[0][2]*(m[1][0]*m[2][1]-m[1][1]*m[2][0]);
+	//TODO
+	return 0.0;
 }
 void Matrix4::resetToZero()
 {
 	m[0][0] = 0.0;
 	m[0][1] = 0.0;
 	m[0][2] = 0.0;
-	p
+	m[0][3] = 0.0;
+
 	m[1][0] = 0.0;
 	m[1][1] = 0.0;
 	m[1][2] = 0.0;
+	m[1][3] = 0.0;
 	
 	m[2][0] = 0.0;
 	m[2][1] = 0.0;
 	m[2][2] = 0.0;
+	m[2][3] = 0.0;
+
+	m[3][0] = 0.0;
+	m[3][1] = 0.0;
+	m[3][2] = 0.0;
+	m[3][3] = 0.0;
 }
 
 
@@ -70,18 +77,9 @@ Vector4 Matrix4::operator*=(const Vector4& parFactor)
 	return result;
 }
 
-Matrix4 Matrix4::inverse(const Matrix3& parMatrix)
+Matrix4 Matrix4::inverse(const Matrix4& parMatrix)
 {
 	Matrix4 inverseMatrix;
-	double invdet = 1.0/parMatrix.det();
-	inverseMatrix.m[0][0] =  (parMatrix.m[1][1]*parMatrix.m[2][2]-parMatrix.m[2][1]*parMatrix.m[1][2])*invdet;
-	inverseMatrix.m[1][0] = -(parMatrix.m[0][1]*parMatrix.m[2][2]-parMatrix.m[0][2]*parMatrix.m[2][1])*invdet;
-	inverseMatrix.m[2][0] =  (parMatrix.m[0][1]*parMatrix.m[1][2]-parMatrix.m[0][2]*parMatrix.m[1][1])*invdet;
-	inverseMatrix.m[0][1] = -(parMatrix.m[1][0]*parMatrix.m[2][2]-parMatrix.m[1][2]*parMatrix.m[2][0])*invdet;
-	inverseMatrix.m[1][1] =  (parMatrix.m[0][0]*parMatrix.m[2][2]-parMatrix.m[0][2]*parMatrix.m[2][0])*invdet;
-	inverseMatrix.m[2][1] = -(parMatrix.m[0][0]*parMatrix.m[1][2]-parMatrix.m[1][0]*parMatrix.m[0][2])*invdet;
-	inverseMatrix.m[0][2] =  (parMatrix.m[1][0]*parMatrix.m[2][1]-parMatrix.m[2][0]*parMatrix.m[1][1])*invdet;
-	inverseMatrix.m[1][2] = -(parMatrix.m[0][0]*parMatrix.m[2][1]-parMatrix.m[2][0]*parMatrix.m[0][1])*invdet;
-	inverseMatrix.m[2][2] =  (parMatrix.m[0][0]*parMatrix.m[1][1]-parMatrix.m[1][0]*parMatrix.m[0][1])*invdet;
+	// TODO
 	return inverseMatrix;
 }

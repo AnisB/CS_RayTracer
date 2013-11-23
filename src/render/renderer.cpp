@@ -129,10 +129,10 @@ void Renderer::InitShaders()
 	FManager.BindTexture(renderTexture);
 	
 	//Mappage de la texturepour dessin
-	FManager.InjectToShader(FPipelineShaderID,renderTexture,"displaySource");
+	FManager.InjectTex(FPipelineShaderID,renderTexture,"displaySource");
 	#ifndef MACOSX
 	//Mappage de la texture pour écriture
-	FManager.InjectToShader(FComputeShader,renderTexture,"renderCanvas");
+	FManager.InjectTex(FComputeShader,renderTexture,"renderCanvas");
 	#endif
 }
 void Renderer::RayTracing()
@@ -158,6 +158,7 @@ void Renderer::Run()
 	while (!glfwWindowShouldClose (FWindow)) 
 	{
 	  glClear (GL_COLOR_BUFFER_BIT);
+	  FCamera.UpdateValues(FComputeShader);
 	  RayTracing();
 	  RenderResultToScreen();
 	  glfwPollEvents ();

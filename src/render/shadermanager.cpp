@@ -118,12 +118,23 @@ GLuint ShaderManager::GenerateTexture(size_t parW, size_t parH)
     return newTexture;
 }
 
-void ShaderManager::InjectToShader(GLuint parShaderID, size_t parIndexTex, const std::string& parName)
+void ShaderManager::InjectTex(GLuint parShaderID, size_t parIndexTex, const std::string& parName)
 {
     BindProgram(parShaderID);
     glUniform1i(glGetUniformLocation(parShaderID, parName.c_str()), 0);
 }
-    
+
+void ShaderManager::Injectd(GLuint parShaderID, double parValue, const std::string& parName)
+{
+    BindProgram(parShaderID);
+    glUniform1f(glGetUniformLocation(parShaderID, parName.c_str()), parValue);
+}
+void ShaderManager::InjectVec3(GLuint parShaderID, const Vector3& parValue, const std::string& parName)
+{
+    BindProgram(parShaderID);
+    glUniform3f(glGetUniformLocation(parShaderID, parName.c_str()), parValue.x, parValue.y, parValue.z);
+}
+
 void ShaderManager::BindTexture(size_t parIndexTex)
 {
     glBindTexture(GL_TEXTURE_2D, parIndexTex);
