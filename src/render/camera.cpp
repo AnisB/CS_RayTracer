@@ -21,11 +21,13 @@ Camera::~Camera()
 
 void Camera::Yaw(double parAngle)
 {
-	// TODO 
+	FTransformation = FTransformation*Matrix4::rotateYAxis(parAngle);
+	PRINT_ORANGE("Camera tourne de "<<parAngle<<" axe de Y");
 }
 void Camera::Pitch(double parAngle)
 {
-	// TODO 
+	FTransformation = FTransformation*Matrix4::rotateXAxis(parAngle);
+	PRINT_ORANGE("Camera tourne de "<<parAngle<<" axe de X");
 }
 void Camera::InjectFixedValues(GLuint parShaderID)
 {

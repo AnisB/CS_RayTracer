@@ -79,3 +79,12 @@ Matrix3 Matrix3::inverse(const Matrix3& parMatrix)
 	inverseMatrix.m[2][2] =  (parMatrix.m[0][0]*parMatrix.m[1][1]-parMatrix.m[1][0]*parMatrix.m[0][1])*invdet;
 	return inverseMatrix;
 }
+
+std::ostream& operator<< (std::ostream& os, const Matrix3& obj) 
+{
+	os << "Matrix4\n("<<obj.m[0][0] <<", " <<obj.m[0][1]<<", "<<obj.m[0][2]<<",\n"
+		<<obj.m[1][0] <<", " <<obj.m[1][1]<<", "<<obj.m[1][2]<<",\n"
+		<<obj.m[2][0] <<", " <<obj.m[2][1]<<", "<<obj.m[2][2]<<",\n"
+		<<obj.m[3][0] <<", " <<obj.m[3][1]<<", "<<obj.m[3][2]<<")";
+	return os;
+}     

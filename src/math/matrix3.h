@@ -1,7 +1,8 @@
 #ifndef MATRIX_3
 #define MATRIX_3
 
-#include<math/vector3.h>
+#include "math/vector3.h"
+#include <iostream>
 
 
 class Vector3;
@@ -21,5 +22,6 @@ class Matrix3
 	public:
 		double ** m;
 };
+std::ostream& operator<< (std::ostream& os, const Matrix3& obj);
 
 #endif //MATRIX_3

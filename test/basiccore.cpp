@@ -8,12 +8,12 @@ int main ()
 	
     if(!glfwInit())
     {
-        PRINT_RED<<"The glfw init failed"<<END_PRINT_COLOR;
+        PRINT_RED("The glfw init failed");
         return false;
     }
     else
     {
-	  PRINT_GREEN<<"The glfw init succeeded"<<END_PRINT_COLOR;
+	  PRINT_GREEN("The glfw init succeeded");
     }
     #ifdef MACOSX
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -28,7 +28,7 @@ int main ()
 	GLFWwindow* window = glfwCreateWindow(640, 480, "CS_RayTracer", NULL, NULL);
 	if(window == NULL)
 	{
-		PRINT_RED<<"The glfw open windows failed"<<END_PRINT_COLOR;
+		PRINT_RED("The glfw open windows failed");
 		glfwTerminate();
 		return false;
 	}

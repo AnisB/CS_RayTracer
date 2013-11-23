@@ -9,7 +9,7 @@
 #include <vector>
 std::string ReadFile(const std::string& parFileName)
 {
-    PRINT_GREEN<< "Loading file: "<<parFileName<<END_PRINT_COLOR;
+    PRINT_GREEN( "Loading file: "<<parFileName);
     std::string fileContent;
     std::fstream fileStream;
     fileStream.open(parFileName.c_str());
@@ -22,7 +22,7 @@ std::string ReadFile(const std::string& parFileName)
     }
     else
     {
-        PRINT_RED<< "Couldn't load shader source: "<<parFileName<<END_PRINT_COLOR;
+        PRINT_RED( "Couldn't load shader source: "<<parFileName);
     }
     return fileContent;
 }
@@ -42,7 +42,7 @@ void CheckShader(GLuint parShaderID)
     {
         char errorMessage[InfoLogLength];
         glGetShaderInfoLog(parShaderID, InfoLogLength, NULL, errorMessage);
-        PRINT_RED<< errorMessage <<END_PRINT_COLOR;
+        PRINT_RED( errorMessage );
     }
 }
 
@@ -58,7 +58,7 @@ void CheckProgram(GLuint parProgramID)
     {   
         char errorMessage[InfoLogLength];
         glGetProgramInfoLog(parProgramID, InfoLogLength, NULL, errorMessage);
-        PRINT_RED<<"Program linking error: "<<std::endl<<errorMessage <<END_PRINT_COLOR;
+        PRINT_RED("Program linking error: "<<std::endl<<errorMessage );
     }
 }
 
@@ -131,7 +131,7 @@ void ShaderManager::Injectd(GLuint parShaderID, double parValue, const std::stri
 }
 void ShaderManager::InjectVec3(GLuint parShaderID, const Vector3& parValue, const std::string& parName)
 {
-    PRINT_ORANGE <<"Injected "<<parValue<<END_PRINT_COLOR;
+    PRINT_ORANGE("Injected "<<parValue);
     BindProgram(parShaderID);
     glUniform3f(glGetUniformLocation(parShaderID, parName.c_str()), parValue.x, parValue.y, parValue.z);
 }

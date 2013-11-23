@@ -16,6 +16,9 @@ set(TEST "${PROJECT_SOURCE_DIR}/test/")
 #Cmake module path
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/;${CMAKE_MODULE_PATH}")
 
+IF(RELEASE)
+add_definitions( -DRELEASE )
+ENDIF()
 
 #Recursive file parsing
 file(

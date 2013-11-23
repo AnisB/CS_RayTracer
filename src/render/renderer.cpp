@@ -9,7 +9,7 @@
 
 static void error_callback(int error, const char* description)
 {
-    PRINT_RED<<error<<" "<<description<<END_PRINT_COLOR;
+    PRINT_RED(error<<" "<<description);
 }
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -63,12 +63,12 @@ bool Renderer::Init()
     // Initialise GLFW
     if(!glfwInit())
     {
-        PRINT_RED<<"The glfw init failed"<<END_PRINT_COLOR;
+        PRINT_RED("The glfw init failed");
         return false;
     }
     else
     {
-	  PRINT_GREEN<<"The glfw init succeeded"<<END_PRINT_COLOR;
+	  PRINT_GREEN("The glfw init succeeded");
     }
     // Defintion du core profile
     #ifdef MACOSX
@@ -88,7 +88,7 @@ bool Renderer::Init()
 	FWindow = glfwCreateWindow(512, 512, "CS_RayTracer", NULL, NULL);
 	if(FWindow == NULL)
 	{
-		PRINT_RED<<"The glfw open windows failed"<<END_PRINT_COLOR;
+		PRINT_RED("The glfw open windows failed");
 		glfwTerminate();
 		return false;
 	}
@@ -101,13 +101,13 @@ bool Renderer::Init()
 	GLenum glewReturn = glewInit();
 	if(glewReturn)
 	{
-	    PRINT_RED<<"Glew returned: "<<glewGetErrorString(glewReturn)<<END_PRINT_COLOR;
+	    PRINT_RED("Glew returned: "<<glewGetErrorString(glewReturn));
 	}
 	// Pour vérifier la version
 	const GLubyte* renderer = glGetString (GL_RENDERER); 
 	const GLubyte* version = glGetString (GL_VERSION); 
-	PRINT_ORANGE<<"Renderer: "<<renderer<<END_PRINT_COLOR;
-	PRINT_ORANGE<<"Version: "<<version<<END_PRINT_COLOR;
+	PRINT_ORANGE("Renderer: "<<renderer);
+	PRINT_ORANGE("Version: "<<version);
 	// Everything went ok let's render
 	FIsRendering = true;
 
@@ -116,7 +116,7 @@ bool Renderer::Init()
 	CreateRenderQuad();
 	glClearColor(0.0,0.0,0.0,0.0);
 	
-	PRINT_GREEN<<"The renderer was created succesfully"<<END_PRINT_COLOR;
+	PRINT_GREEN("The renderer was created succesfully");
     return true;
 }
 
@@ -164,8 +164,7 @@ void Renderer::RayTracing()
 {
 	#ifndef MACOSX
 	FManager.BindProgram(FComputeShader);
-	glDispatchCompute(512/16, 512/16, 1); // 512^2 threads in blocks of 16^2
-	//CheckGLState("RayTracing");
+	glDispatchCompute(512/16, 512/16, 1); 
 	#endif
 }
 

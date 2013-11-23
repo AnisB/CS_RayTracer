@@ -12,11 +12,18 @@ Matrix4::Matrix4(MatrixInit::Type reset)
 	if (reset == MatrixInit::Zero)
 		resetToZero();
 	else if (reset == MatrixInit::Identity)
-	{
 		setIdentity();
-	}
 }
 
+Matrix4::Matrix4(const Matrix4& parMatrix)
+{
+	m = new double*[4];
+	for(int i = 0; i<4; ++i)
+	{
+		m[i] = new double[4];
+	}
+	*this=parMatrix;
+}
 Matrix4::~Matrix4()
 {
 	delete [] m;
@@ -164,9 +171,9 @@ Matrix4 Matrix4::rotateXAxis(double parAngle)
 	result.m[1][3] = 0.0;
 	
 	result.m[2][0] = 0.0;
-	result.m[2][1] = 0.0;
-	result.m[2][2] = sinVal;
-	result.m[2][3] = cosVal;
+	result.m[2][1] = sinVal;
+	result.m[2][2] = cosVal;
+	result.m[2][3] = 0.0;
 
 	result.m[3][0] = 0.0;
 	result.m[3][1] = 0.0;
@@ -229,9 +236,62 @@ Matrix4 Matrix4::rotateZAxis(double parAngle)
 	return result;
 }
 
+Matrix4& Matrix4::operator=(const Matrix4& parMatrix)
+{
+	m[0][0] = parMatrix.m[0][0];
+	m[0][1] = parMatrix.m[0][1];
+	m[0][2] = parMatrix.m[0][2];
+	m[0][3] = parMatrix.m[0][3];
+
+	m[1][0] = parMatrix.m[1][0];
+	m[1][1] = parMatrix.m[1][1];
+	m[1][2] = parMatrix.m[1][2];
+	m[1][3] = parMatrix.m[1][3];
+	
+	m[2][0] = parMatrix.m[2][0];
+	m[2][1] = parMatrix.m[2][1];
+	m[2][2] = parMatrix.m[2][2];
+	m[2][3] = parMatrix.m[2][3];
+
+	m[3][0] = parMatrix.m[3][0];
+	m[3][1] = parMatrix.m[3][1];
+	m[3][2] = parMatrix.m[3][2];
+	m[3][3] = parMatrix.m[3][3];
+	return *this;
+}
+Matrix4 Matrix4::operator*(const Matrix4& parMatrix )
+{
+	Matrix4 result(MatrixInit::None);
+	result.m[0][0] = m[0][0] * parMatrix.m[0][0] + m[0][1] * parMatrix.m[1][0] + m[0][2] * parMatrix.m[2][0] + m[0][3] * parMatrix.m[3][0]; 
+	result.m[0][1] = m[0][0] * parMatrix.m[0][1] + m[0][1] * parMatrix.m[1][1] + m[0][2] * parMatrix.m[2][1] + m[0][3] * parMatrix.m[3][1]; 
+	result.m[0][2] = m[0][0] * parMatrix.m[0][2] + m[0][1] * parMatrix.m[1][2] + m[0][2] * parMatrix.m[2][2] + m[0][3] * parMatrix.m[3][2]; 
+	result.m[0][3] = m[0][0] * parMatrix.m[0][3] + m[0][1] * parMatrix.m[1][3] + m[0][2] * parMatrix.m[2][3] + m[0][3] * parMatrix.m[3][3]; 
+	result.m[1][0] = m[1][0] * parMatrix.m[0][0] + m[1][1] * parMatrix.m[1][0] + m[1][2] * parMatrix.m[2][0] + m[1][3] * parMatrix.m[3][0]; 
+	result.m[1][1] = m[1][0] * parMatrix.m[0][1] + m[1][1] * parMatrix.m[1][1] + m[1][2] * parMatrix.m[2][1] + m[1][3] * parMatrix.m[3][1]; 
+	result.m[1][2] = m[1][0] * parMatrix.m[0][2] + m[1][1] * parMatrix.m[1][2] + m[1][2] * parMatrix.m[2][2] + m[1][3] * parMatrix.m[3][2]; 
+	result.m[1][3] = m[1][0] * parMatrix.m[0][3] + m[1][1] * parMatrix.m[1][3] + m[1][2] * parMatrix.m[2][3] + m[1][3] * parMatrix.m[3][3]; 
+	result.m[2][0] = m[2][0] * parMatrix.m[0][0] + m[2][1] * parMatrix.m[1][0] + m[2][2] * parMatrix.m[2][0] + m[2][3] * parMatrix.m[3][0]; 
+	result.m[2][1] = m[2][0] * parMatrix.m[0][1] + m[2][1] * parMatrix.m[1][1] + m[2][2] * parMatrix.m[2][1] + m[2][3] * parMatrix.m[3][1]; 
+	result.m[2][2] = m[2][0] * parMatrix.m[0][2] + m[2][1] * parMatrix.m[1][2] + m[2][2] * parMatrix.m[2][2] + m[2][3] * parMatrix.m[3][2]; 
+	result.m[2][3] = m[2][0] * parMatrix.m[0][3] + m[2][1] * parMatrix.m[1][3] + m[2][2] * parMatrix.m[2][3] + m[2][3] * parMatrix.m[3][3]; 
+	result.m[3][0] = m[3][0] * parMatrix.m[0][0] + m[3][1] * parMatrix.m[1][0] + m[3][2] * parMatrix.m[2][0] + m[3][3] * parMatrix.m[3][0]; 
+	result.m[3][1] = m[3][0] * parMatrix.m[0][1] + m[3][1] * parMatrix.m[1][1] + m[3][2] * parMatrix.m[2][1] + m[3][3] * parMatrix.m[3][1]; 
+	result.m[3][2] = m[3][0] * parMatrix.m[0][2] + m[3][1] * parMatrix.m[1][2] + m[3][2] * parMatrix.m[2][2] + m[3][3] * parMatrix.m[3][2]; 
+	result.m[3][3] = m[3][0] * parMatrix.m[0][3] + m[3][1] * parMatrix.m[1][3] + m[3][2] * parMatrix.m[2][3] + m[3][3] * parMatrix.m[3][3]; 
+	return result;
+}
 Matrix4 Matrix4::inverse(const Matrix4& parMatrix)
 {
 	Matrix4 inverseMatrix;
 	// TODO
 	return inverseMatrix;
 }
+
+std::ostream& operator<< (std::ostream& os, const Matrix4& obj) 
+{
+	os << "Matrix4\n("<<obj.m[0][0] <<", " <<obj.m[0][1]<<", "<<obj.m[0][2]<<", " << obj.m[0][3]<<",\n"
+		<<obj.m[1][0] <<", " <<obj.m[1][1]<<", "<<obj.m[1][2]<<", " << obj.m[1][3]<<",\n"
+		<<obj.m[2][0] <<", " <<obj.m[2][1]<<", "<<obj.m[2][2]<<", " << obj.m[2][3]<<",\n"
+		<<obj.m[3][0] <<", " <<obj.m[3][1]<<", "<<obj.m[3][2]<<", " << obj.m[3][3]<<")";
+	return os;
+}     

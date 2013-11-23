@@ -21,6 +21,7 @@ class Matrix4
 {
 	public:
 		Matrix4(MatrixInit::Type reset = MatrixInit::Zero);
+		Matrix4(const Matrix4& parMatrix);
 		~Matrix4();
 		
 		void setIdentity();
@@ -43,9 +44,13 @@ class Matrix4
 		static Matrix4 rotateZAxis(double parAngle);
 
 		Vector4 operator*(const Vector4& parFactor);
+		Matrix4 operator*(const Matrix4& parMatrix);
+		Matrix4& operator=(const Matrix4& parMatrix);
+
 		
 	public:
 		double ** m;
 };
+std::ostream& operator<< (std::ostream& os, const Matrix4& obj); 
 
 #endif //MATRIX_4
