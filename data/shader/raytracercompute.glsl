@@ -1,5 +1,5 @@
 #version 430
-
+#define EPSILON 0.000001
 
 //Destination du rendu
 layout(rgba8) uniform image2D renderCanvas;
@@ -13,6 +13,7 @@ uniform vec3 cameraPosition;
 uniform vec3 coinSupGauche;
 uniform float unitX;
 uniform float unitY;
+
 
 // Primitives
 struct Triangle
@@ -51,13 +52,20 @@ struct Ray
 	vec3 direction;				
 };
 
-// Rayon
+// Primitive
+struct Primitive
+{
+	int type;
+	int index;
+};
+
+// Intersection
 struct Intersection
 {
 	bool isValid;
 	vec3 point;
 	float distance;				
-	vec3 normale;
+	vec3 normal;
 	Primitive obj;	
 };
 
@@ -66,11 +74,7 @@ struct Materiau
 {
 	vec4 color;
 };
-struct Primitive
-{
-	int type;
-	int index;
-};
+
 // Objets
 struct ObjectQ
 {
@@ -91,10 +95,14 @@ struct ObjectP
 };
 
 
+// Headers
+vec4 CouleurPixel(Ray parRayon);
+
+
 Intersection IntersectWithScene(Ray parRay, Primitive[MAX_PRIM] parPrim)
 {
 	Intersection intersect;
-	return intersect
+	return intersect;
 }
 vec4 computeBRDF(Ray parRay, Intersection parIntersect)
 {
@@ -104,7 +112,7 @@ vec4 computeBRDF(Ray parRay, Intersection parIntersect)
 
 Primitive[MAX_PRIM] getPrimitives(Ray parRay)
 {
-	Primitive listePrim[MAX_PRIM]
+	Primitive listePrim[MAX_PRIM];
 	return  listePrim;
 }
 
@@ -115,12 +123,12 @@ vec4 Reflect(Ray parRay, Intersection parIntersect)
 	{
 		Ray reflected;
 		reflected.origin = parIntersect.point - EPSILON*parIntersect.normal;		
-		refracted.direction = reflect(parRay.direction,parIntersect.normal);
-		color = CouleurPixel(refracted);
+		reflected.direction = reflect(parRay.direction,parIntersect.normal);
+		color = CouleurPixel(reflected);
 	}
 	return color;
 }
-vec4 Refract(Ray parRay, Intersection parIntersect,)
+vec4 Refract(Ray parRay, Intersection parIntersect)
 {
 	vec4 color;
 	if(parIntersect.isValid)
@@ -134,20 +142,15 @@ vec4 Refract(Ray parRay, Intersection parIntersect,)
 	return color;
 }
 
-
-vec4 computeBRDF(Ray parRay, Intersection parIntersect)
-{
-	vec4 color;
-	return color;
-}
 vec4 CouleurPixel(Ray parRayon)
 {
 	vec4 finalColor;
 	Primitive listePrim[MAX_PRIM] = getPrimitives(parRayon);
 	Intersection intersect = IntersectWithScene(parRayon,listePrim);
-	finalColor = computeBRDF(Ray, intersect);
-	finalColor*=Reflect(Ray, Intersection);
-	finalColor*=Refract(Ray, Intersection);
+	finalColor = computeBRDF(parRayon, intersect);
+	// Commente a cause du "recursive call" a CouleurPixel
+	//finalColor*=Reflect(parRayon, intersect);
+	//finalColor*=Refract(parRayon, intersect);
 	return finalColor;
 }
 
