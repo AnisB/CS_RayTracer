@@ -72,6 +72,7 @@ struct Materiau
 	vec4 color;
 };
 
+
 // Objets
 struct ObjectQ
 {
