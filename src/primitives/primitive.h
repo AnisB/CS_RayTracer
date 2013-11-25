@@ -5,6 +5,13 @@
 #include "math/vector3.h"
 #include "math/vector4.h"
 
+enum TypePrimitive
+{
+    TRIANGLE = 0,
+    PLAN = 1,
+    QUADRIQUE = 2
+};
+
 struct Triangle
 {
     Vector3 p0;
@@ -63,12 +70,16 @@ struct Intersection
 struct Materiau
 {
     Vector4 color;
+    float coeffReflexion;
+    float coeffRefraction;
+    float indiceRefraction;
 };
 
 // Lumieres
 struct Light
 {
     Vector3 position;
+    Vector3 color;
     float intensity;
 };
 
