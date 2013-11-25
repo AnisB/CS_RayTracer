@@ -1,25 +1,25 @@
 vec4 computeBRDF(Ray parRay, Intersection parIntersect)
 {
 	Material material = Materiau[listPrim[parIntersect.obj].material];
-    float m = texture(textures[material.texRough], intersect.uv).r;
-    vec4 albedo = texture(textures[material.texAlbedo], intersect.uv);
+    	float m = texture(textures[material.texRough], intersect.uv).r;
+    	vec4 albedo = texture(textures[material.texAlbedo], intersect.uv);
 	vec3 V = -parRay.direction;
 	
 	float refractInd = material.indiceRefraction;
 	
 	float m2 = m*m;
-	float brillance = 2*(1-m2)/m2;
+	float brillance = 2.0*(1.0-m2)/m2;
 	
 	vec4 specularReflection = vec4(0.0,0.0,0.0,1.0);
 	vec4 diffuseReflection = vec4(0.0,0.0,0.0,1.0);
 
 	//Pour toutes les lumières
-	for(int i  = 0; i < NOMBRE_DE_LUMIERES; i++)
+	for(int i  = 0; i < NB_LIGHTS; i++)
 	{
-		if(pasOmbrager(lights(i),parIntersect.point))
+		if(pasOmbrager(listLight[i],parIntersect.point))
 		{
-			vec3 L = normalize(positionLumiere[i].position-parIntersect.point);
-			vec3 H = V+L/2;
+			vec3 L = normalize(listLight[i].position-parIntersect.point);
+			vec3 H = (V+L)/2.0;
 			vec3 N = normalize(parIntersect.normal);
 			
 			//La source de lumiere est bien devant la surface
@@ -31,21 +31,21 @@ vec4 computeBRDF(Ray parRay, Intersection parIntersect)
 			//F - Fresnel term (Schlick's Approximation)
 			float Ro = (1.0-n2)/(1.0+n2);
 			Ro = Ro*Ro;
-			float F = Ro + (1-Ro)*pow((1-HdotV),5);
+			float F = Ro + (1.0-Ro)*pow((1.0-HdotV),5.0);
 			
 			//D - Micro-facet Slope Distribution
-			float D = ((NdotH2)-1)/(m2*NdotH2);
+			float D = ((NdotH2)-1.0)/(m2*NdotH2);
 			D = exp(D)/(PI*m2*NdotH2*NdotH2);
 
 			//G - Geometric attenuation factor
-			float k = m*sqrt(2/PI);
-			float G = NdotV/(NdotV*(1-k)+k);
+			float k = m*sqrt(2.0/PI);
+			float G = NdotV/(NdotV*(1.0-k)+k);
 			
 			float cookTorranceSpecularCoefficient = F * D * G / (PI*NdotL*NdotV);
 			
-			specularReflection += lightColor[i].specular * brillance * cookTorranceSpecularCoefficient;
+			specularReflection += listLight[i].colorSpec * brillance * cookTorranceSpecularCoefficient;
 			
-			diffuseReflection += lightColor[i].diffuse * albedo * LdotN;
+			diffuseReflection += listLight[i].colorDiff * albedo * LdotN;
 		}
 	}
 	
