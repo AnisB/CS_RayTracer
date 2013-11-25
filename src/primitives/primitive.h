@@ -2,37 +2,22 @@
 #define PRIMITIVE
 
 #include <vector>
+#include "math/vector3.h"
+#include "math/vector4.h"
 
-// Vectors
-struct vec3
-{
-    float x;
-    float y;
-    float z;
-};
-
-struct vec4
-{
-    float x;
-    float y;
-    float z;
-    float w;
-};
-
-// Primitives
 struct Triangle
 {
-    vec3 p0;
-    vec3 p1;
-    vec3 p2;
+    Vector3 p0;
+    Vector3 p1;
+    Vector3 p2;
 };
 
 struct Plan
 {
-    vec3 p1;
-    vec3 p2;
-    vec3 p3;
-    vec3 p4;
+    Vector3 p1;
+    Vector3 p2;
+    Vector3 p3;
+    Vector3 p4;
 };
 
 struct Quadrique
@@ -52,8 +37,8 @@ struct Quadrique
 // Rayon
 struct Ray
 {
-    vec3 origin;
-    vec3 direction;
+    Vector3 origin;
+    Vector3 direction;
 };
 
 // Primitive
@@ -68,22 +53,22 @@ struct Primitive
 struct Intersection
 {
     bool isValid;
-    vec3 point;
+    Vector3 point;
     float distance;
-    vec3 normal;
+    Vector3 normal;
     Primitive obj;
 };
 
 //Materiau
 struct Materiau
 {
-    vec4 color;
+    Vector4 color;
 };
 
 // Lumieres
 struct Light
 {
-    vec3 position;
+    Vector3 position;
     float intensity;
 };
 
