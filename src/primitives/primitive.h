@@ -61,6 +61,7 @@ struct Primitive
 {
     int type;
     int index;
+    int materiau;
 };
 
 // Intersection
@@ -77,25 +78,6 @@ struct Intersection
 struct Materiau
 {
     vec4 color;
-};
-
-// Objets
-struct ObjectQ
-{
-    Quadrique quadric;
-    Materiau material;
-};
-
-struct ObjectT
-{
-    Triangle triangle;
-    Materiau material;
-};
-
-struct ObjectP
-{
-    Plan plan;
-    Materiau material;
 };
 
 // Lumieres
