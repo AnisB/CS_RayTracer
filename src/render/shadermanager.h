@@ -13,8 +13,8 @@ class ShaderManager : public Singleton<ShaderManager>
 		ShaderManager();
 		~ShaderManager();
 		
-		GLuint CreateProgramVF( const std::string& parVertex,const std::string& parFragment);
-		GLuint CreateProgramC( const std::string& parCompute);
+		GLuint CreateProgramVF();
+		GLuint CreateProgramC(int parNbTriangle, int parNbPlan, int parNbQuad, int parNbNoeud, int parNbPrimMax);
 		void BindProgram( GLuint parProgram);
 
 

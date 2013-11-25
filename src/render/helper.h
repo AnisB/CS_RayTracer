@@ -6,4 +6,6 @@
 
 void CheckGLState(const std::string& desc);
 
+std::string convertToString(int parToConvert);
+
 #endif //RENDER_HELPERS

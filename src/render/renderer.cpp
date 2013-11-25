@@ -141,12 +141,12 @@ void Renderer::InitShaders()
 {
 
 	//Création du shader de la pipline fixe
-	FPipelineShaderID = FManager.CreateProgramVF("data/shader/vertex.glsl","data/shader/fragment.glsl");
+	FPipelineShaderID = FManager.CreateProgramVF();
 
-	#ifndef MACOSX
+	//#ifndef MACOSX
 	//Création du shader de calcul
-	FComputeShader = FManager.CreateProgramC("data/shader/raytracercompute.glsl");
-	#endif
+	FComputeShader = FManager.CreateProgramC(10,10,10,20,5);
+	//#endif
 	//Création de la texture
 	GLuint renderTexture = FManager.GenerateTexture(512,512);
 	
@@ -181,10 +181,14 @@ void Renderer::Run()
 	FCamera.UpdateValues(FComputeShader);
 	while (!glfwWindowShouldClose (FWindow)) 
 	{
+	  //START_COUNT_TIME(temps);
 	  glClear (GL_COLOR_BUFFER_BIT);
 	  RayTracing();
 	  RenderResultToScreen();
 	  glfwPollEvents ();
 	  glfwSwapBuffers (FWindow);
+	  //END_COUNT_TIME(temps);
+	  //PRINT_ORANGE("Temps pour la frame"<<temps);
+
 	}
 }
