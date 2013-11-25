@@ -1,9 +1,8 @@
-
 // Constantes necessaires
 #define PI 3.14159265359
 #define EPSILON 0.000001
 #define ENERGY_MIN 0.1
-
+#define INDICE_PEAU 1.44
 const vec4 backGroundColor = vec4(1.0,1.0,1.0,1.0); 
 // Données relatives a la caméra
 // Camera position
