@@ -7,6 +7,23 @@
 
 #include <fstream>
 #include <vector>
+#include <sstream>
+
+
+#define vertex_shader "data/shader/vertex.glsl"
+#define fragment_shader "data/shader/fragment.glsl"
+
+#define compute_shader_header "data/shader/raytrace/head.glsl"
+#define compute_shader_common "data/shader/raytrace/common.glsl"
+#define compute_shader_octree "data/shader/raytrace/octree.glsl"
+#define compute_shader_brdf "data/shader/raytrace/brdf.glsl"
+#define compute_shader_intersect "data/shader/raytrace/intersect.glsl"
+#define compute_shader_raytrace "data/shader/raytrace/raytrace.glsl"
+#define compute_shader_final "data/shader/raytrace/final.glsl"
+
+#define TRIANGLE_LIST 
+
+
 std::string ReadFile(const std::string& parFileName)
 {
     PRINT_GREEN( "Loading file: "<<parFileName);
@@ -27,6 +44,23 @@ std::string ReadFile(const std::string& parFileName)
     return fileContent;
 }
 
+std::string WriteFile(const std::string& parFileName, const std::string & parContent)
+{
+    PRINT_GREEN( "Loading file: "<<parFileName);
+    std::string fileContent;
+    std::fstream fileStream;
+    fileStream.open(parFileName.c_str(), std::ios::out );
+    if(fileStream.is_open())
+    {
+        fileStream<<parContent;
+        fileStream.close();
+    }
+    else
+    {
+        PRINT_RED( parContent);
+    }
+    return fileContent;
+}
 
 void CheckShader(GLuint parShaderID)
 {
@@ -36,12 +70,11 @@ void CheckShader(GLuint parShaderID)
     glGetShaderiv(parShaderID, GL_COMPILE_STATUS, &Result);
     glGetShaderiv(parShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
 
-
-
     if(InfoLogLength>1)
     {
         char errorMessage[InfoLogLength];
         glGetShaderInfoLog(parShaderID, InfoLogLength, NULL, errorMessage);
+        PRINT_RED( "Shader error:"<< parShaderID);
         PRINT_RED( errorMessage );
     }
 }
@@ -61,7 +94,15 @@ void CheckProgram(GLuint parProgramID)
         PRINT_RED("Program linking error: "<<std::endl<<errorMessage );
     }
 }
-
+std::string concatenate(const std::string& parBase, int parIndex, const std::string& parAttrib)
+{
+    std::string result = parBase;
+    result+="[";
+    result+=convertToString(parIndex);
+    result+="].";
+    result+=parAttrib;
+    return result;
+}
 ShaderManager::ShaderManager()
 {
 
@@ -73,17 +114,17 @@ ShaderManager::~ShaderManager()
 
 }
 		
-GLuint ShaderManager::CreateProgramVF(const std::string& parVertex,const std::string& parFragment)
+GLuint ShaderManager::CreateProgramVF()
 {
     GLuint vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
-    std::string VertexShaderCode = ReadFile(parVertex);
+    std::string VertexShaderCode = ReadFile(vertex_shader);
     const char *vsc_str = VertexShaderCode.c_str();
     glShaderSource(vertexShaderID, 1, &vsc_str, NULL);
     glCompileShader(vertexShaderID);
     CheckShader(vertexShaderID);
     
     GLuint fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
-    std::string FragmentShaderCode = ReadFile(parFragment);
+    std::string FragmentShaderCode = ReadFile(fragment_shader);
     const char *fsc_str = FragmentShaderCode.c_str();
     glShaderSource(fragmentShaderID, 1, (&fsc_str) , NULL);
     glCompileShader(fragmentShaderID);
@@ -146,11 +187,38 @@ void ShaderManager::UnbindTexture()
 }   
 
  
-GLuint ShaderManager::CreateProgramC(const std::string& parCompute)
+GLuint ShaderManager::CreateProgramC(int parNbTriangle, int parNbPlan, int parNbQuad, int parNbNoeud, int parNbPrimMax)
 {
     GLuint computeShaderID = glCreateShader(GL_COMPUTE_SHADER);
-    std::string computeShaderCode = ReadFile(parCompute);
-    const char *csc_str = computeShaderCode.c_str();
+    std::string computeShader;
+
+    std::string computeShaderHeader = ReadFile(compute_shader_header);
+    std::string computeShaderCommon = ReadFile(compute_shader_common);
+    std::string computeShaderOctree = ReadFile(compute_shader_octree);
+    std::string computeShaderBrdf = ReadFile(compute_shader_brdf);
+    std::string computeShaderIntersect = ReadFile(compute_shader_intersect);
+    std::string computeShaderRaytrace = ReadFile(compute_shader_raytrace);
+    std::string computeShaderFinal = ReadFile(compute_shader_final);
+
+    computeShader+=computeShaderHeader;
+    std::stringstream ss;
+    ss<<"const int NB_TRIANGLE = " << convertToString(parNbTriangle)<<";"<<std::endl;
+    ss<<"const int NB_PLAN = " <<convertToString(parNbPlan)<<";"<<std::endl;
+    ss<<"const int NB_QUAD = " << convertToString(parNbQuad)<<";"<<std::endl;
+    ss<<"const int NB_MAT = " << convertToString(parNbQuad)<<";"<<std::endl;
+    ss<<"const int NB_NOEUD = " << convertToString(parNbNoeud)<<";"<<std::endl;
+    ss<<"const int NB_PRIM_MAX = " << convertToString(parNbPrimMax)<<";"<<std::endl;
+    PRINT_ORANGE(ss.str());
+    computeShader+=ss.str();
+    computeShader+=computeShaderCommon;
+    computeShader+=computeShaderOctree;
+    computeShader+=computeShaderBrdf;
+    computeShader+=computeShaderIntersect;
+    computeShader+=computeShaderRaytrace;
+    computeShader+=computeShaderFinal;
+
+    WriteFile("computeLog.glsl", computeShader);
+    const char *csc_str = computeShader.c_str();
     glShaderSource(computeShaderID, 1, &csc_str, NULL);
     glCompileShader(computeShaderID);
     CheckShader(computeShaderID);
@@ -160,6 +228,45 @@ GLuint ShaderManager::CreateProgramC(const std::string& parCompute)
     glLinkProgram(programID);
     CheckProgram(programID);
     return programID;
+}
+
+
+void ShaderManager::InjectTriangle(GLuint parShaderID, const Triangle& parValue, int parIndex)
+{
+    glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"p0").c_str()), parValue.p0.x, parValue.p0.y, parValue.p0.z);      
+    glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"p1").c_str()), parValue.p1.x, parValue.p1.y, parValue.p1.z);  
+    glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"p2").c_str()), parValue.p2.x, parValue.p2.y, parValue.p2.z);
+}
+
+void ShaderManager::InjectPlan(GLuint parShaderID, const Plan& parValue, int parIndex)
+{
+    glUniform3f(glGetUniformLocation(parShaderID, concatenate("listPlan",parIndex,"p0").c_str()), parValue.p0.x, parValue.p0.y, parValue.p0.z);      
+    glUniform3f(glGetUniformLocation(parShaderID, concatenate("listPlan",parIndex,"p1").c_str()), parValue.p1.x, parValue.p1.y, parValue.p1.z);  
+    glUniform3f(glGetUniformLocation(parShaderID, concatenate("listPlan",parIndex,"p2").c_str()), parValue.p2.x, parValue.p2.y, parValue.p2.z);
+    glUniform3f(glGetUniformLocation(parShaderID, concatenate("listPlan",parIndex,"p3").c_str()), parValue.p3.x, parValue.p3.y, parValue.p3.z); 
+}
+void ShaderManager::InjectQuadrique(GLuint parShaderID, const Quadrique& parValue, int parIndex)
+{
+    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"A").c_str()), parValue.A);  
+    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"B").c_str()), parValue.B);  
+    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"C").c_str()), parValue.C);  
+    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"D").c_str()), parValue.D);  
+    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"E").c_str()), parValue.E);  
+    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"F").c_str()), parValue.F);  
+    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"G").c_str()), parValue.G);  
+    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"H").c_str()), parValue.H);  
+    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"I").c_str()), parValue.I);  
+    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"J").c_str()), parValue.J);  
+}
+void ShaderManager::InjectMateriau(GLuint parShaderID, const Materiau& parValue, int parIndex)
+{
+    glUniform4f(glGetUniformLocation(parShaderID, concatenate("listMateriau",parIndex,"color").c_str()), parValue.color.x, parValue.color.y, parValue.color.z, parValue.color.w);  
+}
+void ShaderManager::InjectPrimitive(GLuint parShaderID, const Primitive& parValue, int parIndex)
+{
+    glUniform1i(glGetUniformLocation(parShaderID, concatenate("listPrimitive",parIndex,"type").c_str()), parValue.type);  
+    glUniform1i(glGetUniformLocation(parShaderID, concatenate("listPrimitive",parIndex,"index").c_str()), parValue.index);  
+    glUniform1i(glGetUniformLocation(parShaderID, concatenate("listPrimitive",parIndex,"materiau").c_str()), parValue.materiau);  
 }
 
 

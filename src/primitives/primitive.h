@@ -21,10 +21,10 @@ struct Triangle
 
 struct Plan
 {
+    Vector3 p0;
     Vector3 p1;
     Vector3 p2;
     Vector3 p3;
-    Vector3 p4;
 };
 
 struct Quadrique

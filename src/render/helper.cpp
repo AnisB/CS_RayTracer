@@ -1,8 +1,11 @@
 #include "helper.h"
 
 #include <common/defines.h>
+#include <sstream>
+#include <string>
 #include <render/defines.h>
 
+using namespace std;
 void CheckGLState(const std::string& desc) 
 {
 	GLenum e = glGetError();
@@ -13,4 +16,13 @@ void CheckGLState(const std::string& desc)
 	{
 		PRINT_ORANGE("No OpenGL errors@"<<desc);
 	}
+}
+
+std::string convertToString(int parToConvert)
+{
+	stringstream ss;
+	ss<<parToConvert;
+	std::string result;
+	ss>>result;
+	return result;	
 }
