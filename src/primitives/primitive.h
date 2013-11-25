@@ -41,13 +41,6 @@ struct Quadrique
     float J;
 };
 
-// Rayon
-struct Ray
-{
-    Vector3 origin;
-    Vector3 direction;
-};
-
 // Primitive
 struct Primitive
 {
@@ -73,6 +66,10 @@ struct Materiau
     float coeffReflexion;
     float coeffRefraction;
     float indiceRefraction;
+    float diff;
+    float spec;
+    int texAlbedo;
+    int texRough;
 };
 
 // Lumieres
