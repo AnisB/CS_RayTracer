@@ -162,7 +162,7 @@ void Renderer::InitShaders()
 }
 void Renderer::RayTracing()
 {
-	#ifndef MACOSX
+    #ifdef MACOSX || SIMPLE
 	FManager.BindProgram(FComputeShader);
 	glDispatchCompute(512/16, 512/16, 1); 
 	#endif
