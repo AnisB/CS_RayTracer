@@ -1,5 +1,5 @@
 
-
+// Le main du programme
 void main() 
 {
 	 // Recuperation de la taille de l'image

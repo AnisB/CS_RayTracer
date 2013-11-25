@@ -2,9 +2,11 @@
 // Constantes necessaires
 #define PI 3.14159265359
 #define EPSILON 0.000001
+#define ENERGY_MIN 0.1
 
+const vec4 backGroundColor = vec4(1.0,1.0,1.0,1.0); 
 // Données relatives a la caméra
-// Camera Pos
+// Camera position
 uniform vec3 cameraPosition;
 //Attributs précalcules pour soucis de perf
 uniform vec3 coinSupGauche;
@@ -46,14 +48,16 @@ struct Quadrique
 struct Ray
 {
 	vec3 origin;
-	vec3 direction;				
+	vec3 direction;	
+	float energy;			
 };
 
-// Primitive
+// Primitive gobale
 struct Primitive
 {
 	int type;
 	int index;
+	int material;
 };
 
 // Intersection
@@ -63,33 +67,20 @@ struct Intersection
 	vec3 point;
 	float distance;				
 	vec3 normal;
-	Primitive obj;	
+	int obj;
+	vec2 uv;	
 };
 
 //Materiau
 struct Materiau
 {
 	vec4 color;
-};
-
-
-// Objets
-struct ObjectQ
-{
-	Quadrique quadric;
-	int material;
-};
-
-struct ObjectT
-{
-	Triangle triangle;
-	int material;
-};
-
-struct ObjectP
-{
-	Plan plan;
-	int material;
+	float refractance;
+	float reflectance;
+	float diff;
+	float spec;
+	int texAlbedo;
+	int texRough;
 };
 
 
@@ -97,8 +88,12 @@ struct ObjectP
 vec4 CouleurPixel(Ray parRayon);
 void proc_subtree (double tx0, double ty0, double tz0, double tx1, double ty1, double tz1, Node node);
 
+uniform	sampler2D textures[NB_TEX];
+
 uniform	Quadrique listQuadrique[NB_QUAD];
 uniform	Triangle listTriangle[NB_TRIANGLE];
 uniform	Plan listPlan[NB_PLAN];
-
+uniform	Primitive listPrim[NB_PRIM];
 uniform	Materiau listMateriau[NB_MAT];
+
+
