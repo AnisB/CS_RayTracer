@@ -11,6 +11,7 @@ uniform vec3 coinSupGauche;
 uniform float unitX;
 uniform float unitY;
 
+
 // Primitives
 struct Triangle
 {
@@ -21,10 +22,10 @@ struct Triangle
 
 struct Plan
 {
+	vec3 p0;
 	vec3 p1;
 	vec3 p2;
 	vec3 p3;
-	vec3 p4;
 };
 
 struct Quadrique
@@ -95,6 +96,8 @@ struct ObjectP
 vec4 CouleurPixel(Ray parRayon);
 void proc_subtree (double tx0, double ty0, double tz0, double tx1, double ty1, double tz1, Node node);
 
-uniform	ObjectQ listQuadric[MAX_QUAD];
-uniform	ObjectT listTriangle[MAX_TRIANGLE];
-uniform	ObjectP listPlan[MAX_PLAN];
+uniform	Quadrique listQuadrique[NB_QUAD];
+uniform	Triangle listTriangle[NB_TRIANGLE];
+uniform	Plan listPlan[NB_PLAN];
+
+uniform	Materiau listMateriau[NB_MAT];
