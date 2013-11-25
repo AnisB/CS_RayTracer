@@ -10,9 +10,11 @@
 #include <sstream>
 
 
+
 #define vertex_shader "data/shader/vertex.glsl"
 #define fragment_shader "data/shader/fragment.glsl"
 
+#define base_compute_shader "data/shader/basecompute.glsl"
 #define compute_shader_header "data/shader/raytrace/head.glsl"
 #define compute_shader_common "data/shader/raytrace/common.glsl"
 #define compute_shader_octree "data/shader/raytrace/octree.glsl"
@@ -190,8 +192,8 @@ void ShaderManager::UnbindTexture()
 GLuint ShaderManager::CreateProgramC(int parNbTriangle, int parNbPlan, int parNbQuad, int parNbNoeud, int parNbPrimMax)
 {
     GLuint computeShaderID = glCreateShader(GL_COMPUTE_SHADER);
-    std::string computeShader;
 
+    std::string computeShader;
     std::string computeShaderHeader = ReadFile(compute_shader_header);
     std::string computeShaderCommon = ReadFile(compute_shader_common);
     std::string computeShaderOctree = ReadFile(compute_shader_octree);
@@ -202,12 +204,14 @@ GLuint ShaderManager::CreateProgramC(int parNbTriangle, int parNbPlan, int parNb
 
     computeShader+=computeShaderHeader;
     std::stringstream ss;
-    ss<<"const int NB_TRIANGLE = " << convertToString(parNbTriangle)<<";"<<std::endl;
-    ss<<"const int NB_PLAN = " <<convertToString(parNbPlan)<<";"<<std::endl;
-    ss<<"const int NB_QUAD = " << convertToString(parNbQuad)<<";"<<std::endl;
-    ss<<"const int NB_MAT = " << convertToString(parNbQuad)<<";"<<std::endl;
-    ss<<"const int NB_NOEUD = " << convertToString(parNbNoeud)<<";"<<std::endl;
-    ss<<"const int NB_PRIM_MAX = " << convertToString(parNbPrimMax)<<";"<<std::endl;
+    ss<<"#define NB_TRIANGLE " << convertToString(parNbTriangle)<<std::endl;
+    ss<<"#define NB_PLAN " <<convertToString(parNbPlan)<<std::endl;
+    ss<<"#define NB_QUAD " << convertToString(parNbQuad)<<std::endl;
+    ss<<"#define NB_MAT " << convertToString(parNbQuad)<<std::endl;
+    ss<<"#define NB_NOEUD " << convertToString(parNbNoeud)<<std::endl;
+    ss<<"#define NB_PRIM " << convertToString(parNbPrimMax)<<std::endl;
+	ss<<"#define NB_TEX " << convertToString(10)<<std::endl;
+	ss<<"#define NB_LIGHTS " << convertToString(2)<<std::endl;
     PRINT_ORANGE(ss.str());
     computeShader+=ss.str();
     computeShader+=computeShaderCommon;
@@ -218,6 +222,7 @@ GLuint ShaderManager::CreateProgramC(int parNbTriangle, int parNbPlan, int parNb
     computeShader+=computeShaderFinal;
 
     WriteFile("computeLog.glsl", computeShader);
+    
     const char *csc_str = computeShader.c_str();
     glShaderSource(computeShaderID, 1, &csc_str, NULL);
     glCompileShader(computeShaderID);

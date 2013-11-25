@@ -1,8 +1,8 @@
 vec4 computeBRDF(Ray parRay, Intersection parIntersect)
 {
-	Material material = Materiau[listPrim[parIntersect.obj].material];
-    	float m = texture(textures[material.texRough], intersect.uv).r;
-    	vec4 albedo = texture(textures[material.texAlbedo], intersect.uv);
+	Materiau material = listMateriau[listPrim[parIntersect.obj].material];
+    float m = texture(textures[material.texRough], parIntersect.uv).r;
+    vec4 albedo = texture(textures[material.texAlbedo], parIntersect.uv);
 	vec3 V = -parRay.direction;
 	
 	float refractInd = material.indiceRefraction;
@@ -16,7 +16,7 @@ vec4 computeBRDF(Ray parRay, Intersection parIntersect)
 	//Pour toutes les lumières
 	for(int i  = 0; i < NB_LIGHTS; i++)
 	{
-		if(pasOmbrager(listLight[i],parIntersect.point))
+		//if(pasOmbrager(listLight[i],parIntersect.point))
 		{
 			vec3 L = normalize(listLight[i].position-parIntersect.point);
 			vec3 H = (V+L)/2.0;
@@ -26,10 +26,11 @@ vec4 computeBRDF(Ray parRay, Intersection parIntersect)
 			float NdotL = dot(N,L);
 			float HdotV = dot(H,V);
 			float NdotH = dot(N,H);
+			float NdotV = dot(N,H);
 			float NdotH2 = NdotH*NdotH;
 		
 			//F - Fresnel term (Schlick's Approximation)
-			float Ro = (1.0-n2)/(1.0+n2);
+			float Ro = (1.0-refractInd)/(1.0+refractInd);
 			Ro = Ro*Ro;
 			float F = Ro + (1.0-Ro)*pow((1.0-HdotV),5.0);
 			
@@ -45,10 +46,8 @@ vec4 computeBRDF(Ray parRay, Intersection parIntersect)
 			
 			specularReflection += listLight[i].colorSpec * brillance * cookTorranceSpecularCoefficient;
 			
-			diffuseReflection += listLight[i].colorDiff * albedo * LdotN;
+			diffuseReflection += listLight[i].colorDiff * albedo * (-NdotL);
 		}
 	}
-	
-	color = diffuseReflection+specularReflection;
-	return color;
+	return diffuseReflection+specularReflection;
 }
