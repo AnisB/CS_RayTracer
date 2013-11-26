@@ -110,12 +110,10 @@ bool Renderer::Init()
 	PRINT_ORANGE("Version: "<<version);
 	// Everything went ok let's render
 	FIsRendering = true;
-
 	InitShaders();
 	//Creating the render to quad
 	CreateRenderQuad();
 	glClearColor(0.0,0.0,0.0,0.0);
-	
 	PRINT_GREEN("The renderer was created succesfully");
     return true;
 }
@@ -143,10 +141,11 @@ void Renderer::InitShaders()
 	//Création du shader de la pipline fixe
 	FPipelineShaderID = FManager.CreateProgramVF();
 
-	//#ifndef MACOSX
+	#ifndef SIMPLE
 	//Création du shader de calcul
-	FComputeShader = FManager.CreateProgramC(10,10,10,20,5);
-	//#endif
+	FComputeShader = FManager.CreateProgramC(4,10,10,10,20,5);
+	#endif
+	
 	//Création de la texture
 	GLuint renderTexture = FManager.GenerateTexture(512,512);
 	
@@ -155,14 +154,14 @@ void Renderer::InitShaders()
 	
 	//Mappage de la texturepour dessin
 	FManager.InjectTex(FPipelineShaderID,renderTexture,"displaySource");
-	#ifndef MACOSX
+	#ifndef SIMPLE
 	//Mappage de la texture pour écriture
 	FManager.InjectTex(FComputeShader,renderTexture,"renderCanvas");
 	#endif
 }
 void Renderer::RayTracing()
 {
-    #ifdef MACOSX || SIMPLE
+    #ifndef SIMPLE
 	FManager.BindProgram(FComputeShader);
 	glDispatchCompute(512/16, 512/16, 1); 
 	#endif
