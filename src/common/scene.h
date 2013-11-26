@@ -7,8 +7,8 @@
 class Scene
 {
  public:
-    Scene() {};
-    ~Scene() {};
+    Scene() {}
+    ~Scene() {}
     void AddTriangle(Triangle triangle, Materiau materiau);
     void AddPlane(Plan plane, Materiau materiau);
     void AddQuadric(Quadrique quadric, Materiau materiau);
