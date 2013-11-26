@@ -3,6 +3,7 @@
 #include <string>
 #include <fstream>
 
+#include "common/defines.h"
 #include "common/scene.h"
 #include "stringutils.h"
 #include "primitives/primitive.h"
@@ -14,8 +15,8 @@
 class Parser
 {
  public:
-    Parser();
-    ~Parser();    
+    Parser() {}
+    ~Parser() {}
     Scene* GetSceneFromFile(std::string filename);
     enum EtatTraitementScene
     { 

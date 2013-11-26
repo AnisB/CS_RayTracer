@@ -1,22 +1,13 @@
 #include "parser.h"
 
-Parser::Parser()
-{
-    
-}
-
-Parser::~Parser()
-{
-    
-}
-
 Scene* Parser::GetSceneFromFile(std::string filename)
 {
-    Scene* scene = new Scene();
+    Scene* scene = NULL;
     fstream fichierScene(filename.c_str(), ios::in );
 
     if( fichierScene.is_open() )
     {
+        scene = new Scene();
         EtatTraitementScene EtatCourant = TRAITEMENT_SCENE;
         EtatTraitementScene EtatNouveau = TRAITEMENT_SCENE;
 
@@ -286,7 +277,7 @@ Scene* Parser::GetSceneFromFile(std::string filename)
         }
     }
     else
-        cerr << "[CScene::TraiterFichierDeScene()] : Incapable d'ouvrir " << filename << "." << endl;
+        PRINT_RED("[Parser::GetSceneFromFile()] : Incapable d'ouvrir " << filename);
 
     return scene;
 }
