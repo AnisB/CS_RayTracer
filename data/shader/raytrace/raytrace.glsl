@@ -6,7 +6,7 @@ vec4 Reflect(Ray parRay, Intersection parIntersect)
 	Ray reflected;
 	reflected.origin = parIntersect.point - EPSILON*parIntersect.normal;		
 	reflected.direction = reflect(parRay.direction,parIntersect.normal);
-	color = CouleurPixel(reflected);
+	//color = CouleurPixel(reflected);
 	return color;
 }
 vec4 Refract(Ray parRay, Intersection parIntersect)
@@ -16,11 +16,11 @@ vec4 Refract(Ray parRay, Intersection parIntersect)
 	refracted.origin = parIntersect.point + EPSILON*parIntersect.normal;	
 	// Indice de réraction a changer	
 	refracted.direction = refract(parRay.direction,parIntersect.normal,0.5);
-	color = CouleurPixel(refracted);
+	//color = CouleurPixel(refracted);
 	return color;
 }
 
-vec4 CouleurPixel(Ray parRayon)
+vec4 CouleurPixel1(Ray parRayon)
 {
 	if(parRayon.energy>ENERGY_MIN)
 	{
@@ -50,5 +50,5 @@ vec4 RayTrace(vec2 storePos)
 	vec3 screenPoint = coinSupGauche + unitX * storePos.x + unitY * storePos.y;
 	rayon.direction = screenPoint - cameraPosition;
 	// Lancer
-	return CouleurPixel(rayon);
+	return CouleurPixel1(rayon);
 }

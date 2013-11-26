@@ -7,9 +7,9 @@
 
 enum TypePrimitive
 {
-    TRIANGLE = 0,
-    PLAN = 1,
-    QUADRIQUE = 2
+    PRIMITIVE_TRIANGLE = 0,
+    PRIMITIVE_PLAN = 1,
+    PRIMITIVE_QUADRIQUE = 2
 };
 
 struct Triangle

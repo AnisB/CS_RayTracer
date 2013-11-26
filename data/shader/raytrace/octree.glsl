@@ -9,6 +9,8 @@ struct Node {
 	Node[8]	child;
 };
 
+void proc_subtree (double tx0, double ty0, double tz0, double tx1, double ty1, double tz1, Node node);
+
 struct Octree {
 	Node		root;
 	float		xmin;
@@ -107,7 +109,8 @@ uint new_node(double txm, int x, double tym, int y, double tzm, int z){
 // void proc_subtree (OCTREE)
 // ------------------------------------
 
-void proc_subtree (double tx0, double ty0, double tz0, double tx1, double ty1, double tz1, Node node){
+void proc_subtree (double tx0, double ty0, double tz0, double tx1, double ty1, double tz1, Node node)
+{
 	double txm, tym, tzm;
 	uint currNode;
  
@@ -160,8 +163,8 @@ void proc_subtree (double tx0, double ty0, double tz0, double tx1, double ty1, d
 	} while (currNode<8);
 }
 
-Primitive[MAX_PRIM] getPrimitives(Ray parRay)
+int[NB_PRIM] getPrimitives(Ray parRay)
 {
-	Primitive listePrim[MAX_PRIM];
+	int listePrim[NB_PRIM];
 	return  listePrim;
 }
