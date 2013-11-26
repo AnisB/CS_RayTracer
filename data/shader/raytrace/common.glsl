@@ -3,7 +3,9 @@
 #define EPSILON 0.000001
 #define ENERGY_MIN 0.1
 #define INDICE_PEAU 1.44
-const vec4 backGroundColor = vec4(1.0,1.0,1.0,1.0); 
+
+
+const vec4 backGroundColor = vec4(0.3,0.5,0.8,1.0); 
 // Données relatives a la caméra
 // Camera position
 uniform vec3 cameraPosition;
