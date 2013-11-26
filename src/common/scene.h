@@ -2,6 +2,7 @@
 #define SCENE_COMMON
 #include <vector>
 
+#include "common/defines.h"
 #include "../primitives/primitive.h"
 
 class Scene
