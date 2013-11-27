@@ -63,6 +63,8 @@ Scene* Parser::GetSceneFromFile(std::string filename)
                             case TRAITEMENT_QUADRIQUE:
                                 scene->AddQuadric(quadric, materiau);
                                 break;
+                            default:
+                                PRINT_RED("Cas non pris en charge.");
                             }
                         }
                     }
@@ -255,6 +257,8 @@ Scene* Parser::GetSceneFromFile(std::string filename)
                         quadric.J = Val0;
                     }
                     break;
+                default:
+                    PRINT_RED("Cas non pris en charge.");
                 }
             }
         }
@@ -277,6 +281,8 @@ Scene* Parser::GetSceneFromFile(std::string filename)
         case TRAITEMENT_LUMIERE:
             scene->AddLight(light);
             break;
+        default:
+            PRINT_RED("Cas non pris en charge.");
         }
     }
     else

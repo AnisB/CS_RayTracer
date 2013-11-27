@@ -5,6 +5,7 @@
 #ifndef COMMON_DEFINES
 #define COMMON_DEFINES
 #include <iostream>
+#include <assert.h>
 
 
 namespace MathTools
@@ -40,6 +41,6 @@ static double RATIO = SCREEN_X/SCREEN_Y;
 #endif
 
 #define PRINT_RED(stuff) std::cout<<RED_COLOR<<stuff<<END_PRINT_COLOR
-
+#define AssertNotValid(stuff)  PRINT_RED(stuff); assert(false);
 
 #endif //COMMON_DEFINES

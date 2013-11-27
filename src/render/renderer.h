@@ -20,6 +20,7 @@ class Renderer : public Singleton<Renderer>
 
 		void RayTracing();
 		void RenderResultToScreen();
+		GLuint GetComputeProgID() {return FComputeShader;};
 
 		void HandleKey(int parKey, int parAction);
 
