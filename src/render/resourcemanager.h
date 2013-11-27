@@ -1,6 +1,11 @@
 #ifndef RESOURCE_MANAGER
 #define RESOURCE_MANAGER
 
+#include <map>
+#include <string>
+
+#include "defines.h"
+#include "common/singleton.h"
 
 struct Texture
 {
@@ -13,8 +18,8 @@ struct Texture
 class ResourceManager: public Singleton<ResourceManager>
 {
 public:
-	ResourceManage();
-	~ResourceManage();
+    ResourceManager();
+    ~ResourceManager();
 
 	const Texture& LoadTexture(const std::string& parFileName);
 

@@ -190,7 +190,6 @@ void ShaderManager::UnbindTexture()
     glBindTexture(GL_TEXTURE_2D, 0);
 }   
 
- 
 GLuint ShaderManager::CreateProgramC(int parMaxRecur, int parNbTriangle, int parNbPlan, int parNbQuad, int parNbNoeud, int parNbPrimMax)
 {
     GLuint computeShaderID = glCreateShader(GL_COMPUTE_SHADER);
