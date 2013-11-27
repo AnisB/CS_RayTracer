@@ -1,24 +1,39 @@
 #ifndef RESOURCE_MANAGER
 #define RESOURCE_MANAGER
 
+#include <render/defines.h>
+#include <common/singleton.h>
+#include <primitives/primitive.h>
+#include <map>
+#include <list>
 
 struct Texture
 {
 	GLuint id;
 	int w;
 	int l;
-	GLbyte ** content;
+	GLubyte * content;
+};
+
+
+struct ObjFile
+{
+	std::list<Triangle> listTriangle; 
 };
 
 class ResourceManager: public Singleton<ResourceManager>
 {
 public:
-	ResourceManage();
-	~ResourceManage();
+	ResourceManager();
+	~ResourceManager();
 
-	const Texture& LoadTexture(const std::string& parFileName);
+	const Texture* LoadTexture(const std::string& parFileName);
+	const ObjFile* LoadModel(const std::string& parFileName);
 
 protected:
 	std::map<std::string, Texture*> FTextures;
+	std::map<std::string, ObjFile*> FModels;
+	int FTexIndex;
 };
+
 #endif // RESOURCE_MANAGER

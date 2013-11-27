@@ -252,6 +252,7 @@ void ShaderManager::InjectTriangle(GLuint parShaderID, const Triangle& parValue,
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"p0").c_str()), parValue.p0.x, parValue.p0.y, parValue.p0.z);      
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"p1").c_str()), parValue.p1.x, parValue.p1.y, parValue.p1.z);  
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"p2").c_str()), parValue.p2.x, parValue.p2.y, parValue.p2.z);
+    glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"normale").c_str()), parValue.normale.x, parValue.normale.y, parValue.normale.z);
 }
 
 void ShaderManager::InjectPlan(GLuint parShaderID, const Plan& parValue, int parIndex)
@@ -261,6 +262,8 @@ void ShaderManager::InjectPlan(GLuint parShaderID, const Plan& parValue, int par
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listPlan",parIndex,"p1").c_str()), parValue.p1.x, parValue.p1.y, parValue.p1.z);  
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listPlan",parIndex,"p2").c_str()), parValue.p2.x, parValue.p2.y, parValue.p2.z);
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listPlan",parIndex,"p3").c_str()), parValue.p3.x, parValue.p3.y, parValue.p3.z); 
+    glUniform3f(glGetUniformLocation(parShaderID, concatenate("listPlan",parIndex,"normale").c_str()), parValue.normale.x, parValue.normale.y, parValue.normale.z);
+
 }
 void ShaderManager::InjectQuadrique(GLuint parShaderID, const Quadrique& parValue, int parIndex)
 {
