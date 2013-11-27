@@ -8,7 +8,7 @@
 
 #ifdef SIMPLE
 	#ifndef GL_COMPUTE_SHADER
-	#define GL_COMPUTE_SHADER
+	#define GL_COMPUTE_SHADER 8
 	#endif
 #endif
 
