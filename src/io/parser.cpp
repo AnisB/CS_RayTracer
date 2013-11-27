@@ -15,7 +15,7 @@ Scene* Parser::GetSceneFromFile(std::string filename)
         string buffer;
 
         Light light;
-        Triangle triangle;
+        Triangle triangle = {.p0 = Vector3(0, 0, 0),  .p1 = Vector3(0, 0, 0), .p2 = Vector3(0, 0, 0)};
         Plan plan;
         Quadrique quadric;
         Materiau materiau;
@@ -27,10 +27,10 @@ Scene* Parser::GetSceneFromFile(std::string filename)
         {
             fichierScene.getline( line, NB_MAX_CAR_PAR_LIGNE );
             buffer = line;
-            CStringUtils::Trim( buffer, " " );
+            CStringUtils::Trim( buffer, " ");
 
             // Passer les lignes vides et les commentaires
-            if( buffer.empty() || buffer[ 0 ] == '*' )
+            if( buffer.empty() || buffer[ 0 ] == '*'  || buffer[ 0 ] == '\r' )
                 continue;
             else
             {
@@ -199,10 +199,13 @@ Scene* Parser::GetSceneFromFile(std::string filename)
                         {
                             case 0:
                             triangle.p0 = Vector3(Val0, Val1, Val2);
+                            break;
                             case 1:
                             triangle.p1 = Vector3(Val0, Val1, Val2);
+                            break;
                             case 2:
                             triangle.p2 = Vector3(Val0, Val1, Val2);
+                            break;
                         }
                     }
 

@@ -1,16 +1,4 @@
 
-vec4 RayTrace(vec2 storePos)
-{
-	//Calcul du rayon a lancer
-	Ray rayon;
-	rayon.energy = 1.0;
-	rayon.origin = cameraPosition;
-	vec3 screenPoint = coinSupGauche + unitX * storePos.x + unitY * storePos.y;
-	rayon.direction = screenPoint - cameraPosition;
-	// Lancer
-	return CouleurPixel1(rayon);
-}
-
 // Le main du programme
 void main() 
 {

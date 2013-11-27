@@ -1,8 +1,8 @@
 * --- fichier test pour Ray-Tracer ---
 
 * --- GENERAL ------------------------
-        * --- back-ground color: R G B ---
-        * --- pos camera ---
+* --- back-ground color: R G B ---
+* --- pos camera ---
         background: 0 0 150
         origin: 100.0 30.0 400.0
 

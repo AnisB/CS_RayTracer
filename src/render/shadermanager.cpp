@@ -4,6 +4,8 @@
 
 
 #include <common/defines.h>
+#include <common/helper.h>
+
 
 #include <fstream>
 #include <vector>
@@ -14,12 +16,12 @@
 #define vertex_shader "data/shader/vertex.glsl"
 #define fragment_shader "data/shader/fragment.glsl"
 
-#define base_compute_shader "data/shader/basecompute.glsl"
 #define compute_shader_header "data/shader/raytrace/head.glsl"
 #define compute_shader_common "data/shader/raytrace/common.glsl"
 #define compute_shader_octree "data/shader/raytrace/octree.glsl"
 #define compute_shader_brdf "data/shader/raytrace/brdf.glsl"
 #define compute_shader_intersect "data/shader/raytrace/intersect.glsl"
+#define compute_shader_raytrace2 "data/shader/raytrace/raytrace2.glsl"
 #define compute_shader_raytrace "data/shader/raytrace/raytrace.glsl"
 #define compute_shader_final "data/shader/raytrace/final.glsl"
 
@@ -189,7 +191,7 @@ void ShaderManager::UnbindTexture()
 }   
 
  
-GLuint ShaderManager::CreateProgramC(int parNbTriangle, int parNbPlan, int parNbQuad, int parNbNoeud, int parNbPrimMax)
+GLuint ShaderManager::CreateProgramC(int parMaxRecur, int parNbTriangle, int parNbPlan, int parNbQuad, int parNbNoeud, int parNbPrimMax)
 {
     GLuint computeShaderID = glCreateShader(GL_COMPUTE_SHADER);
 
@@ -199,6 +201,7 @@ GLuint ShaderManager::CreateProgramC(int parNbTriangle, int parNbPlan, int parNb
     std::string computeShaderOctree = ReadFile(compute_shader_octree);
     std::string computeShaderBrdf = ReadFile(compute_shader_brdf);
     std::string computeShaderIntersect = ReadFile(compute_shader_intersect);
+    std::string computeShaderRaytrace2 = ReadFile(compute_shader_raytrace2);
     std::string computeShaderRaytrace = ReadFile(compute_shader_raytrace);
     std::string computeShaderFinal = ReadFile(compute_shader_final);
 
@@ -212,13 +215,20 @@ GLuint ShaderManager::CreateProgramC(int parNbTriangle, int parNbPlan, int parNb
     ss<<"#define NB_PRIM " << convertToString(parNbPrimMax)<<std::endl;
 	ss<<"#define NB_TEX " << convertToString(10)<<std::endl;
 	ss<<"#define NB_LIGHTS " << convertToString(2)<<std::endl;
-    PRINT_ORANGE(ss.str());
     computeShader+=ss.str();
     computeShader+=computeShaderCommon;
     computeShader+=computeShaderOctree;
     computeShader+=computeShaderBrdf;
     computeShader+=computeShaderIntersect;
-    computeShader+=computeShaderRaytrace;
+    
+    computeShader+= replaceAll(computeShaderRaytrace2,"@NB_ITER@", convertToString(parMaxRecur));
+    for(int i = parMaxRecur-1 ; i!= 0; --i)
+    {
+    	const std::string& firstPass=replaceAll(computeShaderRaytrace,"@NB_ITER@", convertToString(i));
+    	const std::string& secondPass=replaceAll(firstPass,"@NB_ITER2@", convertToString(i+1));
+    	computeShader+=secondPass;
+    }
+    //computeShader+=computeShaderRaytrace;
     computeShader+=computeShaderFinal;
 
     WriteFile("computeLog.glsl", computeShader);
@@ -238,6 +248,7 @@ GLuint ShaderManager::CreateProgramC(int parNbTriangle, int parNbPlan, int parNb
 
 void ShaderManager::InjectTriangle(GLuint parShaderID, const Triangle& parValue, int parIndex)
 {
+	BindProgram(parShaderID);
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"p0").c_str()), parValue.p0.x, parValue.p0.y, parValue.p0.z);      
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"p1").c_str()), parValue.p1.x, parValue.p1.y, parValue.p1.z);  
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"p2").c_str()), parValue.p2.x, parValue.p2.y, parValue.p2.z);
@@ -245,6 +256,7 @@ void ShaderManager::InjectTriangle(GLuint parShaderID, const Triangle& parValue,
 
 void ShaderManager::InjectPlan(GLuint parShaderID, const Plan& parValue, int parIndex)
 {
+	BindProgram(parShaderID);
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listPlan",parIndex,"p0").c_str()), parValue.p0.x, parValue.p0.y, parValue.p0.z);      
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listPlan",parIndex,"p1").c_str()), parValue.p1.x, parValue.p1.y, parValue.p1.z);  
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listPlan",parIndex,"p2").c_str()), parValue.p2.x, parValue.p2.y, parValue.p2.z);
@@ -252,6 +264,7 @@ void ShaderManager::InjectPlan(GLuint parShaderID, const Plan& parValue, int par
 }
 void ShaderManager::InjectQuadrique(GLuint parShaderID, const Quadrique& parValue, int parIndex)
 {
+	BindProgram(parShaderID);
     glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"A").c_str()), parValue.A);  
     glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"B").c_str()), parValue.B);  
     glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"C").c_str()), parValue.C);  
@@ -265,10 +278,12 @@ void ShaderManager::InjectQuadrique(GLuint parShaderID, const Quadrique& parValu
 }
 void ShaderManager::InjectMateriau(GLuint parShaderID, const Materiau& parValue, int parIndex)
 {
+	BindProgram(parShaderID);
     glUniform4f(glGetUniformLocation(parShaderID, concatenate("listMateriau",parIndex,"color").c_str()), parValue.color.x, parValue.color.y, parValue.color.z, parValue.color.w);  
 }
 void ShaderManager::InjectPrimitive(GLuint parShaderID, const Primitive& parValue, int parIndex)
 {
+	BindProgram(parShaderID);
     glUniform1i(glGetUniformLocation(parShaderID, concatenate("listPrimitive",parIndex,"type").c_str()), parValue.type);  
     glUniform1i(glGetUniformLocation(parShaderID, concatenate("listPrimitive",parIndex,"index").c_str()), parValue.index);  
     glUniform1i(glGetUniformLocation(parShaderID, concatenate("listPrimitive",parIndex,"materiau").c_str()), parValue.materiau);  
