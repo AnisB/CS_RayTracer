@@ -39,5 +39,4 @@ void Scene::AddTriangle(const Triangle& triangle, const Materiau& materiau)
     primitive.materiau = m_materiaux.size() - 1;
     primitive.index = m_triangles.size() - 1;
     m_primitives.push_back(primitive);
-    PRINT_RED(triangle.p0.x << " " << m_triangles[m_triangles.size() - 1].p0.x);
 }

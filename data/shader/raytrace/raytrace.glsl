@@ -4,6 +4,7 @@ vec4 Reflect@NB_ITER@(Ray parRay, Intersection parIntersect)
 {
 	vec4 color = vec4(1.0);
 	Ray reflected;
+        reflected.energy = 1;
 	reflected.origin = parIntersect.point - EPSILON*parIntersect.normal;		
 	reflected.direction = reflect(parRay.direction,parIntersect.normal);
 	color = CouleurPixel@NB_ITER2@(reflected);
@@ -13,6 +14,8 @@ vec4 Refract@NB_ITER@(Ray parRay, Intersection parIntersect)
 {
 	vec4 color = vec4(1.0);
 	Ray refracted;
+        refracted.energy = 1;
+
 	refracted.origin = parIntersect.point + EPSILON*parIntersect.normal;	
 	// Indice de réraction a changer	
 	refracted.direction = refract(parRay.direction,parIntersect.normal,0.5);

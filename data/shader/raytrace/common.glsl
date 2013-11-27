@@ -4,10 +4,14 @@
 #define ENERGY_MIN 0.1
 #define INDICE_PEAU 1.44
 
+#define PRIMITIVE_TRIANGLE  1
+#define PRIMITIVE_PLAN      2
+#define PRIMITIVE_QUADRIQUE 3
 
 const vec4 backGroundColor = vec4(0.3,0.5,0.8,1.0); 
 // Données relatives a la caméra
 // Camera position
+
 uniform vec3 cameraPosition;
 //Attributs précalcules pour soucis de perf
 uniform vec3 coinSupGauche;
