@@ -8,6 +8,7 @@ Intersection IntersectWithTriangle(Ray parRay, int indexTriangle)
     intersect.point = vec3(0.0);
     intersect.normal = vec3(0.0);
     intersect.obj = 0;	
+    intersect.distance = 0;
     vec3 edge1 = listTriangle[indexTriangle].p1 - listTriangle[indexTriangle].p0;
     vec3 edge2 = listTriangle[indexTriangle].p2 - listTriangle[indexTriangle].p0;
     vec3 vecP = cross(parRay.direction, edge2);
@@ -51,6 +52,7 @@ Intersection IntersectWithScene(Ray parRay, int[NB_PRIM] parPrim)
     intersectResult.uv = vec2(0.0);
     intersectResult.point = vec3(0.0);
     intersectResult.normal = vec3(0.0);
+    intersectResult.distance = 0;
     intersectResult.obj = 0;
     for(i=0; i<NB_PRIM; i++)
     {

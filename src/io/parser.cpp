@@ -7,6 +7,7 @@ Scene* Parser::GetSceneFromFile(std::string filename)
 
     if( fichierScene.is_open() )
     {
+        PRINT_GREEN("Fchier de scene bien ouvert.");
         scene = new Scene();
         EtatTraitementScene EtatCourant = TRAITEMENT_SCENE;
         EtatTraitementScene EtatNouveau = TRAITEMENT_SCENE;

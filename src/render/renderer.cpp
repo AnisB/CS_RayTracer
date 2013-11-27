@@ -113,8 +113,12 @@ bool Renderer::Init()
 	InitShaders();
 	//Creating the render to quad
 	CreateRenderQuad();
-	glClearColor(0.0,0.0,0.0,0.0);
+
+    // Loading the scene file
+    LoadScene("data/scenes/scene_octree.dat");
 	PRINT_GREEN("The renderer was created succesfully");
+
+
     return true;
 }
 
@@ -177,6 +181,7 @@ void Renderer::RenderResultToScreen()
 
 void Renderer::Run()
 {
+    glClearColor(0.0,0.0,0.0,0.0);
 	FCamera.UpdateValues(FComputeShader);
 	while (!glfwWindowShouldClose (FWindow)) 
 	{
@@ -190,4 +195,40 @@ void Renderer::Run()
 	  //PRINT_ORANGE("Temps pour la frame"<<temps);
 
 	}
+}
+
+
+void Renderer::LoadScene(const std::string& parFilename)
+{
+    int index = 0;
+    FScene = FParser.GetSceneFromFile(parFilename);
+    if(FScene == NULL)
+    {
+        PRINT_RED("Fichier de scene " << parFilename << " non trouve.");
+    }
+    foreach(triangle, FScene->m_triangles)
+    {
+        FManager.InjectTriangle(FComputeShader, *triangle, index++);
+    }
+    /*
+    index = 0;
+    foreach(plan, FScene->m_planes)
+    {
+        FManager.InjectPlan(FComputeShader, *plan, index++);
+    }
+    index = 0;
+    foreach(quadric, FScene->m_quadrics)
+    {
+        FManager.InjectQuadrique(FComputeShader, *quadric, index++);
+    }
+    index = 0;
+    foreach(primitive, FScene->m_primitives)
+    {
+        FManager.InjectPrimitive(FComputeShader, *primitive, index++);
+    }
+    index = 0;
+    foreach(materiau, FScene->m_materiaux)
+    {
+        FManager.InjectMateriau(FComputeShader, *materiau, index++);
+    }*/
 }

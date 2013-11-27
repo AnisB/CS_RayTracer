@@ -166,5 +166,7 @@ void proc_subtree (double tx0, double ty0, double tz0, double tx1, double ty1, d
 int[NB_PRIM] getPrimitives(Ray parRay)
 {
 	int listePrim[NB_PRIM];
+        for(int i = 0; i < NB_PRIM; i++)
+                listePrim[i] = i;
 	return  listePrim;
 }

@@ -1,7 +1,7 @@
 #ifndef CSR_RENDERER
 #define CSR_RENDERER
 
-
+#include "io/parser.h"
 #include "shadermanager.h"
 #include "camera.h"
 #include "defines.h"
@@ -20,13 +20,14 @@ class Renderer : public Singleton<Renderer>
 
 		void RayTracing();
 		void RenderResultToScreen();
-		GLuint GetComputeProgID() {return FComputeShader;};
+        GLuint GetComputeProgID() {return FComputeShader;}
 
 		void HandleKey(int parKey, int parAction);
 
 		
 	protected:
 		void CreateRenderQuad();
+        void LoadScene(const string & parFilename);
 		
 	protected:
 		bool FIsRendering;
@@ -34,6 +35,10 @@ class Renderer : public Singleton<Renderer>
 
 		ShaderManager FManager;
 		Camera FCamera;
+
+        // Loading scene
+        Parser FParser;
+        Scene* FScene;
 		
 		// RenderToQuad
 		GLuint FVertexArrayID;
