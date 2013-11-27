@@ -15,7 +15,7 @@ Scene* Parser::GetSceneFromFile(std::string filename)
         string buffer;
 
         Light light;
-        Triangle triangle = {.p0 = Vector3(0, 0, 0),  .p1 = Vector3(0, 0, 0), .p2 = Vector3(0, 0, 0)};
+        Triangle triangle;
         Plan plan;
         Quadrique quadric;
         Materiau materiau;

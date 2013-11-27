@@ -17,6 +17,9 @@ Vector3::Vector3(double parX, double parY, double parZ)
 }
 
 Vector3::Vector3(const Vector3& parVec)
+    : x(parVec.x)
+    , y(parVec.y)
+    , z(parVec.z)
 {
 }
 

@@ -5,7 +5,7 @@ void Scene::AddLight(Light light)
     m_lights.push_back(light);
 }
 
-void Scene::AddQuadric(Quadrique quadric, Materiau materiau)
+void Scene::AddQuadric(const Quadrique& quadric, const Materiau& materiau)
 {
     m_quadrics.push_back(quadric);
     m_materiaux.push_back(materiau);
@@ -18,7 +18,7 @@ void Scene::AddQuadric(Quadrique quadric, Materiau materiau)
 }
 
 
-void Scene::AddPlane(Plan plane, Materiau materiau)
+void Scene::AddPlane(const Plan& plane, const Materiau& materiau)
 {
     m_planes.push_back(plane);
     m_materiaux.push_back(materiau);
@@ -30,7 +30,7 @@ void Scene::AddPlane(Plan plane, Materiau materiau)
 }
 
 
-void Scene::AddTriangle(Triangle triangle, Materiau materiau)
+void Scene::AddTriangle(const Triangle& triangle, const Materiau& materiau)
 {
     m_triangles.push_back(triangle);
     m_materiaux.push_back(materiau);
@@ -39,5 +39,5 @@ void Scene::AddTriangle(Triangle triangle, Materiau materiau)
     primitive.materiau = m_materiaux.size() - 1;
     primitive.index = m_triangles.size() - 1;
     m_primitives.push_back(primitive);
-    PRINT_RED(triangle.p0.x << " " << m_triangles[m_triangles.size() - 1].p2.x);
+    PRINT_RED(triangle.p0.x << " " << m_triangles[m_triangles.size() - 1].p0.x);
 }

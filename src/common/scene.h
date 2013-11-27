@@ -10,9 +10,9 @@ class Scene
  public:
     Scene() {}
     ~Scene() {}
-    void AddTriangle(Triangle triangle, Materiau materiau);
-    void AddPlane(Plan plane, Materiau materiau);
-    void AddQuadric(Quadrique quadric, Materiau materiau);
+    void AddTriangle(const Triangle &triangle, const Materiau &materiau);
+    void AddPlane(const Plan &plane, const Materiau &materiau);
+    void AddQuadric(const Quadrique &quadric, const Materiau &materiau);
     void AddLight(Light light);
     std::vector<Plan> m_planes;
     std::vector<Triangle> m_triangles;
