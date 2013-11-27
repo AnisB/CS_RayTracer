@@ -6,6 +6,8 @@
 #include <primitives/primitive.h>
 #include <map>
 #include <list>
+#include <stdio.h>
+#include <stdlib.h>
 
 struct Texture
 {
