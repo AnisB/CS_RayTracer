@@ -156,6 +156,7 @@ const ObjFile* ResourceManager::LoadModel(const std::string& parFileName)
   	if (!in) 
   	{ 
   		PRINT_RED("Cannot find model obj: "<<parFileName); 
+  		return NULL;
   	}
  	ObjFile * newModel = new ObjFile();
 	string line;
@@ -216,5 +217,5 @@ const ObjFile* ResourceManager::LoadModel(const std::string& parFileName)
 		newTriangle.normale = normales[i/3];
  		newModel->listTriangle.push_back(newTriangle);
 	}
-	return 0;
+	return newModel;
 }
