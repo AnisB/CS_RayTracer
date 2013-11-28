@@ -23,6 +23,7 @@ class Renderer : public Singleton<Renderer>
         GLuint GetComputeProgID() {return FComputeShader;}
 
 		void HandleKey(int parKey, int parAction);
+		void HandleMouse(float parX, float parY);
 
 		
 	protected:
@@ -32,6 +33,9 @@ class Renderer : public Singleton<Renderer>
 	protected:
 		bool FIsRendering;
 		GLFWwindow* FWindow;
+		float FOldX;
+		float FOldY;
+		bool FInitDone;
 
 		ShaderManager FManager;
 		Camera FCamera;

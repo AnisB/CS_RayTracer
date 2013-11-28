@@ -18,11 +18,22 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
     Renderer::Instance().HandleKey(key,action);
 }
 
+static void cursor_callback(GLFWwindow *window, double xpos, double ypos)
+{
+    int width, height;
+    glfwGetFramebufferSize(window, &width, &height);
+    float ratio = width / (float) height;
+    float x = ratio*(2*xpos/(float)width - 1);
+    float y = 2*-ypos/(float)height + 1;
+    Renderer::Instance().HandleMouse(x,y);
+}
+
 Renderer::Renderer()
 : FIsRendering(false)
 , FVertexArrayID(0)
 , FVertexbuffer(0)
 , FManager()
+, FInitDone(false)
 {
 	
 }
@@ -32,28 +43,52 @@ Renderer::~Renderer()
 	
 }
 
+void Renderer::HandleMouse(float parX, float parY)
+{
+	if(FInitDone)
+	{
+		// Calcul des déplacements relatifs
+		float xMove = parX - FOldX;
+		float yMove = parY - FOldY;
+		FOldX = parX;
+		FOldY = parY;
+	    PRINT_ORANGE("x: "<<xMove<<"y: "<<yMove);
+	    // Rotations
+	    FCamera.Yaw(xMove);
+	    FCamera.Pitch(yMove);
+		FCamera.UpdateValues(FComputeShader);
+	}
+	else
+	{
+		FOldX = parX;
+		FOldY = parY;
+		FInitDone = true;
+	}
+
+
+}
 void Renderer::HandleKey(int parKey, int parAction)
 {
 	if(parKey == GLFW_KEY_LEFT && parAction == GLFW_PRESS)
 	{
-		FCamera.Yaw(-MathTools::PI/20);
+		FCamera.Translate(Vector3(1.0,0.0,0.0));
 		FCamera.UpdateValues(FComputeShader);
 
 	}
 	if(parKey == GLFW_KEY_RIGHT && parAction == GLFW_PRESS)
 	{
-		FCamera.Yaw(MathTools::PI/20);
+		FCamera.Translate(Vector3(-1.0,0.0,0.0));
 		FCamera.UpdateValues(FComputeShader);
 	}
 	if(parKey == GLFW_KEY_UP && parAction == GLFW_PRESS)
 	{
-		FCamera.Pitch(-MathTools::PI/20);
+		FCamera.Translate(Vector3(0.0,0.0,1.0));
 		FCamera.UpdateValues(FComputeShader);
 
 	}
 	if(parKey == GLFW_KEY_DOWN && parAction == GLFW_PRESS)
 	{
-		FCamera.Pitch(MathTools::PI/20);
+		FCamera.Translate(Vector3(0.0,0.0,-1.0));
 		FCamera.UpdateValues(FComputeShader);
 	}
 }
@@ -96,6 +131,7 @@ bool Renderer::Init()
 
 	glfwSetErrorCallback(error_callback);
     glfwSetKeyCallback(FWindow, key_callback);
+    glfwSetCursorPosCallback(FWindow, cursor_callback);
 
 	glewExperimental = GL_TRUE;
 	GLenum glewReturn = glewInit();
@@ -191,8 +227,8 @@ void Renderer::Run()
 	{
 	  //START_COUNT_TIME(temps);
 	  glClear (GL_COLOR_BUFFER_BIT);
-	  RayTracing();
-	  RenderResultToScreen();
+	  //RayTracing();
+	  //RenderResultToScreen();
 	  glfwPollEvents ();
 	  glfwSwapBuffers (FWindow);
 	  //END_COUNT_TIME(temps);

@@ -13,6 +13,7 @@ class Camera
 
 		void Yaw(double parAngle);
 		void Pitch(double parAngle);
+		void Translate(const Vector3& parDir);
 		void InjectFixedValues(GLuint parShaderID);
 		void UpdateValues(GLuint parShaderID);
 
