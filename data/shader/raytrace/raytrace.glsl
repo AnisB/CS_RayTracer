@@ -30,9 +30,10 @@ vec4 CouleurPixel@NB_ITER@(Ray parRayon)
 		vec4 finalColor = vec4(1.0);
 		int primitives[NB_PRIM] = getPrimitives(parRayon);
 		Intersection intersect = IntersectWithScene(parRayon,primitives);
-
-		//finalColor = computeBRDF(parRayon, intersect);
 		finalColor = listMateriau[listPrim[intersect.obj].materiau].color;
+		finalColor *=SecondRayTrace(intersect);
+		//finalColor = computeBRDF(parRayon, intersect);
+		
 		// Commente a cause du "recursive call" a CouleurPixel
 		if(intersect.isValid)
 		{

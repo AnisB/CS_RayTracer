@@ -18,6 +18,8 @@ std::ostream& operator<< (std::ostream& stream, const Triangle& parTriangle)
 std::ostream& operator<< (std::ostream& stream, const Materiau& parMat)
 {
 	stream<<"color "<<parMat.color<<std::endl;
+	stream<<"refractance "<<parMat.coeffReflexion<<std::endl;
+	stream<<"reflectance "<<parMat.coeffRefraction<<std::endl;
 	return stream;
 }
 
@@ -27,5 +29,15 @@ std::ostream& operator<< (std::ostream& stream, const Primitive& parTriangle)
 	stream<<"type "<<parTriangle.type<<std::endl;
 	stream<<"index "<<parTriangle.index<<std::endl;
 	stream<<"materiau "<<parTriangle.materiau<<std::endl;
+	return stream;
+}
+
+
+// Lumière
+std::ostream& operator<< (std::ostream& stream, const Light& parLum)
+{
+	stream<<"color "<<parLum.color<<std::endl;
+	stream<<"intensity "<<parLum.intensity<<std::endl;
+	stream<<"position "<<parLum.position<<std::endl;
 	return stream;
 }

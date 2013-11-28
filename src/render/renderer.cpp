@@ -25,7 +25,7 @@ static void cursor_callback(GLFWwindow *window, double xpos, double ypos)
     float ratio = width / (float) height;
     float x = ratio*(2*xpos/(float)width - 1);
     float y = 2*-ypos/(float)height + 1;
-    Renderer::Instance().HandleMouse(x,y);
+    Renderer::Instance().HandleMouse(x,-y);
 }
 
 Renderer::Renderer()
@@ -34,6 +34,7 @@ Renderer::Renderer()
 , FVertexbuffer(0)
 , FManager()
 , FInitDone(false)
+, FLastTime(-1)
 {
 	
 }
@@ -154,7 +155,7 @@ bool Renderer::Init()
     LoadScene("data/scenes/scene_test.dat");
 	PRINT_GREEN("The renderer was created succesfully");
 
-
+	FLastTime = glfwGetTime();
     return true;
 }
 
@@ -227,8 +228,8 @@ void Renderer::Run()
 	{
 	  //START_COUNT_TIME(temps);
 	  glClear (GL_COLOR_BUFFER_BIT);
-	  //RayTracing();
-	  //RenderResultToScreen();
+	  RayTracing();
+	  RenderResultToScreen();
 	  glfwPollEvents ();
 	  glfwSwapBuffers (FWindow);
 	  //END_COUNT_TIME(temps);
@@ -262,6 +263,11 @@ void Renderer::LoadScene(const std::string& parFilename)
         FManager.InjectQuadrique(FComputeShader, *quadric, index++);
     }
     */
+	index = 0;
+    foreach(light, FScene->m_lights)
+    {
+        FManager.InjectLight(FComputeShader, *light, index++);
+    }
     index = 0;
     foreach(primitive, FScene->m_primitives)
     {

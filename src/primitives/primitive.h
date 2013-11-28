@@ -90,4 +90,6 @@ struct Light
     float intensity;
 };
 
+std::ostream& operator<< (std::ostream& stream, const Light& parLum);
+
 #endif //PRIMITIVE

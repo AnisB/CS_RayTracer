@@ -37,7 +37,7 @@ Scene* Parser::GetSceneFromFile(std::string filename)
             {
                 // Vérifier l'arrivée d'un nouvel état de traitement
                 bool EstNouvelObjetScene = true;
-                if     ( STRING_CHECKFIND( buffer, "light:" ) ) EtatNouveau = TRAITEMENT_LUMIERE;
+                if     ( STRING_CHECKFIND( buffer, "Lumiere:" ) ) EtatNouveau = TRAITEMENT_LUMIERE;
                 else if( STRING_CHECKFIND( buffer, "Poly:"    ) ) EtatNouveau = TRAITEMENT_TRIANGLE;
                 else if( STRING_CHECKFIND( buffer, "Plane:"   ) ) EtatNouveau = TRAITEMENT_PLAN;
                 else if( STRING_CHECKFIND( buffer, "Quad:"    ) ) EtatNouveau = TRAITEMENT_QUADRIQUE;

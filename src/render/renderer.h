@@ -36,7 +36,8 @@ class Renderer : public Singleton<Renderer>
 		float FOldX;
 		float FOldY;
 		bool FInitDone;
-
+		
+		double FLastTime;
 		ShaderManager FManager;
 		Camera FCamera;
 

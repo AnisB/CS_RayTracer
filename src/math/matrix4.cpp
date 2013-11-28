@@ -84,7 +84,8 @@ void Matrix4::resetToZero()
 
 Vector3 Matrix4::getTranslate()
 {
-	return Vector3(m[0][3],m[1][3],m[2][3]);
+	// IL Y AUN PROBLEME ICI TODO
+	return Vector3(m[3][0],m[3][1],m[3][2]);
 }
 
 Vector3 Matrix4::xAxis()

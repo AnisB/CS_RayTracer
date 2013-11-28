@@ -76,3 +76,44 @@ Intersection IntersectWithScene(in Ray parRay,in int parPrim[NB_PRIM])
     }
     return intersectResult;
 }
+
+
+
+vec4 IntersectToLight(in Ray parRay,in int parPrim[NB_PRIM])
+{
+    Intersection intersect;
+    intersect.isValid = false;
+    intersect.uv = vec2(0.0);
+    intersect.point = vec3(0.0);
+    intersect.normal = vec3(0.0);
+    intersect.obj = 0;
+	vec4 colorFilter =  vec4(1.0);
+    for(int i=0; i<NB_PRIM; i++)
+    {
+        switch(listPrim[i].type)
+        {
+        case PRIMITIVE_TRIANGLE:
+
+            intersect = IntersectWithTriangle(parRay, i);
+            if(intersect.isValid )
+            {
+                if( listMateriau[i].reflectance == 1.0)
+                {
+                	return  vec4(0.5);
+                }
+                else
+                {
+                	return colorFilter*listMateriau[i].reflectance;
+                }
+            }
+            break;
+        case PRIMITIVE_PLAN:
+            break;
+        case PRIMITIVE_QUADRIQUE:
+            break;
+        default:
+            return colorFilter;
+        }
+    }
+    return colorFilter;
+}

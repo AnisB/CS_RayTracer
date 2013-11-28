@@ -1,7 +1,8 @@
 #include "scene.h"
 
-void Scene::AddLight(Light light)
+void Scene::AddLight(const Light& light)
 {
+	PRINT_RED("Lumière ajouteee");
     m_lights.push_back(light);
 }
 

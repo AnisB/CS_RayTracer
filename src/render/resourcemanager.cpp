@@ -4,6 +4,7 @@
 #include <render/helper.h>
 #include <render/renderer.h>
 
+#include <fstream>
 #include <sstream>
 
 ResourceManager::ResourceManager()
@@ -152,7 +153,8 @@ const ObjFile* ResourceManager::LoadModel(const std::string& parFileName)
 {
 	std::vector<Vector3> vertices;
 	std::vector<Vector3> normales;
-	ifstream in(parFileName, ios::in);
+	fstream in;
+	in.open(parFileName.c_str(), std::fstream::in);
   	if (!in) 
   	{ 
   		PRINT_RED("Cannot find model obj: "<<parFileName); 

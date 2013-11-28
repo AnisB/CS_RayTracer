@@ -302,7 +302,7 @@ void ShaderManager::InjectLight(GLuint parShaderID, const Light& parLight, int p
 	PRINT_ORANGE("On injecte la lumière :"<<std::endl<<parLight);
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listLight",parIndex,"position").c_str()), parLight.position.x, parLight.position.y, parLight.position.z);    
     glUniform1i(glGetUniformLocation(parShaderID, concatenate("listLight",parIndex,"intensity").c_str()), parLight.intensity);  
-    glUniform4f(glGetUniformLocation(parShaderID, concatenate("listLight",parIndex,"colorSpec").c_str()), parLight.color.x, parLight.color.y, parLight.color.z, 1.0);   
+    glUniform4f(glGetUniformLocation(parShaderID, concatenate("listLight",parIndex,"color").c_str()), parLight.color.x, parLight.color.y, parLight.color.z, 1.0);   
 }
 void ShaderManager::BindProgram( GLuint parProgram)
 {
