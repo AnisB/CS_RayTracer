@@ -65,6 +65,7 @@ IF(APPLE)
 
 ENDIF (APPLE)
 
+add_library(Lumina_lib ${Source_File})
 add_subdirectory(program)
 add_subdirectory(test)
 

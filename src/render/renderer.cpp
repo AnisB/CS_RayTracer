@@ -36,24 +36,24 @@ void Renderer::HandleKey(int parKey, int parAction)
 {
 	if(parKey == GLFW_KEY_LEFT && parAction == GLFW_PRESS)
 	{
-		FCamera.Yaw(MathTools::PI/20);
+		FCamera.Yaw(-MathTools::PI/20);
 		FCamera.UpdateValues(FComputeShader);
 
 	}
 	if(parKey == GLFW_KEY_RIGHT && parAction == GLFW_PRESS)
 	{
-		FCamera.Yaw(-MathTools::PI/20);
+		FCamera.Yaw(MathTools::PI/20);
 		FCamera.UpdateValues(FComputeShader);
 	}
 	if(parKey == GLFW_KEY_UP && parAction == GLFW_PRESS)
 	{
-		FCamera.Pitch(MathTools::PI/20);
+		FCamera.Pitch(-MathTools::PI/20);
 		FCamera.UpdateValues(FComputeShader);
 
 	}
 	if(parKey == GLFW_KEY_DOWN && parAction == GLFW_PRESS)
 	{
-		FCamera.Pitch(-MathTools::PI/20);
+		FCamera.Pitch(MathTools::PI/20);
 		FCamera.UpdateValues(FComputeShader);
 	}
 }
@@ -115,7 +115,7 @@ bool Renderer::Init()
 	CreateRenderQuad();
 
     // Loading the scene file
-    LoadScene("data/scenes/scene_octree.dat");
+    LoadScene("data/scenes/scene_test.dat");
 	PRINT_GREEN("The renderer was created succesfully");
 
 
@@ -127,8 +127,10 @@ void Renderer::CreateRenderQuad()
 {
 	glGenVertexArrays (1, &FVertexArrayID);
 	glBindVertexArray (FVertexArrayID);
+	
 	glGenBuffers(1, &FVertexbuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, FVertexbuffer);
+	
 	glBufferData(GL_ARRAY_BUFFER, sizeof(mainQuadArray), mainQuadArray, GL_STATIC_DRAW);
 	GLuint posAtt = glGetAttribLocation(FPipelineShaderID, "Vertex_Pos");
 	GLuint texAtt = glGetAttribLocation(FPipelineShaderID, "Vertex_TexCoord");
@@ -139,6 +141,7 @@ void Renderer::CreateRenderQuad()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray (0);
 }
+
 void Renderer::InitShaders()
 {
 
@@ -147,7 +150,7 @@ void Renderer::InitShaders()
 
 	#ifndef SIMPLE
 	//Création du shader de calcul
-	FComputeShader = FManager.CreateProgramC(4,10,10,10,20,5);
+	FComputeShader = FManager.CreateProgramC(4,3,1,1,1,3);
 	#endif
 	
 	//Création de la texture
@@ -163,6 +166,7 @@ void Renderer::InitShaders()
 	FManager.InjectTex(FComputeShader,renderTexture,"renderCanvas");
 	#endif
 }
+
 void Renderer::RayTracing()
 {
     #ifndef SIMPLE
@@ -221,6 +225,7 @@ void Renderer::LoadScene(const std::string& parFilename)
     {
         FManager.InjectQuadrique(FComputeShader, *quadric, index++);
     }
+    */
     index = 0;
     foreach(primitive, FScene->m_primitives)
     {
@@ -230,5 +235,5 @@ void Renderer::LoadScene(const std::string& parFilename)
     foreach(materiau, FScene->m_materiaux)
     {
         FManager.InjectMateriau(FComputeShader, *materiau, index++);
-    }*/
+    }
 }

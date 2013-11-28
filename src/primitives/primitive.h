@@ -2,6 +2,7 @@
 #define PRIMITIVE
 
 #include <vector>
+#include <iostream>
 #include "math/vector3.h"
 #include "math/vector4.h"
 
@@ -18,7 +19,10 @@ struct Triangle
     Vector3 p1;
     Vector3 p2;
     Vector3 normale;
+
 };
+
+std::ostream& operator<< (std::ostream& stream, const Triangle& parTriangle);
 
 struct Plan
 {
@@ -51,6 +55,8 @@ struct Primitive
     int materiau;
 };
 
+std::ostream& operator<< (std::ostream& stream, const Primitive& parTriangle);
+
 // Intersection
 struct Intersection
 {
@@ -73,6 +79,8 @@ struct Materiau
     int texAlbedo;
     int texRough;
 };
+
+std::ostream& operator<< (std::ostream& stream, const Materiau& parMat);
 
 // Lumieres
 struct Light

@@ -9,9 +9,11 @@ Camera::Camera()
 , FLens(50.0)
 , FAngleView(45.0)
 {
-	FHauteurEcran =  tan(FAngleView)*FLens;
-	FPasX = RATIO * FHauteurEcran * 2/SCREEN_X; 
-	FPasY = FHauteurEcran * 2/SCREEN_Y;
+	FHauteurEcran =  tan(FAngleView/2)*FLens;
+	//FPasX = RATIO * FHauteurEcran * 2/SCREEN_X; 
+	//FPasY = FHauteurEcran * 2/SCREEN_Y;
+	FPasX = SCREEN_X;
+	FPasY = SCREEN_Y;
 }
 
 Camera::~Camera()
@@ -43,12 +45,12 @@ void Camera::UpdateValues(GLuint parShaderID)
 	const Vector3& zAxis = FTransformation.zAxis();
 	const Vector3& yAxis = FTransformation.yAxis();
 	const Vector3& xAxis = FTransformation.xAxis();
-	ShaderManager::Instance().InjectVec3(parShaderID, FTransformation.getTranslate(), "cameraPos");
+	ShaderManager::Instance().InjectVec3(parShaderID, FTransformation.getTranslate(), "cameraPosition");
 
 	// Precalcules 
 	const Vector3& centreEcran = pos+zAxis*FLens;
-	const Vector3& coinSupGauche = centreEcran - yAxis * SCREEN_Y - xAxis * SCREEN_X * RATIO;
+	const Vector3& coinSupGauche = centreEcran - yAxis * FHauteurEcran - xAxis * FHauteurEcran * RATIO;
 	ShaderManager::Instance().InjectVec3(parShaderID, coinSupGauche, "coinSupGauche");
-	ShaderManager::Instance().InjectVec3(parShaderID, xAxis*FPasX, "unitX");
-	ShaderManager::Instance().InjectVec3(parShaderID, yAxis*FPasY, "unitY");
+	ShaderManager::Instance().InjectVec3(parShaderID, xAxis*FHauteurEcran*2, "unitX");
+	ShaderManager::Instance().InjectVec3(parShaderID, yAxis*FHauteurEcran*2, "unitY");
 }

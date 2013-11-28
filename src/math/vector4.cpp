@@ -20,6 +20,10 @@ Vector4::Vector4(double parX, double parY, double parZ, double parW)
 }
 
 Vector4::Vector4(const Vector4& parVec)
+: x(parVec.x)
+, y(parVec.y)
+, z(parVec.z)
+, w(parVec.w)
 {
 }
 
@@ -55,3 +59,11 @@ Vector4 Vector4::crossProduct(const Vector4& parV1, const Vector4& parV2)
 	result.z = parV1.x * parV2.y - parV2.x * parV1.y; 
 	return result;
 }
+
+
+
+std::ostream& operator<< (std::ostream& os, const Vector4& obj) 
+{
+       os << "Vec3("<<obj.x <<", " <<obj.y<<", "<<obj.z << ", "<<obj.w<<")";
+       return os;
+}     

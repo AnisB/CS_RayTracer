@@ -153,8 +153,8 @@ GLuint ShaderManager::GenerateTexture(size_t parW, size_t parH)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, parW, parH, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     #ifndef MACOSX
     glBindImageTexture(0, newTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
     #endif
@@ -209,7 +209,7 @@ GLuint ShaderManager::CreateProgramC(int parMaxRecur, int parNbTriangle, int par
     ss<<"#define NB_TRIANGLE " << convertToString(parNbTriangle)<<std::endl;
     ss<<"#define NB_PLAN " <<convertToString(parNbPlan)<<std::endl;
     ss<<"#define NB_QUAD " << convertToString(parNbQuad)<<std::endl;
-    ss<<"#define NB_MAT " << convertToString(parNbQuad)<<std::endl;
+    ss<<"#define NB_MAT " << convertToString(3)<<std::endl;
     ss<<"#define NB_NOEUD " << convertToString(parNbNoeud)<<std::endl;
     ss<<"#define NB_PRIM " << convertToString(parNbPrimMax)<<std::endl;
 	ss<<"#define NB_TEX " << convertToString(10)<<std::endl;
@@ -247,6 +247,7 @@ GLuint ShaderManager::CreateProgramC(int parMaxRecur, int parNbTriangle, int par
 
 void ShaderManager::InjectTriangle(GLuint parShaderID, const Triangle& parValue, int parIndex)
 {
+	PRINT_ORANGE("On injecte le triangle :"<<std::endl<<parValue);
 	BindProgram(parShaderID);
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"p0").c_str()), parValue.p0.x, parValue.p0.y, parValue.p0.z);      
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"p1").c_str()), parValue.p1.x, parValue.p1.y, parValue.p1.z);  
@@ -281,14 +282,16 @@ void ShaderManager::InjectQuadrique(GLuint parShaderID, const Quadrique& parValu
 void ShaderManager::InjectMateriau(GLuint parShaderID, const Materiau& parValue, int parIndex)
 {
 	BindProgram(parShaderID);
+	PRINT_ORANGE("On injecte le materiau :"<<std::endl<<parValue);
     glUniform4f(glGetUniformLocation(parShaderID, concatenate("listMateriau",parIndex,"color").c_str()), parValue.color.x, parValue.color.y, parValue.color.z, parValue.color.w);  
 }
 void ShaderManager::InjectPrimitive(GLuint parShaderID, const Primitive& parValue, int parIndex)
 {
 	BindProgram(parShaderID);
-    glUniform1i(glGetUniformLocation(parShaderID, concatenate("listPrimitive",parIndex,"type").c_str()), parValue.type);  
-    glUniform1i(glGetUniformLocation(parShaderID, concatenate("listPrimitive",parIndex,"index").c_str()), parValue.index);  
-    glUniform1i(glGetUniformLocation(parShaderID, concatenate("listPrimitive",parIndex,"materiau").c_str()), parValue.materiau);  
+	PRINT_ORANGE("On injecte la primitive :"<<std::endl<<parValue);
+    glUniform1i(glGetUniformLocation(parShaderID, concatenate("listPrim",parIndex,"type").c_str()), parValue.type);  
+    glUniform1i(glGetUniformLocation(parShaderID, concatenate("listPrim",parIndex,"index").c_str()), parValue.index);  
+    glUniform1i(glGetUniformLocation(parShaderID, concatenate("listPrim",parIndex,"materiau").c_str()), parValue.materiau);  
 }
 
 

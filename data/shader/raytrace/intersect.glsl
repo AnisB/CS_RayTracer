@@ -2,7 +2,6 @@
 Intersection IntersectWithTriangle(Ray parRay, int indexTriangle)
 {
     Intersection intersect;
-    int i;
     intersect.isValid = false;
     intersect.uv = vec2(0.0);
     intersect.point = vec3(0.0);
@@ -20,7 +19,7 @@ Intersection IntersectWithTriangle(Ray parRay, int indexTriangle)
     vec3 vecS = parRay.origin - listTriangle[indexTriangle].p0;
     float u = dot(vecS, vecP) * invDet;
     if(u<0 || u>1)
-        return intersect;
+        return intersect;    
     vec3 vecQ = cross(vecS, edge1);
     float v = dot(parRay.direction, vecQ) * invDet;
     if(v<0 || u + v > 1)
@@ -39,10 +38,9 @@ Intersection IntersectWithTriangle(Ray parRay, int indexTriangle)
 }
 
 
-Intersection IntersectWithScene(Ray parRay, int[NB_PRIM] parPrim)
+Intersection IntersectWithScene(in Ray parRay,in int parPrim[NB_PRIM])
 {
     Intersection intersectResult, intersectCourant;
-    int i;
     intersectCourant.isValid = false;
     intersectCourant.uv = vec2(0.0);
     intersectCourant.point = vec3(0.0);
@@ -54,19 +52,18 @@ Intersection IntersectWithScene(Ray parRay, int[NB_PRIM] parPrim)
     intersectResult.normal = vec3(0.0);
     intersectResult.distance = 0;
     intersectResult.obj = 0;
-    for(i=0; i<NB_PRIM; i++)
+    for(int i=0; i<NB_PRIM; i++)
     {
-        if(parPrim[i] < 0)
-            return intersectResult;
-        switch(listPrim[parPrim[i]].type)
+        switch(listPrim[i].type)
         {
         case PRIMITIVE_TRIANGLE:
-            intersectCourant = IntersectWithTriangle(parRay, listPrim[parPrim[i]].index);
+
+            intersectCourant = IntersectWithTriangle(parRay, i);
             if(intersectCourant.isValid && intersectCourant.distance < intersectResult.distance)
             {
                 intersectResult = intersectCourant;
-                intersectResult.obj = parPrim[i];
-                intersectResult.normal = listTriangle[listPrim[parPrim[i]].index].normale;
+                intersectResult.obj = listPrim[i].index;
+                intersectResult.normal = listTriangle[i].normale;
             }
             break;
         case PRIMITIVE_PLAN:

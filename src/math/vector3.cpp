@@ -93,3 +93,12 @@ std::ostream& operator<< (std::ostream& os, const Vector3& obj)
        os << "Vec3("<<obj.x <<", " <<obj.y<<", "<<obj.z << ")";
        return os;
 }     
+
+Vector3 Vector3::operator/(double parFactor) const
+{
+	Vector3 result;
+	result.x= x/parFactor;
+	result.y= y/parFactor;
+	result.z= z/parFactor;
+	return result;
+}

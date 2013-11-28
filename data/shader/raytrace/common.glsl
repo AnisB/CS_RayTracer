@@ -4,9 +4,9 @@
 #define ENERGY_MIN 0.1
 #define INDICE_PEAU 1.44
 
-#define PRIMITIVE_TRIANGLE  1
-#define PRIMITIVE_PLAN      2
-#define PRIMITIVE_QUADRIQUE 3
+#define PRIMITIVE_TRIANGLE  0
+#define PRIMITIVE_PLAN      1
+#define PRIMITIVE_QUADRIQUE 2
 
 const vec4 backGroundColor = vec4(0.3,0.5,0.8,1.0); 
 // Données relatives a la caméra
@@ -15,8 +15,8 @@ const vec4 backGroundColor = vec4(0.3,0.5,0.8,1.0);
 uniform vec3 cameraPosition;
 //Attributs précalcules pour soucis de perf
 uniform vec3 coinSupGauche;
-uniform float unitX;
-uniform float unitY;
+uniform vec3 unitX;
+uniform vec3 unitY;
 
 
 // Primitives
@@ -64,7 +64,7 @@ struct Primitive
 {
 	int type;
 	int index;
-	int material;
+	int materiau;
 };
 
 // Intersection

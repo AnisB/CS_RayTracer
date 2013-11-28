@@ -1,0 +1,30 @@
+* --- fichier test pour Ray-Tracer ---
+
+* --- triangle a gauche ---
+Poly: polygon_1
+        point: 0 10.0  10.0 -80.0
+        point: 1 10.0   0.0 -80.0
+        point: 2  0.0  10.0 -80.0
+        color:  0.1 1.0 0.1
+
+		
+* --- triangle a droite ---
+Poly: polygon_1
+        point: 0 -10.0  -10.0 -80.0
+        point: 1 -10.0   0.0 -80.0
+        point: 2  0.0  -10.0 -80.0
+        color:  1.0 0.1 0.1
+
+		
+* --- triangle en haut ---
+Poly: polygon_1
+        point: 0 20.0  20.0 -80.0
+        point: 1 20.0  10.0 -80.0
+        point: 2 10.0  20.0 -80.0
+        color:  0.1 0.1 1.0
+        
+
+* --- lumiere ---
+Lumiere: light_1
+        position: 200.0 400.0 600.0
+        intens:   1.0

@@ -15,6 +15,7 @@ class Vector3
 		
 		Vector3& operator*=(double parFactor);
 		Vector3 operator*(double parFactor) const;
+		Vector3 operator/(double parFactor) const;
 		Vector3 operator+(const Vector3& parVect) const;
         Vector3 operator-(const Vector3& parVect) const;
 		Vector3 operator*(const Matrix3& parMatrix);

@@ -1,6 +1,7 @@
 #ifndef VECTOR4
 #define VECTOR4
 
+#include <iostream>
 class Vector4
 {
 	public:
@@ -22,5 +23,7 @@ class Vector4
 		double w;
 	
 };
+
+std::ostream& operator<< (std::ostream& os, const Vector4& obj); 
 
 #endif

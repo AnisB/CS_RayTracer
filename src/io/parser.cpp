@@ -22,7 +22,7 @@ Scene* Parser::GetSceneFromFile(std::string filename)
         Materiau materiau;
 
         float Val0, Val1, Val2;
-        int  R, G, B;
+        float  R, G, B;
 
         while( !fichierScene.eof() )
         {
@@ -81,7 +81,7 @@ Scene* Parser::GetSceneFromFile(std::string filename)
 
                     if( STRING_CHECKFIND( buffer, "color:" ) )
                     {
-                        sscanf( buffer.c_str(), "%s %i %i %i", line, &R, &G, &B );
+                        sscanf( buffer.c_str(), "%s %f %f %f", line, &R, &G, &B );
                         materiau.color = Vector4(R, G, B, 1.0f);
                     }
                     /*else if( STRING_CHECKFIND( buffer, "ambient:" ) )
@@ -208,6 +208,8 @@ Scene* Parser::GetSceneFromFile(std::string filename)
                             break;
                             case 2:
                             triangle.p2 = Vector3(Val0, Val1, Val2);
+                            triangle.normale = Vector3::crossProduct(triangle.p1-triangle.p0,triangle.p2-triangle.p0);
+                            triangle.normale = triangle.normale/triangle.normale.Norm();
                             break;
                         }
                     }

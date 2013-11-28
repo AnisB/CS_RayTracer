@@ -1,6 +1,6 @@
 vec4 computeBRDF(Ray parRay, Intersection parIntersect)
 {
-	Materiau material = listMateriau[listPrim[parIntersect.obj].material];
+	Materiau material = listMateriau[listPrim[parIntersect.obj].materiau];
     float m = texture(textures[material.texRough], parIntersect.uv).r;
     vec4 albedo = texture(textures[material.texAlbedo], parIntersect.uv);
 	vec3 V = -parRay.direction;
