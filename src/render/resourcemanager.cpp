@@ -4,6 +4,7 @@
 #include <render/helper.h>
 #include <render/renderer.h>
 
+#include <sstream>
 
 ResourceManager::ResourceManager()
 : FTexIndex(0)
@@ -16,7 +17,8 @@ ResourceManager::~ResourceManager()
 {
 	foreach(tex, FTextures)
 	{
-
+		free(tex->second->content);
+		delete tex->second;
 	}
 }
 
@@ -42,6 +44,7 @@ const Texture* ResourceManager::LoadTexture(const std::string& parFileName)
 	if ((file = fopen(parFileName.c_str(), "rb"))==NULL) 
 	{
 		PRINT_RED("Texture introuvable "<<parFileName);
+		delete newTex;
 		return 0;
 	}
 
@@ -52,6 +55,8 @@ const Texture* ResourceManager::LoadTexture(const std::string& parFileName)
 	if ((i = (unsigned long)fread(&newTex->w, 4, 1, file)) != 1) 
 	{
 		PRINT_RED("Erreur de lecture de la largeeur de l'image "<<parFileName);
+		delete newTex;
+
 		return 0;
 	}
 
@@ -59,6 +64,8 @@ const Texture* ResourceManager::LoadTexture(const std::string& parFileName)
 	if ((i = (unsigned long)fread(&newTex->l, 4, 1, file)) != 1) 
 	{
 		PRINT_RED("Erreur de lecture de la hauteur de l'image "<<parFileName);
+		delete newTex;
+
 	}
 
 	// calculate the size (assuming 24 bits or 3 bytes per pixel).
@@ -68,23 +75,32 @@ const Texture* ResourceManager::LoadTexture(const std::string& parFileName)
 	if (((unsigned long)fread(&planes, 2, 1, file)) != 1) 
 	{
 		PRINT_RED("Erreur de lecture des plans de l'image "<<parFileName);
+		delete newTex;
+
 		return 0;
 	}
 
 	if (planes != 1) 
 	{
 		printf("Planes from %s is not 1: %u\n", parFileName.c_str(), planes);
+		delete newTex;
+
 		return 0;
 	}
 
 	// read the bpp
-	if ((i = (unsigned long)fread(&bpp, 2, 1, file)) != 1) {
+	if ((i = (unsigned long)fread(&bpp, 2, 1, file)) != 1) 
+	{
 		printf("Error reading bpp from %s.\n", parFileName.c_str());
+		delete newTex;
+
 		return 0;
 	}
 
 	if (bpp != 24) {
 		printf("Bpp from %s is not 24: %u\n", parFileName.c_str(), bpp);
+		delete newTex;
+
 		return 0;
 	}
 
@@ -95,12 +111,15 @@ const Texture* ResourceManager::LoadTexture(const std::string& parFileName)
 	newTex->content = (GLubyte *) malloc(size);
 	if (newTex->content == NULL) {
 		printf("Error allocating memory for color-corrected newTex data");
+		delete newTex;
 		return 0;
 	}
 
-	if ((i = (unsigned long)fread(newTex->content, size, 1, file)) != 1) {
+	if ((i = (unsigned long)fread(newTex->content, size, 1, file)) != 1) 
+	{
 		printf("Error reading newTex data from %s.\n", parFileName.c_str());
 		free(newTex->content);
+		delete newTex;
 		return 0;
 	}
 
@@ -126,10 +145,76 @@ const Texture* ResourceManager::LoadTexture(const std::string& parFileName)
 	glBindTexture(GL_TEXTURE_2D, newTex->id);
 	glUniform1i(tex0, FTexIndex + 1);
 	FTexIndex++;
-	return newTex;  // OK
+	return newTex;
 }
 
 const ObjFile* ResourceManager::LoadModel(const std::string& parFileName)
 {
+	std::vector<Vector3> vertices;
+	std::vector<Vector3> normales;
+	ifstream in(parFileName, ios::in);
+  	if (!in) 
+  	{ 
+  		PRINT_RED("Cannot find model obj: "<<parFileName); 
+  	}
+ 	ObjFile * newModel = new ObjFile();
+	string line;
+	while (getline(in, line)) 
+	{
+	    if (line.substr(0,2) == "v ") 
+	    {
+	      stringstream s(line.substr(2));
+	      Vector3 v; 
+	      s >> v.x; 
+	      s >> v.y; 
+	      s >> v.z; 
+	      vertices.push_back(v);
+	    }  
+	    else if (line.substr(0,2) == "f ") 
+	    {
+	      stringstream s(line.substr(2));
+	      short a,b,c;
+	      s >> a; s >> b; s >> c;
+	      //a--; b--; c--;
+	      //elements.push_back(a); elements.push_back(b); elements.push_back(c);
+	    }
+	    else if(line[0] == 'v' && line[1] == 't') 
+	    { 
+			istringstream s(line.substr(2));
+			float u,v;
+			s >> u;
+			s >> v;
+		}
+	    else if(line[0] == 'v' && line[1] == 'n') 
+	    { 
+			istringstream s(line.substr(2));
+			Vector3 normal;
+			s >> normal.x;
+			s >> normal.y;
+			s >> normal.z;
+	      	normales.push_back(normal);
+		}
+	    else if (line[0] == '#') 
+	    { 
+	    	// Commentaire
+		}
+	}			
+ 	if(normales.size()==0)
+ 	{
+ 		// Les normales n'ont pas été précalculées dans le obj
+		for (int i = 0; i < vertices.size(); i+=3) 
+		{
+			// Il fuat les calculer
+		}
+ 	}
+	for (int i = 0; i < vertices.size(); i+=3) 
+	{
+		Triangle newTriangle;
+		newTriangle.p0 = vertices[i];
+		newTriangle.p1 = vertices[i+1];
+		newTriangle.p2 = vertices[i+2];
+		newTriangle.normale = normales[i/3];
+ 		newModel->listTriangle.push_back(newTriangle);
+	}
 	return 0;
 }

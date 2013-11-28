@@ -186,7 +186,7 @@ Scene* Parser::GetSceneFromFile(std::string filename)
                     }
                     else if( STRING_CHECKFIND( buffer, "color:" ) )
                     {
-                        sscanf( buffer.c_str(), "%s %i %i %i", line, &R, &G, &B );
+                        sscanf( buffer.c_str(), "%s %f %f %f", line, &R, &G, &B );
                         light.color = Vector3(R, G, B);
                     }
 
