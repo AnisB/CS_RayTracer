@@ -36,6 +36,10 @@ Renderer::Renderer()
 , FManager()
 , FInitDone(false)
 , FLastTime(-1)
+, FFoward(false)
+, FBackward(false)
+, FLeftward(false)
+, FRightward(false)
 {
 	
 }
@@ -54,7 +58,6 @@ void Renderer::HandleMouse(float parX, float parY)
 		float yMove = parY - FOldY;
 		FOldX = parX;
 		FOldY = parY;
-	    PRINT_ORANGE("x: "<<xMove<<"y: "<<yMove);
 	    // Rotations
 	    FCamera.Yaw(xMove);
 	    FCamera.Pitch(yMove);
@@ -73,26 +76,36 @@ void Renderer::HandleKey(int parKey, int parAction)
 {
 	if(parKey == GLFW_KEY_LEFT && parAction == GLFW_PRESS)
 	{
-		FCamera.Translate(Vector3(1.0,0.0,0.0));
-		FCamera.UpdateValues(FComputeShader);
-
+		FLeftward = true;
 	}
 	if(parKey == GLFW_KEY_RIGHT && parAction == GLFW_PRESS)
 	{
-		FCamera.Translate(Vector3(-1.0,0.0,0.0));
-		FCamera.UpdateValues(FComputeShader);
+		FRightward = true;
 	}
 	if(parKey == GLFW_KEY_UP && parAction == GLFW_PRESS)
 	{
-		FCamera.Translate(Vector3(0.0,0.0,1.0));
-		FCamera.UpdateValues(FComputeShader);
-
+		FFoward = true;
 	}
 	if(parKey == GLFW_KEY_DOWN && parAction == GLFW_PRESS)
 	{
-		FCamera.Translate(Vector3(0.0,0.0,-1.0));
-		FCamera.UpdateValues(FComputeShader);
+		FBackward = true;
 	}
+	if(parKey == GLFW_KEY_LEFT && parAction == GLFW_RELEASE)
+	{
+		FLeftward = false;
+	}
+	if(parKey == GLFW_KEY_RIGHT && parAction == GLFW_RELEASE)
+	{
+		FRightward = false;
+	}
+	if(parKey == GLFW_KEY_UP && parAction == GLFW_RELEASE)
+	{
+		FFoward = false;
+	}
+	if(parKey == GLFW_KEY_DOWN && parAction == GLFW_RELEASE)
+	{
+		FBackward = false;
+	}	
 }
 
 bool Renderer::Init()
@@ -122,7 +135,7 @@ bool Renderer::Init()
 	
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
 	// Open a window and create its OpenGL context
-	FWindow = glfwCreateWindow(512, 512, "CS_RayTracer", NULL, NULL);
+	FWindow = glfwCreateWindow(1280, 720, "CS_RayTracer", NULL, NULL);
 	if(FWindow == NULL)
 	{
 		PRINT_RED("The glfw open windows failed");
@@ -148,12 +161,17 @@ bool Renderer::Init()
 	PRINT_ORANGE("Version: "<<version);
 	// Everything went ok let's render
 	FIsRendering = true;
+	
+	// Loading the scene file
+    LoadScene("data/scenes/scene_test.dat");
+    
 	InitShaders();
 	//Creating the render to quad
 	CreateRenderQuad();
 
-    // Loading the scene file
-    LoadScene("data/scenes/scene_test.dat");
+	// Injecting the scene to the shader
+	InjectScene();
+    
 	PRINT_GREEN("The renderer was created succesfully");
 
 	FLastTime = glfwGetTime();
@@ -188,7 +206,7 @@ void Renderer::InitShaders()
 
 	#ifndef SIMPLE
 	//Création du shader de calcul
-	FComputeShader = FManager.CreateProgramC(4,3,1,1,1,3);
+	FComputeShader = FManager.CreateProgramC(4,FScene->m_triangles.size(),1,1,1,FScene->m_primitives.size());
 	#endif
 	
 	//Création de la texture
@@ -221,6 +239,26 @@ void Renderer::RenderResultToScreen()
 	  glBindVertexArray (0);
 }
 
+void Renderer::UpdateDisplacement()
+{
+	if(FFoward)
+	{
+		FCamera.Translate(Vector3(0.0,0.0,-1.0));
+	}
+	if(FBackward)
+	{
+		FCamera.Translate(Vector3(0.0,0.0,1.0));
+	}
+	if(FLeftward)
+	{
+		FCamera.Translate(Vector3(1.0,0.0,0.0));
+	}
+	if(FRightward)
+	{
+		FCamera.Translate(Vector3(-1.0,0.0,0.0));
+	}
+	FCamera.UpdateValues(FComputeShader);		
+}
 void Renderer::Run()
 {
     glClearColor(0.0,0.0,0.0,0.0);
@@ -231,6 +269,7 @@ void Renderer::Run()
 	  glClear (GL_COLOR_BUFFER_BIT);
 	  RayTracing();
 	  RenderResultToScreen();
+	  UpdateDisplacement();
 	  glfwPollEvents ();
 	  glfwSwapBuffers (FWindow);
 	  //END_COUNT_TIME(temps);
@@ -242,16 +281,31 @@ void Renderer::Run()
 
 void Renderer::LoadScene(const std::string& parFilename)
 {
-    int index = 0;
+    
     FScene = FParser.GetSceneFromFile(parFilename);
     if(FScene == NULL)
     {
         PRINT_RED("Fichier de scene " << parFilename << " non trouve.");
     }
+    /*
+    ObjFile * newModel = ResourceManager::Instance().LoadModel("data/model/final/ear.obj");
+    foreach(triangle, newModel->listTriangle)
+    {
+    	FScene->m_triangles.push_back(*triangle);
+    }
+    */
+    
+    
+}
+
+void Renderer::InjectScene()
+{
+	int index = 0;
     foreach(triangle, FScene->m_triangles)
     {
         FManager.InjectTriangle(FComputeShader, *triangle, index++);
     }
+    
     /*
     index = 0;
     foreach(plan, FScene->m_planes)

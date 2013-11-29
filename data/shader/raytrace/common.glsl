@@ -8,7 +8,7 @@
 #define PRIMITIVE_PLAN      1
 #define PRIMITIVE_QUADRIQUE 2
 
-const vec4 backGroundColor = vec4(0.3,0.5,0.8,1.0); 
+const vec4 backGroundColor = vec4(0.0,0,0,1.0); 
 // Données relatives a la caméra
 // Camera position
 

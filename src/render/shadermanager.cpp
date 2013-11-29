@@ -176,7 +176,7 @@ void ShaderManager::Injectd(GLuint parShaderID, double parValue, const std::stri
 }
 void ShaderManager::InjectVec3(GLuint parShaderID, const Vector3& parValue, const std::string& parName)
 {
-    PRINT_ORANGE("Injected "<<parValue);
+    //PRINT_ORANGE("Injected "<<parValue);
     BindProgram(parShaderID);
     glUniform3f(glGetUniformLocation(parShaderID, parName.c_str()), parValue.x, parValue.y, parValue.z);
 }
@@ -209,7 +209,7 @@ GLuint ShaderManager::CreateProgramC(int parMaxRecur, int parNbTriangle, int par
     ss<<"#define NB_TRIANGLE " << convertToString(parNbTriangle)<<std::endl;
     ss<<"#define NB_PLAN " <<convertToString(parNbPlan)<<std::endl;
     ss<<"#define NB_QUAD " << convertToString(parNbQuad)<<std::endl;
-    ss<<"#define NB_MAT " << convertToString(3)<<std::endl;
+    ss<<"#define NB_MAT " << convertToString(parNbTriangle)<<std::endl;
     ss<<"#define NB_NOEUD " << convertToString(parNbNoeud)<<std::endl;
     ss<<"#define NB_PRIM " << convertToString(parNbPrimMax)<<std::endl;
 	ss<<"#define NB_TEX " << convertToString(10)<<std::endl;
@@ -247,7 +247,7 @@ GLuint ShaderManager::CreateProgramC(int parMaxRecur, int parNbTriangle, int par
 
 void ShaderManager::InjectTriangle(GLuint parShaderID, const Triangle& parValue, int parIndex)
 {
-	PRINT_ORANGE("On injecte le triangle :"<<std::endl<<parValue);
+	//PRINT_ORANGE("On injecte le triangle :"<<std::endl<<parValue);
 	BindProgram(parShaderID);
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"p0").c_str()), parValue.p0.x, parValue.p0.y, parValue.p0.z);      
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"p1").c_str()), parValue.p1.x, parValue.p1.y, parValue.p1.z);  

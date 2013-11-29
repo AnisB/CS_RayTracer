@@ -27,6 +27,7 @@ Intersection IntersectWithTriangle(Ray parRay, int indexTriangle)
     intersect.isValid = true;
     intersect.distance = dot(edge2, vecQ) * invDet;
     vec3 I = parRay.origin + parRay.direction * intersect.distance;
+    intersect.distance = abs(intersect.distance);
     vec3 v1 = I - listTriangle[indexTriangle].p0;
     vec3 v2 = listTriangle[indexTriangle].p1 - listTriangle[indexTriangle].p0;
     float uTex = dot(v1, v2);
@@ -50,28 +51,16 @@ Intersection IntersectWithScene(in Ray parRay,in int parPrim[NB_PRIM])
     intersectResult.uv = vec2(0.0);
     intersectResult.point = vec3(0.0);
     intersectResult.normal = vec3(0.0);
-    intersectResult.distance = 0;
+    intersectResult.distance = 1000.0;
     intersectResult.obj = 0;
     for(int i=0; i<NB_PRIM; i++)
     {
-        switch(listPrim[i].type)
+        intersectCourant = IntersectWithTriangle(parRay, i);
+        if(intersectCourant.isValid && intersectCourant.distance < intersectResult.distance)
         {
-        case PRIMITIVE_TRIANGLE:
-
-            intersectCourant = IntersectWithTriangle(parRay, i);
-            if(intersectCourant.isValid && intersectCourant.distance < intersectResult.distance)
-            {
-                intersectResult = intersectCourant;
-                intersectResult.obj = listPrim[i].index;
-                intersectResult.normal = listTriangle[i].normale;
-            }
-            break;
-        case PRIMITIVE_PLAN:
-            break;
-        case PRIMITIVE_QUADRIQUE:
-            break;
-        default:
-            return intersectResult;
+            intersectResult = intersectCourant;
+            intersectResult.obj = listPrim[i].index;
+            intersectResult.normal = listTriangle[i].normale;
         }
     }
     return intersectResult;
@@ -79,7 +68,7 @@ Intersection IntersectWithScene(in Ray parRay,in int parPrim[NB_PRIM])
 
 
 
-vec4 IntersectToLight(in Ray parRay,in int parPrim[NB_PRIM])
+vec4 IntersectToLight(in Ray parRay, vec3 lightPos)
 {
     Intersection intersect;
     intersect.isValid = false;
@@ -88,31 +77,17 @@ vec4 IntersectToLight(in Ray parRay,in int parPrim[NB_PRIM])
     intersect.normal = vec3(0.0);
     intersect.obj = 0;
 	vec4 colorFilter =  vec4(1.0);
-    for(int i=0; i<NB_PRIM; i++)
+	float distance = length(lightPos-parRay.origin);
+    for(int i=0; i<NB_TRIANGLE; i++)
     {
-        switch(listPrim[i].type)
+        intersect = IntersectWithTriangle(parRay, i);
+        float distanceToLight = length(lightPos-intersect.point);
+        if(intersect.isValid && distanceToLight < distance)
         {
-        case PRIMITIVE_TRIANGLE:
-
-            intersect = IntersectWithTriangle(parRay, i);
-            if(intersect.isValid )
+            if( listMateriau[i].reflectance > 0)
             {
-                if( listMateriau[i].reflectance == 1.0)
-                {
-                	return  vec4(0.5);
-                }
-                else
-                {
-                	return colorFilter*listMateriau[i].reflectance;
-                }
+            	colorFilter*=vec4(0.5);
             }
-            break;
-        case PRIMITIVE_PLAN:
-            break;
-        case PRIMITIVE_QUADRIQUE:
-            break;
-        default:
-            return colorFilter;
         }
     }
     return colorFilter;
