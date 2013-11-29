@@ -23,8 +23,11 @@ uniform vec3 unitY;
 struct Triangle
 {
 	vec3 p0;
+	vec2 uv0;
 	vec3 p1;
+	vec2 uv1;
 	vec3 p2;
+	vec2 uv2;
 	vec3 normale;
 };
 

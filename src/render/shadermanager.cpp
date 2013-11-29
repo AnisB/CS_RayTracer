@@ -250,8 +250,11 @@ void ShaderManager::InjectTriangle(GLuint parShaderID, const Triangle& parValue,
 	PRINT_ORANGE("On injecte le triangle :"<<std::endl<<parValue);
 	BindProgram(parShaderID);
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"p0").c_str()), parValue.p0.x, parValue.p0.y, parValue.p0.z);      
+    glUniform2f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"uv0").c_str()), parValue.uv0.u, parValue.uv0.v);      
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"p1").c_str()), parValue.p1.x, parValue.p1.y, parValue.p1.z);  
+    glUniform2f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"uv1").c_str()), parValue.uv1.u, parValue.uv1.v);      
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"p2").c_str()), parValue.p2.x, parValue.p2.y, parValue.p2.z);
+    glUniform2f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"uv2").c_str()), parValue.uv2.u, parValue.uv2.v);      
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"normale").c_str()), parValue.normale.x, parValue.normale.y, parValue.normale.z);
 }
 
