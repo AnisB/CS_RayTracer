@@ -5,6 +5,7 @@
 #include "helper.h"
 
 #include <common/defines.h>
+#include <render/resourcemanager.h>
 
 
 static void error_callback(int error, const char* description)

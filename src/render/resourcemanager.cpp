@@ -153,6 +153,7 @@ const ObjFile* ResourceManager::LoadModel(const std::string& parFileName)
 {
 	std::vector<Vector3> vertices;
 	std::vector<Vector3> normales;
+	std::vector<vec2> mapping;
 	fstream in;
 	in.open(parFileName.c_str(), std::fstream::in);
   	if (!in) 
@@ -187,6 +188,10 @@ const ObjFile* ResourceManager::LoadModel(const std::string& parFileName)
 			float u,v;
 			s >> u;
 			s >> v;
+			vec2 map;
+			map.u = u;
+			map.v = v;
+	      	mapping.push_back(map);
 		}
 	    else if(line[0] == 'v' && line[1] == 'n') 
 	    { 
@@ -213,9 +218,15 @@ const ObjFile* ResourceManager::LoadModel(const std::string& parFileName)
 	for (int i = 0; i < vertices.size(); i+=3) 
 	{
 		Triangle newTriangle;
+		// Coordonnées
 		newTriangle.p0 = vertices[i];
 		newTriangle.p1 = vertices[i+1];
 		newTriangle.p2 = vertices[i+2];
+		// Mappage
+		newTriangle.uv0 = mapping[i];
+		newTriangle.uv1 = mapping[i+1];
+		newTriangle.uv2 = mapping[i+2];
+		// Normale
 		newTriangle.normale = normales[i/3];
  		newModel->listTriangle.push_back(newTriangle);
 	}

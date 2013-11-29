@@ -13,11 +13,19 @@ enum TypePrimitive
     PRIMITIVE_QUADRIQUE = 2
 };
 
+struct vec2
+{
+    float u;
+    float v;
+};
 struct Triangle
 {
     Vector3 p0;
+    vec2 uv0;
     Vector3 p1;
+    vec2 uv1;
     Vector3 p2;
+    vec2 uv2;
     Vector3 normale;
 
 };
