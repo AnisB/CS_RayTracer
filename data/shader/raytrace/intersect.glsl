@@ -24,9 +24,10 @@ Intersection IntersectWithTriangle(Ray parRay, int indexTriangle)
     float v = dot(parRay.direction, vecQ) * invDet;
     if(v<0 || u + v > 1)
         return intersect;
-    intersect.isValid = true;
     intersect.distance = dot(edge2, vecQ) * invDet;
-    vec3 I = parRay.origin + parRay.direction * intersect.distance;
+    vec3 I = parRay.origin + intersect.distance * parRay.direction ;
+    if(intersect.distance > EPSILON)
+        return intersect;         
     intersect.distance = abs(intersect.distance);
     vec3 v1 = I - listTriangle[indexTriangle].p0;
     vec3 v2 = listTriangle[indexTriangle].p1 - listTriangle[indexTriangle].p0;
@@ -35,6 +36,11 @@ Intersection IntersectWithTriangle(Ray parRay, int indexTriangle)
     float vTex = dot(v1, v2);
     intersect.point = I;
     intersect.uv = vec2(uTex, vTex);
+    intersect.isValid = true;
+    if(dot(parRay.direction, listTriangle[indexTriangle].normale) > 0)
+        intersect.normal = -listTriangle[indexTriangle].normale;
+    else
+        intersect.normal = listTriangle[indexTriangle].normale;
     return intersect;
 }
 
@@ -51,16 +57,15 @@ Intersection IntersectWithScene(in Ray parRay,in int parPrim[NB_PRIM])
     intersectResult.uv = vec2(0.0);
     intersectResult.point = vec3(0.0);
     intersectResult.normal = vec3(0.0);
-    intersectResult.distance = 1000.0;
+    intersectResult.distance = 0.0;
     intersectResult.obj = 0;
     for(int i=0; i<NB_PRIM; i++)
     {
         intersectCourant = IntersectWithTriangle(parRay, i);
-        if(intersectCourant.isValid && intersectCourant.distance < intersectResult.distance)
+        if(intersectCourant.isValid && (!intersectResult.isValid || intersectCourant.distance < intersectResult.distance))
         {
             intersectResult = intersectCourant;
             intersectResult.obj = listPrim[i].index;
-            intersectResult.normal = listTriangle[i].normale;
         }
     }
     return intersectResult;
@@ -76,8 +81,8 @@ vec4 IntersectToLight(in Ray parRay, vec3 lightPos)
     intersect.point = vec3(0.0);
     intersect.normal = vec3(0.0);
     intersect.obj = 0;
-	vec4 colorFilter =  vec4(1.0);
-	float distance = length(lightPos-parRay.origin);
+    vec4 colorFilter =  vec4(1.0);
+    float distance = length(lightPos-parRay.origin);
     for(int i=0; i<NB_TRIANGLE; i++)
     {
         intersect = IntersectWithTriangle(parRay, i);
