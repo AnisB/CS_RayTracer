@@ -8,6 +8,25 @@
 #define PRIMITIVE_PLAN      1
 #define PRIMITIVE_QUADRIQUE 2
 
+#define TRIANGLE_PARAM 17.0
+
+#define p0x 0.0/TRIANGLE_PARAM
+#define p0y 1.0/TRIANGLE_PARAM
+#define p0z 2.0/TRIANGLE_PARAM
+
+#define p1x 5.0/TRIANGLE_PARAM
+#define p1y 6.0/TRIANGLE_PARAM
+#define p1z 7.0/TRIANGLE_PARAM
+
+
+#define p2x 10.0/TRIANGLE_PARAM
+#define p2y 11.0/TRIANGLE_PARAM
+#define p2z 12.0/TRIANGLE_PARAM
+
+#define nx 15.0/TRIANGLE_PARAM
+#define ny 16.0/TRIANGLE_PARAM
+#define nz 17.0/TRIANGLE_PARAM
+
 const vec4 backGroundColor = vec4(0.0,0,0,1.0); 
 // Données relatives a la caméra
 // Camera position
@@ -121,4 +140,36 @@ uniform	Materiau listMateriau[NB_MAT];
 uniform	Light listLight[NB_LIGHTS];
 
 
+
+Triangle getTriangleByIndex(int parIndexTriangle)
+{
+	Triangle unTriangle;
+	float triNormIndex = float(parIndexTriangle)/(float(NB_TRIANGLE)-1);
+    unTriangle.p0.x = texture(listTriangles, vec2(p0x,triNormIndex)).r;
+    unTriangle.p0.y = texture(listTriangles, vec2(p0y,triNormIndex)).r;
+    unTriangle.p0.z = texture(listTriangles, vec2(p0z,triNormIndex)).r;
+
+    unTriangle.p1.x = texture(listTriangles, vec2(p1x,triNormIndex)).r;
+    unTriangle.p1.y = texture(listTriangles, vec2(p1y,triNormIndex)).r;
+    unTriangle.p1.z = texture(listTriangles, vec2(p1z,triNormIndex)).r;    
+    
+    unTriangle.p2.x = texture(listTriangles, vec2(p2x,triNormIndex)).r;
+    unTriangle.p2.y = texture(listTriangles, vec2(p2y,triNormIndex)).r;
+    unTriangle.p2.z = texture(listTriangles, vec2(p2z,triNormIndex)).r;
+    
+    unTriangle.normale.x = texture(listTriangles, vec2(nx,triNormIndex)).r;
+    unTriangle.normale.y = texture(listTriangles, vec2(ny,triNormIndex)).r;
+    unTriangle.normale.z = texture(listTriangles, vec2(nz,triNormIndex)).r;
+    
+    unTriangle.p0-= vec3(0.5);
+    unTriangle.p1-= vec3(0.5);
+    unTriangle.p2-= vec3(0.5);
+    unTriangle.normale-= vec3(0.5);
+    
+    unTriangle.p0*=400;
+    unTriangle.p1*=400;
+    unTriangle.p2*=400; 
+    unTriangle.normale*=400;
+    return unTriangle;
+}
 

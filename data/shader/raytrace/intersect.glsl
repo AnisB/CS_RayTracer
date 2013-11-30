@@ -1,5 +1,5 @@
 
-Intersection IntersectWithTriangle(Ray parRay, int indexTriangle)
+Intersection IntersectWithTriangle(Ray parRay, Triangle parTheTriangle)
 {
     Intersection intersect;
     intersect.isValid = false;
@@ -9,37 +9,16 @@ Intersection IntersectWithTriangle(Ray parRay, int indexTriangle)
     intersect.obj = 0;	
     intersect.distance = 0;
     
-    Triangle monTriangle;
-    monTriangle.p0.x = texture(listTriangles, vec2(0/17.0,(float(indexTriangle))/4.0)).r;
-    monTriangle.p0.y = texture(listTriangles, vec2(1/17.0,(float(indexTriangle))/4.0)).r;
-    monTriangle.p0.z = texture(listTriangles, vec2(2/17.0,(float(indexTriangle))/4.0)).r;
-
-    monTriangle.p1.x = texture(listTriangles, vec2(5/17.0,(float(indexTriangle))/4.0)).r;
-    monTriangle.p1.y = texture(listTriangles, vec2(6/17.0,(float(indexTriangle))/4.0)).r;
-    monTriangle.p1.z = texture(listTriangles, vec2(7/17.0,(float(indexTriangle))/4.0)).r;    
     
-    monTriangle.p2.x = texture(listTriangles, vec2(10/17.0,(float(indexTriangle))/4.0)).r;
-    monTriangle.p2.y = texture(listTriangles, vec2(11/17.0,(float(indexTriangle))/4.0)).r;
-    monTriangle.p2.z = texture(listTriangles, vec2(12/17.0,(float(indexTriangle))/4.0)).r;    
-    
-    
-    monTriangle.p0-= vec3(0.5);
-    monTriangle.p1-= vec3(0.5);
-    monTriangle.p2-= vec3(0.5);
-    
-    monTriangle.p0*=400;
-    monTriangle.p1*=400;
-    monTriangle.p2*=400;   
-    
-    vec3 edge1 = monTriangle.p1 - monTriangle.p0;
-    vec3 edge2 = monTriangle.p2 - monTriangle.p0;
+    vec3 edge1 = parTheTriangle.p1 - parTheTriangle.p0;
+    vec3 edge2 = parTheTriangle.p2 - parTheTriangle.p0;
     vec3 vecP = cross(parRay.direction, edge2);
     float det = dot(edge1, vecP);
         
     if(abs(det)<EPSILON)
         return intersect;
     float invDet = 1.0f / det;
-    vec3 vecS = parRay.origin - monTriangle.p0;
+    vec3 vecS = parRay.origin - parTheTriangle.p0;
     float u = dot(vecS, vecP) * invDet;
     if(u<0 || u>1)
         return intersect;    
@@ -52,18 +31,18 @@ Intersection IntersectWithTriangle(Ray parRay, int indexTriangle)
     if(intersect.distance > EPSILON)
         return intersect;         
     intersect.distance = abs(intersect.distance);
-    vec3 v1 = I - monTriangle.p0;
-    vec3 v2 = monTriangle.p1 - monTriangle.p0;
+    vec3 v1 = I - parTheTriangle.p0;
+    vec3 v2 = parTheTriangle.p1 - parTheTriangle.p0;
     float uTex = dot(v1, v2);
-    v2 = monTriangle.p2 - monTriangle.p0;
+    v2 = parTheTriangle.p2 - parTheTriangle.p0;
     float vTex = dot(v1, v2);
     intersect.point = I;
     intersect.uv = vec2(uTex, vTex);
     intersect.isValid = true;
-    if(dot(parRay.direction, listTriangle[indexTriangle].normale) > 0)
-        intersect.normal = -listTriangle[indexTriangle].normale;
+    if(dot(parRay.direction, parTheTriangle.normale) > 0)
+        intersect.normal = -parTheTriangle.normale;
     else
-        intersect.normal = listTriangle[indexTriangle].normale;
+        intersect.normal = parTheTriangle.normale;
     return intersect;
 }
 
@@ -84,7 +63,8 @@ Intersection IntersectWithScene(in Ray parRay,in int parPrim[NB_PRIM])
     intersectResult.obj = 0;
     for(int i=0; i<NB_PRIM; i++)
     {
-        intersectCourant = IntersectWithTriangle(parRay, i);
+    	Triangle tri = getTriangleByIndex(i);
+        intersectCourant = IntersectWithTriangle(parRay, tri);
         if(intersectCourant.isValid && (!intersectResult.isValid || intersectCourant.distance < intersectResult.distance))
         {
             intersectResult = intersectCourant;
@@ -108,10 +88,13 @@ vec4 IntersectToLight(in Ray parRay, vec3 lightPos)
     float distance = length(lightPos-parRay.origin);
     for(int i=0; i<NB_TRIANGLE; i++)
     {
-        intersect = IntersectWithTriangle(parRay, i);
+    	Triangle tri = getTriangleByIndex(i);
+        intersect = IntersectWithTriangle(parRay, tri);
         float distanceToLight = length(lightPos-intersect.point);
         if(intersect.isValid && distanceToLight < distance)
         {
+        	return  vec4(0.5);
+        /*
             if( listMateriau[i].reflectance > 0)
             {
                 if( listMateriau[i].reflectance == 1.0)
@@ -123,6 +106,7 @@ vec4 IntersectToLight(in Ray parRay, vec3 lightPos)
                 	return colorFilter*listMateriau[i].reflectance;
                 }
             }
+        */
         }
     }
     return colorFilter;

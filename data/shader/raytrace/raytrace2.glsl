@@ -11,7 +11,7 @@ vec4 SecondRayTrace(Intersection parIntersect)
 	{
 		// On lance un rayon en direction de la lumière
 		Ray nouveauRayon;
-		nouveauRayon.origin = parIntersect.point - 0.00001*parIntersect.normal;
+		nouveauRayon.origin = parIntersect.point - 0.001*parIntersect.normal;
 		nouveauRayon.direction = (listLight[i].position - nouveauRayon.origin);
 		ombrage *= (IntersectToLight(nouveauRayon,listLight[i].position )*listLight[i].colorSpec);
 	}

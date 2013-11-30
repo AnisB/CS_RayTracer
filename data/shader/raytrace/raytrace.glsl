@@ -37,7 +37,7 @@ vec4 CouleurPixel@NB_ITER@(Ray parRayon)
 		// Commente a cause du "recursive call" a CouleurPixel
 		if(intersect.isValid)
 		{
-			finalColor+=Reflect@NB_ITER@(parRayon, intersect);
+			//finalColor+=Reflect@NB_ITER@(parRayon, intersect);
 			//finalColor+=Refract@NB_ITER@(parRayon, intersect);		
 			return finalColor;
 		}
