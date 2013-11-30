@@ -42,7 +42,7 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 FIND_PACKAGE (X11 REQUIRED)
 set(CORELIBS  ${GLEW_LIBRARY} ${OPENGL_LIBRARIES} ${X11_ICE_LIB}
- ${X11_Xxf86vm_LIB} ${X11_Xrandr_LIB} ${X11_Xi_LIB} "${PROJECT_SOURCE_DIR}/external/linux/libglfw3.a" pthread)
+ ${X11_Xxf86vm_LIB} ${X11_Xrandr_LIB} ${X11_Xi_LIB} "${PROJECT_SOURCE_DIR}/external/linux/libglfw3.a" pthread jpeg)
 include_directories(${SOURCES} ${OPENGL_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/external/linux/GLFW)
 ENDIF()
 
@@ -60,7 +60,7 @@ IF(APPLE)
                      GLFW_LIBRARY
                      OpenGL_LIBRARY
                      IOKIT_LIBRARY)
-   SET(CORELIBS ${COCOA_LIBRARY} ${GLEW_LIBRARY} ${OpenGL_LIBRARY} ${IOKIT_LIBRARY} "${PROJECT_SOURCE_DIR}/external/mac/libglfw3.a")
+   SET(CORELIBS ${COCOA_LIBRARY} ${GLEW_LIBRARY} ${OpenGL_LIBRARY} ${IOKIT_LIBRARY} "${PROJECT_SOURCE_DIR}/external/mac/libglfw3.a" jpeg)
    include_directories(${SOURCES} ${OPENGL_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/external/mac/GLFW)
 
 ENDIF (APPLE)

@@ -36,102 +36,58 @@ std::string concatenate(const std::string& parBase, int parIndex)
 
 const Texture* ResourceManager::LoadTexture(const std::string& parFileName)
 {
-	Texture * newTex = new Texture();
-	FILE *file;
-	unsigned long size;        // size of the new texture in bytes.
-	unsigned long i;           // standard counter.
-	unsigned short int planes; // number of planes in newTex (must be 1) 
-	unsigned short int bpp;    // number of bits per pixel (must be 24)
-	char temp;                 // temporary color storage for bgr-rgb conversion.
+    Texture * newTex = new Texture();
+    FILE *fd;
+    struct jpeg_decompress_struct cinfo;
+    struct jpeg_error_mgr jerr;
+    unsigned char * line;
+    unsigned long size;        // size of the new texture in bytes.
+    int format = GL_RGB;
 
-	if ((file = fopen(parFileName.c_str(), "rb"))==NULL) 
-	{
-		PRINT_RED("Texture introuvable "<<parFileName);
-		delete newTex;
-		return 0;
-	}
+    cinfo.err = jpeg_std_error (&jerr);
+    jpeg_create_decompress (&cinfo);
 
-	// seek through the bmp header, up to the width/height:
-	fseek(file, 18, SEEK_CUR);
+    if (0 == (fd = fopen(parFileName.c_str(), "rb")))
+    {
+        PRINT_RED("Error reading from file " << parFileName);
+        delete newTex;
+        return 0;
+    }
 
-	// read the width
-	if ((i = (unsigned long)fread(&newTex->w, 4, 1, file)) != 1) 
-	{
-		PRINT_RED("Erreur de lecture de la largeur de l'image "<<parFileName);
-		delete newTex;
 
-		return 0;
-	}
+    jpeg_stdio_src (&cinfo, fd);
+    jpeg_read_header (&cinfo, TRUE);
+    newTex->w = cinfo.output_width;
+    newTex->l = cinfo.output_height;
+    size = newTex->w * newTex->l * 3;
+    newTex->content = (GLubyte *) malloc(size);
 
-	// read the height 
-	if ((i = (unsigned long)fread(&newTex->l, 4, 1, file)) != 1) 
-	{
-		PRINT_RED("Erreur de lecture de la hauteur de l'image "<<parFileName);
-		delete newTex;
+    if (GL_RGB == format)
+    {
+        if (cinfo.out_color_space == JCS_GRAYSCALE)
+        {
+            PRINT_RED("Error reading from file " << parFileName);
+            delete newTex;
+            return 0;
+        }
+    }
+    else
+        if (cinfo.out_color_space != JCS_GRAYSCALE)
+        {
+            PRINT_RED("Error reading from file " << parFileName);
+            delete newTex;
+            return 0;
+        }
 
-	}
+    jpeg_start_decompress (&cinfo);
 
-	// calculate the size (assuming 24 bits or 3 bytes per pixel).
-	size = newTex->w * newTex->l * 3;
-
-	// read the planes
-	if (((unsigned long)fread(&planes, 2, 1, file)) != 1) 
-	{
-		PRINT_RED("Erreur de lecture des plans de l'image "<<parFileName);
-		delete newTex;
-
-		return 0;
-	}
-
-	if (planes != 1) 
-	{
-		printf("Planes from %s is not 1: %u\n", parFileName.c_str(), planes);
-		delete newTex;
-
-		return 0;
-	}
-
-	// read the bpp
-	if ((i = (unsigned long)fread(&bpp, 2, 1, file)) != 1) 
-	{
-		printf("Error reading bpp from %s.\n", parFileName.c_str());
-		delete newTex;
-
-		return 0;
-	}
-
-	if (bpp != 24) {
-		printf("Bpp from %s is not 24: %u\n", parFileName.c_str(), bpp);
-		delete newTex;
-
-		return 0;
-	}
-
-	// seek past the rest of the bitmap header.
-	fseek(file, 24, SEEK_CUR);
-
-	// read the data. 
-	newTex->content = (GLubyte *) malloc(size);
-	if (newTex->content == NULL) {
-		printf("Error allocating memory for color-corrected newTex data");
-		delete newTex;
-		return 0;
-	}
-
-	if ((i = (unsigned long)fread(newTex->content, size, 1, file)) != 1) 
-	{
-		printf("Error reading newTex data from %s.\n", parFileName.c_str());
-		free(newTex->content);
-		delete newTex;
-		return 0;
-	}
-
-	for (i=0;i<size;i+=3) 
-	{
-		temp = newTex->content[i];
-		newTex->content[i] = newTex->content[i+2];
-		newTex->content[i+2] = temp;
-	}
+    while (cinfo.output_scanline < cinfo.output_height)
+    {
+        line = newTex->content + (GL_RGB == format ? 3 * size : size) * cinfo.output_scanline;
+        jpeg_read_scanlines (&cinfo, &line, 1);
+    }
+    jpeg_finish_decompress (&cinfo);
+    jpeg_destroy_decompress (&cinfo);
 
     glGenTextures(1, &newTex->id);
     glBindTexture(GL_TEXTURE_2D, newTex->id);
@@ -141,12 +97,6 @@ const Texture* ResourceManager::LoadTexture(const std::string& parFileName)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glBindTexture(GL_TEXTURE_2D, 0);
-
-
-	//GLint tex0 = glGetUniformLocation(Renderer::Instance().GetComputeProgID(), concatenate("listTex",FTexIndex).c_str());
-	//glActiveTexture(GL_TEXTURE0+ FTexIndex + 1);
-	//glBindTexture(GL_TEXTURE_2D, newTex->id);
-	//glUniform1i(tex0, FTexIndex + 1);
 	FTexIndex++;
 	return newTex;
 }
