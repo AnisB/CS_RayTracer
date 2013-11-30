@@ -15,6 +15,16 @@ enum TypePrimitive
 
 struct vec2
 {
+    vec2()
+    {
+      u = 0.0;
+      v = 0.0;
+    }
+    vec2(float parU, float parV)
+    {
+      u = parU;
+      v = parV;
+    }
     float u;
     float v;
 };

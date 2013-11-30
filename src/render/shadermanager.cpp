@@ -267,26 +267,26 @@ GLuint ShaderManager::CreateTexTriangle(const std::vector<Triangle>& parValue)
 		triangleData[index*18+1] = TO_GLSL_UNIT(triangle->p0.y); 
 		triangleData[index*18+2] = TO_GLSL_UNIT(triangle->p0.z);
 		
-		triangleData[index*18+3] = TO_GLSL_UNIT(triangle->uv0.u); 
-		triangleData[index*18+4] = TO_GLSL_UNIT(triangle->uv0.v);	
+		triangleData[index*18+3] = triangle->uv0.u; 
+		triangleData[index*18+4] = triangle->uv0.v;	
 			
 		triangleData[index*18+5] = TO_GLSL_UNIT(triangle->p1.x);
 		triangleData[index*18+6] = TO_GLSL_UNIT(triangle->p1.y); 
 		triangleData[index*18+7] = TO_GLSL_UNIT(triangle->p1.z);
 		
-		triangleData[index*18+8] = TO_GLSL_UNIT(triangle->uv1.u); 
-		triangleData[index*18+9] = TO_GLSL_UNIT(triangle->uv1.v);
+		triangleData[index*18+8] = triangle->uv1.u; 
+		triangleData[index*18+9] = triangle->uv1.v;
 		
 		triangleData[index*18+10] = TO_GLSL_UNIT(triangle->p2.x);
 		triangleData[index*18+11] = TO_GLSL_UNIT(triangle->p2.y); 
 		triangleData[index*18+12] = TO_GLSL_UNIT(triangle->p2.z);
 		
-		triangleData[index*18+13] = TO_GLSL_UNIT(triangle->uv2.u); 
-		triangleData[index*18+14] = TO_GLSL_UNIT(triangle->uv2.v);	
+		triangleData[index*18+13] = triangle->uv2.u; 
+		triangleData[index*18+14] = triangle->uv2.v;	
 		
-		triangleData[index*18+15] = TO_GLSL_UNIT(triangle->normale.x);
-		triangleData[index*18+16] = TO_GLSL_UNIT(triangle->normale.y); 
-		triangleData[index*18+17] = TO_GLSL_UNIT(triangle->normale.z);
+		triangleData[index*18+15] = triangle->normale.x;
+		triangleData[index*18+16] = triangle->normale.y; 
+		triangleData[index*18+17] = triangle->normale.z;
 		PRINT_ORANGE("First "<<triangleData[index*18+0]<<" "<<triangleData[index*18+1]<<" "<<triangleData[index*18+2]);
 		index++;		
 	}

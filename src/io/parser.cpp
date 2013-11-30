@@ -213,6 +213,23 @@ Scene* Parser::GetSceneFromFile(std::string filename)
                             break;
                         }
                     }
+                    else if( STRING_CHECKFIND( buffer, "uv:" ) )
+                    {
+                        int PtIdx;
+                        sscanf( buffer.c_str(), "%s %i %f %f", line, &PtIdx, &Val0, &Val1 );
+                        switch(PtIdx)
+                        {
+                            case 0:
+			      triangle.uv0 = vec2(Val0,Val1);
+			      break;
+			    case 1:
+			      triangle.uv1 = vec2(Val0,Val1);
+			      break;
+			    case 2:
+			      triangle.uv2 = vec2(Val0,Val1);
+			      break;
+                        }
+                    }
 
                     break;
 
