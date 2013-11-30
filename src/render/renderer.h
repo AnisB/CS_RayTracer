@@ -60,6 +60,7 @@ class Renderer : public Singleton<Renderer>
 		GLuint FComputeShader;
 		GLuint FRenderTexture;
 		GLuint FTriangleTex;
+		GLuint FNoeudTex;
 		
 		bool FFoward;
 		bool FBackward;

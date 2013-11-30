@@ -70,7 +70,12 @@ void Octree::build(int cur_node_id, float xmin,float ymin,float zmin,float xmax,
 {
 	
 	// init
-	std::vector<int> objects_id;
+	//std::vector<int> objects_id;
+	//int objects_id[10]; 
+	for(int i=0;i<10;i++){
+		m_nodes[cur_node_id].objects_id[i] = -1;
+	}
+	int objects_id_counter = 0;
 	int local_objects_number = 0; 
 	//std::cout << "cur_node_id " << cur_node_id << std::endl;
 	//std::cout << "niveau " << m_level << std::endl;
@@ -80,7 +85,7 @@ void Octree::build(int cur_node_id, float xmin,float ymin,float zmin,float xmax,
 	for (int i =0; i< m_scene->m_triangles.size(); i++){
 		if ( isTriangleInNode(m_scene->m_triangles[i],xmin,ymin,zmin,xmax,ymax,zmax)){
 			local_objects_number++;
-			objects_id.push_back(i);
+			m_nodes[cur_node_id].objects_id[objects_id_counter] = i;objects_id_counter++;
 		}
 	}
 	
@@ -154,7 +159,7 @@ void Octree::build(int cur_node_id, float xmin,float ymin,float zmin,float xmax,
 	else { 
 		//std::cout << "le noeud est terminal" << std::endl; // NOEUD TERMINAL
 		for (int i = 0; i<8;i++) {m_nodes[cur_node_id].child[i] = -1;} // enfants a -1
-		m_nodes[cur_node_id].objects_id = objects_id;
+		//m_nodes[cur_node_id].objects_id = objects_id;
 		return;
 	}
     

@@ -14,6 +14,7 @@ class Octree
     ~Octree(); 
     void build(int node_id, float xmin,float ymin,float zmin,float xmax,float ymax,float zmax);
     bool isTriangleInNode(Triangle triangle,float xmin,float ymin,float zmin,float xmax,float ymax,float zmax);
+	std::vector<Node> m_nodes;
  private :
  	Node*	m_root;
 	float m_xmin;
@@ -30,7 +31,7 @@ class Octree
 	int 	m_objects_max;
 	int m_level;
 	int m_max_level;
-	std::vector<Node> m_nodes;
+
 	int	m_cur_node_id;
 	Scene* m_scene;
 };

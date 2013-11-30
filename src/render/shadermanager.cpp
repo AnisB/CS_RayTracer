@@ -304,6 +304,63 @@ GLuint ShaderManager::CreateTexTriangle(const std::vector<Triangle>& parValue)
 	return triangleTex;
 }
 
+
+GLuint ShaderManager::CreateTexNoeud(const std::vector<Node>& parValue)
+{
+	PRINT_ORANGE("CreateTexNoeud" );
+	GLuint noeudTex;
+	GLint NODE_STRIDE = 24;  // 24 HARDCODED
+	GLfloat * noeudData = new GLfloat[NODE_STRIDE*parValue.size()];
+	int index = 0;
+	foreach(node, parValue)
+	{
+		// childs
+		noeudData[index*NODE_STRIDE+0] = TO_GLSL_UNIT(node->child[0]);
+		noeudData[index*NODE_STRIDE+1] = TO_GLSL_UNIT(node->child[1]);
+		noeudData[index*NODE_STRIDE+2] = TO_GLSL_UNIT(node->child[2]);
+		noeudData[index*NODE_STRIDE+3] = TO_GLSL_UNIT(node->child[3]);
+		noeudData[index*NODE_STRIDE+4] = TO_GLSL_UNIT(node->child[4]);
+		noeudData[index*NODE_STRIDE+5] = TO_GLSL_UNIT(node->child[5]);
+		noeudData[index*NODE_STRIDE+6] = TO_GLSL_UNIT(node->child[6]);
+		noeudData[index*NODE_STRIDE+7] = TO_GLSL_UNIT(node->child[7]);
+
+		// coords
+		noeudData[index*NODE_STRIDE+8] = TO_GLSL_UNIT(node->coords[0]);
+		noeudData[index*NODE_STRIDE+9] = TO_GLSL_UNIT(node->coords[1]);
+		noeudData[index*NODE_STRIDE+10] = TO_GLSL_UNIT(node->coords[2]);
+		noeudData[index*NODE_STRIDE+11] = TO_GLSL_UNIT(node->coords[3]);
+		noeudData[index*NODE_STRIDE+12] = TO_GLSL_UNIT(node->coords[4]);
+		noeudData[index*NODE_STRIDE+13] = TO_GLSL_UNIT(node->coords[5]);
+		
+		// objects_ids
+		noeudData[index*NODE_STRIDE+14] = TO_GLSL_UNIT(node->objects_id[0]);
+		noeudData[index*NODE_STRIDE+15] = TO_GLSL_UNIT(node->objects_id[1]);
+		noeudData[index*NODE_STRIDE+16] = TO_GLSL_UNIT(node->objects_id[2]);
+		noeudData[index*NODE_STRIDE+17] = TO_GLSL_UNIT(node->objects_id[3]);
+		noeudData[index*NODE_STRIDE+18] = TO_GLSL_UNIT(node->objects_id[4]);
+		noeudData[index*NODE_STRIDE+19] = TO_GLSL_UNIT(node->objects_id[5]);
+		noeudData[index*NODE_STRIDE+20] = TO_GLSL_UNIT(node->objects_id[6]);
+		noeudData[index*NODE_STRIDE+21] = TO_GLSL_UNIT(node->objects_id[7]);
+		noeudData[index*NODE_STRIDE+22] = TO_GLSL_UNIT(node->objects_id[8]);
+		noeudData[index*NODE_STRIDE+23] = TO_GLSL_UNIT(node->objects_id[9]);
+
+     	
+		index++;		
+	}
+	
+	glGenTextures(1, &noeudTex);
+	glBindTexture (GL_TEXTURE_2D, noeudTex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, float(NODE_STRIDE), parValue.size(),0, GL_RED, GL_FLOAT, noeudData);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glBindTexture (GL_TEXTURE_2D, 0);
+	
+	delete [] noeudData;
+	return noeudTex;
+}
+
 void ShaderManager::InjectPlan(GLuint parShaderID, const Plan& parValue, int parIndex)
 {
 	BindProgram(parShaderID);

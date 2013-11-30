@@ -213,6 +213,7 @@ void Renderer::InitShaders()
 	//Création de la texture
 	FRenderTexture = ShaderManager::Instance().GenerateTexture(512,512);
 	FTriangleTex = ShaderManager::Instance().CreateTexTriangle(FScene->m_triangles);
+	FNoeudTex = ShaderManager::Instance().CreateTexNoeud(octree->m_nodes);
 	//Mappage de la texturepour dessin
 	ShaderManager::Instance().InjectTex(FPipelineShaderID,FRenderTexture,"bling",0);
 	ShaderManager::Instance().InjectTex(FPipelineShaderID,FTriangleTex,"tex2",1);
@@ -220,6 +221,7 @@ void Renderer::InitShaders()
 	//Mappage de la texture pour écriture
 	ShaderManager::Instance().InjectTex(FComputeShader,FRenderTexture,"renderCanvas",0);
 	ShaderManager::Instance().InjectTex(FComputeShader,FTriangleTex,"listTriangles",1);
+	ShaderManager::Instance().InjectTex(FComputeShader,FNoeudTex,"listNoeuds",4);
 	#endif
 }
 

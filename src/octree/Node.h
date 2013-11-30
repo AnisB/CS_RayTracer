@@ -11,7 +11,8 @@ struct Node {
 	//	int[3]	object_id; // objets a afficher
 	int	child[8]; // enfants
 	float	coords[6]; // xmin,ymin,zmin,xmax,ymax,zmax
-	std::vector<int> objects_id; // objets a afficher 10?
+	//std::vector<int> objects_id; // objets a afficher 10?
+	int objects_id[10]; // objets a afficher 10?
 
 	//int[10] objects_id; // objets a afficher
 };

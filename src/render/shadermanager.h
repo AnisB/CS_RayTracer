@@ -7,6 +7,7 @@
 #include "common/singleton.h"
 #include <primitives/primitive.h>
 #include "math/vector3.h"
+#include "octree/Node.h"
 
 
 class ShaderManager : public Singleton<ShaderManager>
@@ -22,6 +23,7 @@ class ShaderManager : public Singleton<ShaderManager>
 
 		GLuint GenerateTexture(size_t parW, size_t parH);
 		GLuint CreateTexTriangle(const std::vector<Triangle>& parValue);
+		GLuint CreateTexNoeud(const std::vector<Node>& parValue);
 		
 		void InjectTex(GLuint parShaderID, size_t parIndex, const std::string& parName, GLuint parOffset);
 		
