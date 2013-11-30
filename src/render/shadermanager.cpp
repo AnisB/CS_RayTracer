@@ -287,13 +287,14 @@ GLuint ShaderManager::CreateTexTriangle(const std::vector<Triangle>& parValue)
 		triangleData[index*18+15] = triangle->normale.x;
 		triangleData[index*18+16] = triangle->normale.y; 
 		triangleData[index*18+17] = triangle->normale.z;
-		PRINT_ORANGE("First "<<triangleData[index*18+0]<<" "<<triangleData[index*18+1]<<" "<<triangleData[index*18+2]);
+		//PRINT_ORANGE("First "<<triangleData[index*18+0]<<" "<<triangleData[index*18+1]<<" "<<triangleData[index*18+2]);
+
 		index++;		
 	}
 	
 	glGenTextures(1, &triangleTex);
 	glBindTexture (GL_TEXTURE_2D, triangleTex);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, 18.0, parValue.size(),0, GL_RED, GL_FLOAT, triangleData);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, 18, parValue.size(),0, GL_RED, GL_FLOAT, triangleData);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -373,13 +374,13 @@ GLuint ShaderManager::CreateTexPrimitive(const std::vector<Primitive>& parValue,
 		primData[index*3+1] = (prim->index/((float)parValue.size()-1)); 
 		primData[index*3+2] = (prim->materiau/((float)parNbMateriau -1));
 
-		PRINT_ORANGE("Prim "<<primData[index*3+0]<<" "<<primData[index*3+1]<<" "<<primData[index*3+2]);
+		//PRINT_ORANGE("Prim "<<primData[index*3+0]<<" "<<primData[index*3+1]<<" "<<primData[index*3+2]);
 		index++;		
 	}
 	
 	glGenTextures(1, &primTex);
 	glBindTexture (GL_TEXTURE_2D, primTex);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, 3.0, parValue.size(),0, GL_RED, GL_FLOAT, primData);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, 3, parValue.size(),0, GL_RED, GL_FLOAT, primData);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -394,28 +395,33 @@ GLuint ShaderManager::CreateTexPrimitive(const std::vector<Primitive>& parValue,
 GLuint ShaderManager::CreateTexMat(const std::vector<Materiau>& parValue)
 {
 	GLuint matTex;
-	GLfloat * matData = new GLfloat[8*parValue.size()];
+	GLfloat * matData = new GLfloat[11*parValue.size()];
 	int index = 0;
 	foreach(mat, parValue)
 	{
-		matData[index*8+0] = (mat->color.x);
-		matData[index*8+1] = (mat->color.y);
-		matData[index*8+2] = (mat->color.z);
+		matData[index*11+0] = (mat->color.x);
+		matData[index*11+1] = (mat->color.y);
+		matData[index*11+2] = (mat->color.z);
 
-		matData[index*8+3] = (mat->coeffReflexion);
-		matData[index*8+4] = (mat->coeffRefraction);
-		matData[index*8+5] = (mat->indiceRefraction);
+		matData[index*11+3] = (mat->coeffReflexion);
+		matData[index*11+4] = (mat->coeffRefraction);
+		matData[index*11+5] = (mat->indiceRefraction);
 		
-		matData[index*8+6] = (mat->diff);
-		matData[index*8+7] = (mat->spec);		
+		matData[index*11+6] = (mat->diff);
+		matData[index*11+7] = (mat->spec);		
 		
-		PRINT_ORANGE("Mat "<<matData[index*8+0]<<" "<<matData[index*8+1]<<" "<<matData[index*8+2]<<" "<<matData[index*8+3]);
+		matData[index*11+8] = (mat->texAlbedo);
+		matData[index*11+9] = (mat->texRough);
+		matData[index*11+10] = (mat->texSpec);
+		
+		
+		//PRINT_ORANGE("Mat "<<matData[index*11+8]<<" "<<matData[index*11+9]<<" "<<matData[index*11+10]);
 		index++;		
 	}
 	
 	glGenTextures(1, &matTex);
 	glBindTexture (GL_TEXTURE_2D, matTex);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, 8.0, parValue.size(),0, GL_RED, GL_FLOAT, matData);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, 11, parValue.size(),0, GL_RED, GL_FLOAT, matData);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);

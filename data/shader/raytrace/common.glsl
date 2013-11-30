@@ -118,7 +118,9 @@ struct Materiau
 	float diff;
 	float spec;
 	int texAlbedo;
+	int texSpecular;
 	int texRough;
+
 };
 
 // Primitive gobale
@@ -140,7 +142,7 @@ uniform sampler2D listTriangles;
 uniform sampler2D listPrimitives;
 uniform sampler2D listMateriaux;
 
-//uniform	sampler2D textures[NB_TEX];
+uniform	sampler2D listTex[NB_TEX];
 
 uniform	Quadrique listQuadrique[NB_QUAD];
 uniform	Plan listPlan[NB_PLAN];
@@ -216,10 +218,17 @@ Materiau getMateriauByIndex(int parMateriauIndex)
 	float matIndex = float(parMateriauIndex)/(float(NB_MAT)-1);
 	vec4 colorMat;
     colorMat.x = texture(listMateriaux, vec2(0.0,matIndex)).r;
-    colorMat.y = texture(listMateriaux,vec2(1.0/7.0,matIndex)).r;
+    colorMat.y = texture(listMateriaux,vec2(1.0/10.0,matIndex)).r;
     colorMat.z = texture(listMateriaux, vec2(2.0/7.0,matIndex)).r;
     colorMat.w = 1.0;
-	unMat.color = colorMat;
+    unMat.color = colorMat;
+    float albeFloat = texture(listMateriaux,vec2(0.8,matIndex)).r;
+    float roughFloat = texture(listMateriaux, vec2(0.9,matIndex)).r;
+    float specFloat = texture(listMateriaux, vec2(1.0,matIndex)).r;
+    unMat.texAlbedo = int( albeFloat*2.0);
+    unMat.texSpecular = int( albeFloat*2.0);
+    unMat.texRough = int( albeFloat*2.0);
+	
     
     return unMat;
 }

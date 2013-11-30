@@ -30,10 +30,11 @@ vec4 CouleurPixel@NB_ITER@(Ray parRayon)
 		vec4 finalColor = vec4(1.0);
 		int primitives[NB_PRIM] = getPrimitives(parRayon);
 		Intersection intersect = IntersectWithScene(parRayon,primitives);
+		//finalColor = listTex[getMateriauByIndex(getPrimitiveByIndex(intersect.obj).materiau).texAlbedo];
 		finalColor = getMateriauByIndex(getPrimitiveByIndex(intersect.obj).materiau).color;
 		//finalColor = vec4(intersect.uv.x,intersect.uv.y,0.0,1.0);
-		//finalColor = vec4(getMateriauByIndex(0).color);
-		//finalColor *=SecondRayTrace(intersect);
+		finalColor *=SecondRayTrace(intersect);
+
 		//finalColor = computeBRDF(parRayon, intersect);
 		
 		// Commente a cause du "recursive call" a CouleurPixel

@@ -25,9 +25,23 @@ struct vec2
       u = parU;
       v = parV;
     }
+	void operator=(const vec2& parVec2)
+	{
+		u = parVec2.u;
+		v = parVec2.v;
+	}
     float u;
     float v;
 };
+
+
+struct indexList
+{
+    int p0;
+    int p1;
+    int p2;
+};
+
 struct Triangle
 {
     Vector3 p0;
@@ -95,8 +109,8 @@ struct Materiau
     float diff;
     float spec;
     int texAlbedo;
-    int texSpec;
     int texRough;
+    int texSpec;
 };
 
 std::ostream& operator<< (std::ostream& stream, const Materiau& parMat);

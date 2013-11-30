@@ -7,6 +7,7 @@
 #include "defines.h"
 #include "common/singleton.h"
 #include "octree/Octree.h"
+#include <render/resourcemanager.h>
 
 class Renderer : public Singleton<Renderer>
 {
@@ -50,6 +51,7 @@ class Renderer : public Singleton<Renderer>
 		
 		// Octree;
 		Octree* octree;
+		ObjFile * FEarModel;
 		
 		// RenderToQuad
 		GLuint FVertexArrayID;

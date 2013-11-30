@@ -1,6 +1,8 @@
 #include "resourcemanager.h"
 
 #include <common/defines.h>
+#include <common/helper.h>
+
 #include <render/helper.h>
 #include <render/renderer.h>
 
@@ -151,10 +153,17 @@ const Texture* ResourceManager::LoadTexture(const std::string& parFileName)
 
 ObjFile* ResourceManager::LoadModel(const std::string& parFileName, const std::string& parAlbTexFileName, const std::string& parRugTexFileName, const std::string& parSpecTexFileName )
 {
+	// Liste des points
 	std::vector<Vector3> vertices;
+	// Liste des normales par triangle
 	std::vector<Vector3> normales;
+	// Gestion des triangles
+	std::vector<indexList> indexes;
+	std::vector<indexList> uvList;
+	
+	// Liste des coordonnées de mappage
 	std::vector<vec2> mapping;
-	std::vector<short> index;
+	
 	fstream in;
 	in.open(parFileName.c_str(), std::fstream::in);
   	if (!in) 
@@ -179,20 +188,40 @@ ObjFile* ResourceManager::LoadModel(const std::string& parFileName, const std::s
 	      s >> v.z; 
 	      vertices.push_back(v);
 	    }
-	    /*  
 	    else if (line.substr(0,2) == "f ") 
 	    {
 	      stringstream s(line.substr(2));
-	      short a,b,c;
-	      s >> a; s >> b; s >> c;
-	      a--; 
-	      b--; 
-	      c--;
-	      index.push_back(a); 
-	      index.push_back(b); 
-	      index.push_back(c);
+	      
+	      std::string a,b,c;
+	      std::vector<std::string> lineSplitted = split(line,' ');
+	      a = lineSplitted[1];
+	      b = lineSplitted[2];
+	      c = lineSplitted[3];
+	      std::vector<std::string> index1 = split(a,'/');
+	      std::vector<std::string> index2 = split(b,'/');
+	      std::vector<std::string> index3 = split(c,'/');
+	      indexList triangleIndex;
+	      triangleIndex.p0 = convertToInt(index1[0]);
+	      triangleIndex.p1 = convertToInt(index2[0]);
+	      triangleIndex.p2 = convertToInt(index3[0]);
+		  triangleIndex.p0--;
+		  triangleIndex.p1--;
+		  triangleIndex.p2--;
+		  indexes.push_back(triangleIndex);
+		  indexList uvindex;
+  	      uvindex.p0 = convertToInt(index1[1]);
+	      uvindex.p1 = convertToInt(index2[1]);
+	      uvindex.p2 = convertToInt(index3[1]);
+		  uvindex.p0--;
+		  uvindex.p1--;
+		  uvindex.p2--;
+		  uvList.push_back(uvindex);
+		  
+	      PRINT_ORANGE("Indexes "<<triangleIndex.p0<<" "<<triangleIndex.p1<<" "<<triangleIndex.p2);
+	      //index.push_back(a); 
+	      //index.push_back(b); 
+	      //index.push_back(c);
 	    }
-	    */
 	    else if(line[0] == 'v' && line[1] == 't') 
 	    { 	
 			istringstream s(line.substr(2));
@@ -226,25 +255,25 @@ ObjFile* ResourceManager::LoadModel(const std::string& parFileName, const std::s
 			// Il fuat les calculer
 		}
  	}
-	for (int i = 0; i < vertices.size(); i+=3) 
+	for (int i = 0; i < indexes.size(); i+=1) 
 	{
 		Triangle newTriangle;
-		// Coordonnées
-		//newTriangle.p0 = vertices[index[i]];
-		//newTriangle.p1 = vertices[index[i+1]];
-		//newTriangle.p2 = vertices[index[i+2]];
-		newTriangle.p0 = vertices[i];
-		newTriangle.p1 = vertices[i+1];
-		newTriangle.p2 = vertices[i+2];	
-		// Mappage
-		//newTriangle.uv0 = mapping[i];
-		//newTriangle.uv1 = mapping[i+1];
-		//newTriangle.uv2 = mapping[i+2];
-		// Normale
-		//newTriangle.normale = normales[i/3];
+		newTriangle.p0 = vertices[indexes[i].p0];
+		newTriangle.p1 = vertices[indexes[i].p1];
+		newTriangle.p2 = vertices[indexes[i].p2];
+		newTriangle.uv0 = mapping[uvList[i].p0];
+		newTriangle.uv1 = mapping[uvList[i].p1];
+		newTriangle.uv2 = mapping[uvList[i].p2];	
  		newModel->listTriangle.push_back(newTriangle);
 	}
-	
+	foreach(triangle,newModel->listTriangle)
+	{
+		newModel->material.color = Vector4(0.2,0.3,0.8,1.0);
+		newModel->material.indiceRefraction = 1.44;
+		newModel->material.texAlbedo = 0;
+		newModel->material.texRough = 1;
+		newModel->material.texSpec = 2;
+	}
 	newModel->albTex = LoadTexture(parAlbTexFileName);
 	newModel->rugTex = LoadTexture(parRugTexFileName);
 	newModel->specTex = LoadTexture(parSpecTexFileName);

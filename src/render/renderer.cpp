@@ -5,7 +5,6 @@
 #include "helper.h"
 
 #include <common/defines.h>
-#include <render/resourcemanager.h>
 
 
 static void error_callback(int error, const char* description)
@@ -165,7 +164,7 @@ bool Renderer::Init()
     LoadScene("data/scenes/scene_test.dat");
     
     // Octree
-    octree = new Octree(FScene);
+    //octree = new Octree(FScene);
     
 	InitShaders();
 	//Creating the render to quad
@@ -208,14 +207,14 @@ void Renderer::InitShaders()
 
 	#ifndef SIMPLE
 	//Création du shader de calcul
-	FComputeShader = ShaderManager::Instance().CreateProgramC(4,FScene->m_triangles.size(),1,1,1,FScene->m_primitives.size());
+	FComputeShader = ShaderManager::Instance().CreateProgramC(3,FScene->m_triangles.size(),1,1,1,FScene->m_primitives.size());
 	#endif
 	//Création des texture
 	FRenderTexture = ShaderManager::Instance().GenerateTexture(512,512);
 	FTriangleTex = ShaderManager::Instance().CreateTexTriangle(FScene->m_triangles);
 	FPrimitiveTex = ShaderManager::Instance().CreateTexPrimitive(FScene->m_primitives, FScene->m_materiaux.size());
 	FMateriauTex = ShaderManager::Instance().CreateTexMat(FScene->m_materiaux);
-	FNoeudTex = ShaderManager::Instance().CreateTexNoeud(octree->m_nodes);
+	//FNoeudTex = ShaderManager::Instance().CreateTexNoeud(octree->m_nodes);
 
 	//Mappage de la texturepour dessin
 	ShaderManager::Instance().InjectTex(FPipelineShaderID,FRenderTexture,"bling",0);
@@ -225,7 +224,10 @@ void Renderer::InitShaders()
 	ShaderManager::Instance().InjectTex(FComputeShader,FTriangleTex,"listTriangles",1);
 	ShaderManager::Instance().InjectTex(FComputeShader,FPrimitiveTex,"listPrimitives",2);
 	ShaderManager::Instance().InjectTex(FComputeShader,FMateriauTex,"listMateriaux",3);
-	ShaderManager::Instance().InjectTex(FComputeShader,FNoeudTex,"listNoeuds",4);
+	//ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->albTex->id,"listTex[0]",4);
+	//ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->rugTex->id,"listTex[1]",5);
+	//ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->specTex->id,"listTex[2]",6);
+	//ShaderManager::Instance().InjectTex(FComputeShader,FNoeudTex,"listNoeuds",4);
 	#endif
 }
 
@@ -296,30 +298,18 @@ void Renderer::LoadScene(const std::string& parFilename)
     {
         PRINT_RED("Fichier de scene " << parFilename << " non trouve.");
     }
-    /*
-    ObjFile * newModel = ResourceManager::Instance().LoadModel("data/model/final/ear.obj");
-    foreach(triangle, newModel->listTriangle)
+    
+    FEarModel = ResourceManager::Instance().LoadModel("data/model/final/ear.obj", "data/model/final/diff.jpg","data/model/final/rugo.jpg", "data/model/final/spec.jpg");
+    
+    foreach(triangle, FEarModel->listTriangle)
     {
-    	FScene->m_triangles.push_back(*triangle);
+    	FScene->AddTriangle(*triangle, FEarModel->material);
     }
-    */
 }
 
 void Renderer::InjectScene()
 {
 	int index = 0;
-    /*
-    index = 0;
-    foreach(plan, FScene->m_planes)
-    {
-        ShaderManager::Instance().InjectPlan(FComputeShader, *plan, index++);
-    }
-    index = 0;
-    foreach(quadric, FScene->m_quadrics)
-    {
-        ShaderManager::Instance().InjectQuadrique(FComputeShader, *quadric, index++);
-    }
-    */
 	index = 0;
     foreach(light, FScene->m_lights)
     {
