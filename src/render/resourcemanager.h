@@ -22,6 +22,9 @@ struct ObjFile
 {
 	std::list<Triangle> listTriangle;
 	Materiau material;
+	const Texture* albTex;
+	const Texture* rugTex;
+	const Texture* specTex;
 };
 
 class ResourceManager: public Singleton<ResourceManager>
@@ -31,7 +34,7 @@ public:
 	~ResourceManager();
 
 	const Texture* LoadTexture(const std::string& parFileName);
-	ObjFile* LoadModel(const std::string& parFileName);
+	ObjFile* LoadModel(const std::string& parFileName, const std::string& parAlbTexFileName, const std::string& parRugTexFileName, const std::string& parSpecTexFileName );
 
 protected:
 	std::map<std::string, Texture*> FTextures;

@@ -31,13 +31,21 @@ Intersection IntersectWithTriangle(Ray parRay, Triangle parTheTriangle)
     if(intersect.distance > EPSILON)
         return intersect;         
     intersect.distance = abs(intersect.distance);
-    vec3 v1 = I - parTheTriangle.p0;
-    vec3 v2 = parTheTriangle.p1 - parTheTriangle.p0;
-    float uTex = dot(v1, v2);
-    v2 = parTheTriangle.p2 - parTheTriangle.p0;
-    float vTex = dot(v1, v2);
+
+    //vec3 v1 = I - parTheTriangle.p0;
+    //vec3 v2 = parTheTriangle.p1 - parTheTriangle.p0;
+    //float uTex = dot(v1, v2);
+    //v2 = parTheTriangle.p2 - parTheTriangle.p0;
+    //float vTex = dot(v1, v2);
+
+    vec2 uv0 = parTheTriangle.uv0;
+    vec2 uv1 = parTheTriangle.uv1;
+    vec2 uv2 = parTheTriangle.uv2;
+
+    vec2 uvI = u*(uv1-uv0)+v*(uv2-uv0)+uv0;
+
     intersect.point = I;
-    intersect.uv = vec2(uTex, vTex);
+    intersect.uv = uvI;
     intersect.isValid = true;
     if(dot(parRay.direction, parTheTriangle.normale) > 0)
         intersect.normal = -parTheTriangle.normale;

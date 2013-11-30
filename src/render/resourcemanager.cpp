@@ -55,7 +55,7 @@ const Texture* ResourceManager::LoadTexture(const std::string& parFileName)
 	// read the width
 	if ((i = (unsigned long)fread(&newTex->w, 4, 1, file)) != 1) 
 	{
-		PRINT_RED("Erreur de lecture de la largeeur de l'image "<<parFileName);
+		PRINT_RED("Erreur de lecture de la largeur de l'image "<<parFileName);
 		delete newTex;
 
 		return 0;
@@ -149,7 +149,7 @@ const Texture* ResourceManager::LoadTexture(const std::string& parFileName)
 	return newTex;
 }
 
-ObjFile* ResourceManager::LoadModel(const std::string& parFileName)
+ObjFile* ResourceManager::LoadModel(const std::string& parFileName, const std::string& parAlbTexFileName, const std::string& parRugTexFileName, const std::string& parSpecTexFileName )
 {
 	std::vector<Vector3> vertices;
 	std::vector<Vector3> normales;
@@ -244,5 +244,10 @@ ObjFile* ResourceManager::LoadModel(const std::string& parFileName)
 		//newTriangle.normale = normales[i/3];
  		newModel->listTriangle.push_back(newTriangle);
 	}
+	
+	newModel->albTex = LoadTexture(parAlbTexFileName);
+	newModel->rugTex = LoadTexture(parRugTexFileName);
+	newModel->specTex = LoadTexture(parSpecTexFileName);
+	
 	return newModel;
 }

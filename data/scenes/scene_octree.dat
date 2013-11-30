@@ -3,8 +3,11 @@
 * --- triangle a gauche ---
 Poly: polygon_1
         point: 0 10.0  10.0 -80.0
+	uv: 0 0.0 0.0
         point: 1 10.0   0.0 -80.0
+	uv: 1 0.2 0.4
         point: 2  0.0  10.0 -80.0
+	uv: 2 1.0 1.0
         color:  0.1 1.0 0.1
         reflect: 0.8
         refract: 0.2
