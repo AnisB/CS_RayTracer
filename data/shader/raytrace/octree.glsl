@@ -240,14 +240,14 @@ int[NB_PRIM] proc_subtree (double tx0, double ty0, double tz0, double tx1, doubl
 
 int[NB_PRIM] getPrimitives(Ray parRay)
 {
-	int listePrim[NB_PRIM];
+	int listePrims[NB_PRIM];
 
      if (OCTREE_ACTIVE){
-		listePrim = ray_paramter(parRay);
+		listePrims = ray_paramter(parRay);
 	}
 	else {
 		for(int i = 0; i < NB_PRIM; i++)
-			listePrim[i] = i;
+			listePrims[i] = i;
 	}
-	return  listePrim;
+	return  listePrims;
 }

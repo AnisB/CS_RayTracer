@@ -2,10 +2,12 @@
 #define SHADER_MANAGER
 
 #include <string>
+#include <vector>
 #include "defines.h"
 #include "common/singleton.h"
 #include <primitives/primitive.h>
 #include "math/vector3.h"
+#include "octree/Node.h"
 
 
 class ShaderManager : public Singleton<ShaderManager>
@@ -20,12 +22,19 @@ class ShaderManager : public Singleton<ShaderManager>
 
 
 		GLuint GenerateTexture(size_t parW, size_t parH);
-		void InjectTex(GLuint parShaderID, size_t parIndex, const std::string& parName);
+		GLuint CreateTexTriangle(const std::vector<Triangle>& parValue);
+		GLuint CreateTexNoeud(const std::vector<Node>& parValue);
+		GLuint CreateTexPrimitive(const std::vector<Primitive>& parValue, int parNbMat);
+		GLuint CreateTexMat(const std::vector<Materiau>& parValue);
+		
+		void InjectTex(GLuint parShaderID, size_t parIndex, const std::string& parName, GLuint parOffset);
+		
 		void Injectd(GLuint parShaderID, double parValue, const std::string& parName);
 		void InjectVec3(GLuint parShaderID, const Vector3& parValue, const std::string& parName);
 
 		// Injection de structures
-		void InjectTriangle(GLuint parShaderID, const Triangle& parValue, int parIndex);
+		void InjectTriangle(GLuint parShaderID,const Triangle& parValue, int parIndex);
+		
 		void InjectPlan(GLuint parShaderID, const Plan& parValue, int parIndex);
 		void InjectQuadrique(GLuint parShaderID, const Quadrique& parValue, int parIndex);
 		void InjectMateriau(GLuint parShaderID, const Materiau& parValue, int parIndex);
@@ -34,6 +43,10 @@ class ShaderManager : public Singleton<ShaderManager>
 		
 		void BindTexture(size_t parIndexTex);
 		void UnbindTexture();
+		
+		
+	protected:
+		GLuint FTexture;
   
 
 };

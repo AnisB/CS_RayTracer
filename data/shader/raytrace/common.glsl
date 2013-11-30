@@ -129,14 +129,13 @@ vec4 CouleurPixel(Ray parRayon);
 
 
 uniform sampler2D listTriangles;
+uniform sampler2D listPrimitives;
+uniform sampler2D listMateriaux;
 
 //uniform	sampler2D textures[NB_TEX];
 
 uniform	Quadrique listQuadrique[NB_QUAD];
-uniform	Triangle listTriangle[NB_TRIANGLE];
 uniform	Plan listPlan[NB_PLAN];
-uniform	Primitive listPrim[NB_PRIM];
-uniform	Materiau listMateriau[NB_MAT];
 uniform	Light listLight[NB_LIGHTS];
 
 
@@ -173,3 +172,37 @@ Triangle getTriangleByIndex(int parIndexTriangle)
     return unTriangle;
 }
 
+
+Primitive getPrimitiveByIndex(int parIndexPrim)
+{
+	Primitive unePrim;
+	float primIndex = float(parIndexPrim)/(float(NB_PRIM)-1);
+    float type = texture(listPrimitives, vec2(0.0,primIndex)).r;
+    float index = texture(listPrimitives,vec2(0.5,primIndex)).r;
+    float materiau = texture(listPrimitives, vec2(1.0,primIndex)).r;
+
+    
+    index*=float(NB_PRIM);
+    type*=2.0;
+    materiau*=float(NB_MAT);
+    
+	unePrim.index = int(index);
+	unePrim.type = int(type);
+	unePrim.materiau = int(materiau);
+    return unePrim;
+}
+
+
+Materiau getMateriauByIndex(int parMateriauIndex)
+{
+	Materiau unMat;
+	float matIndex = float(parMateriauIndex)/(float(NB_MAT)-1);
+	vec4 colorMat;
+    colorMat.x = texture(listMateriaux, vec2(0.0,matIndex)).r;
+    colorMat.y = texture(listMateriaux,vec2(1.0/7.0,matIndex)).r;
+    colorMat.z = texture(listMateriaux, vec2(2.0/7.0,matIndex)).r;
+    colorMat.w = 1.0;
+	unMat.color = colorMat;
+    
+    return unMat;
+}

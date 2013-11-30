@@ -210,17 +210,21 @@ void Renderer::InitShaders()
 	//Création du shader de calcul
 	FComputeShader = ShaderManager::Instance().CreateProgramC(4,FScene->m_triangles.size(),1,1,1,FScene->m_primitives.size());
 	#endif
-	//Création de la texture
+	//Création des texture
 	FRenderTexture = ShaderManager::Instance().GenerateTexture(512,512);
 	FTriangleTex = ShaderManager::Instance().CreateTexTriangle(FScene->m_triangles);
+	FPrimitiveTex = ShaderManager::Instance().CreateTexPrimitive(FScene->m_primitives, FScene->m_materiaux.size());
+	FMateriauTex = ShaderManager::Instance().CreateTexMat(FScene->m_materiaux);
 	FNoeudTex = ShaderManager::Instance().CreateTexNoeud(octree->m_nodes);
+
 	//Mappage de la texturepour dessin
 	ShaderManager::Instance().InjectTex(FPipelineShaderID,FRenderTexture,"bling",0);
-	ShaderManager::Instance().InjectTex(FPipelineShaderID,FTriangleTex,"tex2",1);
 	#ifndef SIMPLE
 	//Mappage de la texture pour écriture
 	ShaderManager::Instance().InjectTex(FComputeShader,FRenderTexture,"renderCanvas",0);
 	ShaderManager::Instance().InjectTex(FComputeShader,FTriangleTex,"listTriangles",1);
+	ShaderManager::Instance().InjectTex(FComputeShader,FPrimitiveTex,"listPrimitives",2);
+	ShaderManager::Instance().InjectTex(FComputeShader,FMateriauTex,"listMateriaux",3);
 	ShaderManager::Instance().InjectTex(FComputeShader,FNoeudTex,"listNoeuds",4);
 	#endif
 }
@@ -299,19 +303,11 @@ void Renderer::LoadScene(const std::string& parFilename)
     	FScene->m_triangles.push_back(*triangle);
     }
     */
-    
-    
 }
 
 void Renderer::InjectScene()
 {
 	int index = 0;
-	
-    foreach(triangle, FScene->m_triangles)
-    {
-        ShaderManager::Instance().InjectTriangle(FComputeShader, *triangle, index++);
-    }
-    
     /*
     index = 0;
     foreach(plan, FScene->m_planes)
@@ -328,15 +324,5 @@ void Renderer::InjectScene()
     foreach(light, FScene->m_lights)
     {
         ShaderManager::Instance().InjectLight(FComputeShader, *light, index++);
-    }
-    index = 0;
-    foreach(primitive, FScene->m_primitives)
-    {
-        ShaderManager::Instance().InjectPrimitive(FComputeShader, *primitive, index++);
-    }
-    index = 0;
-    foreach(materiau, FScene->m_materiaux)
-    {
-        ShaderManager::Instance().InjectMateriau(FComputeShader, *materiau, index++);
     }
 }

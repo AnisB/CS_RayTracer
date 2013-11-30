@@ -68,7 +68,8 @@ Intersection IntersectWithScene(in Ray parRay,in int parPrim[NB_PRIM])
         if(intersectCourant.isValid && (!intersectResult.isValid || intersectCourant.distance < intersectResult.distance))
         {
             intersectResult = intersectCourant;
-            intersectResult.obj = listPrim[i].index;
+            intersectResult.obj = i;
+            //intersectResult.obj = getlistPrim[i].index;
         }
     }
     return intersectResult;

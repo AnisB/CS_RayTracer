@@ -208,7 +208,7 @@ GLuint ShaderManager::CreateProgramC(int parMaxRecur, int parNbTriangle, int par
     ss<<"#define NB_QUAD " << convertToString(parNbQuad)<<std::endl;
     ss<<"#define NB_MAT " << convertToString(parNbTriangle)<<std::endl;
     ss<<"#define NB_NOEUD " << convertToString(parNbNoeud)<<std::endl;
-    ss<<"#define NB_PRIM " << convertToString(parNbPrimMax)<<std::endl;
+    ss<<"#define NB_PRIM " << convertToString(parNbTriangle)<<std::endl;
 	ss<<"#define NB_TEX " << convertToString(10)<<std::endl;
 	ss<<"#define NB_LIGHTS " << convertToString(1)<<std::endl;
     computeShader+=ss.str();
@@ -351,6 +351,7 @@ GLuint ShaderManager::CreateTexNoeud(const std::vector<Node>& parValue)
 	glGenTextures(1, &noeudTex);
 	glBindTexture (GL_TEXTURE_2D, noeudTex);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, float(NODE_STRIDE), parValue.size(),0, GL_RED, GL_FLOAT, noeudData);
+
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -361,6 +362,68 @@ GLuint ShaderManager::CreateTexNoeud(const std::vector<Node>& parValue)
 	return noeudTex;
 }
 
+GLuint ShaderManager::CreateTexPrimitive(const std::vector<Primitive>& parValue, int parNbMateriau)
+{
+	GLuint primTex;
+	GLfloat * primData = new GLfloat[3*parValue.size()];
+	int index = 0;
+	foreach(prim, parValue)
+	{
+		primData[index*3+0] = (prim->type/2.0);
+		primData[index*3+1] = (prim->index/((float)parValue.size()-1)); 
+		primData[index*3+2] = (prim->materiau/((float)parNbMateriau -1));
+
+		PRINT_ORANGE("Prim "<<primData[index*3+0]<<" "<<primData[index*3+1]<<" "<<primData[index*3+2]);
+		index++;		
+	}
+	
+	glGenTextures(1, &primTex);
+	glBindTexture (GL_TEXTURE_2D, primTex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, 3.0, parValue.size(),0, GL_RED, GL_FLOAT, primData);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glBindTexture (GL_TEXTURE_2D, 0);
+	
+	delete [] primData;
+	return primTex;
+}
+
+
+GLuint ShaderManager::CreateTexMat(const std::vector<Materiau>& parValue)
+{
+	GLuint matTex;
+	GLfloat * matData = new GLfloat[8*parValue.size()];
+	int index = 0;
+	foreach(mat, parValue)
+	{
+		matData[index*8+0] = (mat->color.x);
+		matData[index*8+1] = (mat->color.y);
+		matData[index*8+2] = (mat->color.z);
+
+		matData[index*8+3] = (mat->coeffReflexion);
+		matData[index*8+4] = (mat->coeffRefraction);
+		matData[index*8+5] = (mat->indiceRefraction);
+		
+		matData[index*8+6] = (mat->diff);
+		matData[index*8+7] = (mat->spec);		
+		
+		PRINT_ORANGE("Mat "<<matData[index*8+0]<<" "<<matData[index*8+1]<<" "<<matData[index*8+2]<<" "<<matData[index*8+3]);
+		index++;		
+	}
+	
+	glGenTextures(1, &matTex);
+	glBindTexture (GL_TEXTURE_2D, matTex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, 8.0, parValue.size(),0, GL_RED, GL_FLOAT, matData);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glBindTexture (GL_TEXTURE_2D, 0);
+	delete [] matData;
+	return matTex;	
+}
 void ShaderManager::InjectPlan(GLuint parShaderID, const Plan& parValue, int parIndex)
 {
 	BindProgram(parShaderID);
@@ -396,7 +459,7 @@ void ShaderManager::InjectMateriau(GLuint parShaderID, const Materiau& parValue,
 void ShaderManager::InjectPrimitive(GLuint parShaderID, const Primitive& parValue, int parIndex)
 {
 	BindProgram(parShaderID);
-	//PRINT_ORANGE("On injecte la primitive :"<<std::endl<<parValue);
+	PRINT_ORANGE("On injecte la primitive :"<<std::endl<<parValue);
     glUniform1i(glGetUniformLocation(parShaderID, concatenate("listPrim",parIndex,"type").c_str()), parValue.type);  
     glUniform1i(glGetUniformLocation(parShaderID, concatenate("listPrim",parIndex,"index").c_str()), parValue.index);  
     glUniform1i(glGetUniformLocation(parShaderID, concatenate("listPrim",parIndex,"materiau").c_str()), parValue.materiau);  
@@ -405,7 +468,7 @@ void ShaderManager::InjectPrimitive(GLuint parShaderID, const Primitive& parValu
 void ShaderManager::InjectLight(GLuint parShaderID, const Light& parLight, int parIndex)
 {
 	BindProgram(parShaderID);
-	//PRINT_ORANGE("On injecte la lumière :"<<std::endl<<parLight);
+	PRINT_ORANGE("On injecte la lumière :"<<std::endl<<parLight);
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listLight",parIndex,"position").c_str()), parLight.position.x, parLight.position.y, parLight.position.z);    
     glUniform1i(glGetUniformLocation(parShaderID, concatenate("listLight",parIndex,"intensity").c_str()), parLight.intensity);  
     glUniform4f(glGetUniformLocation(parShaderID, concatenate("listLight",parIndex,"colorSpec").c_str()), parLight.color.x, parLight.color.y, parLight.color.z, 1.0);   

@@ -22,7 +22,11 @@ class ShaderManager : public Singleton<ShaderManager>
 
 
 		GLuint GenerateTexture(size_t parW, size_t parH);
+		
 		GLuint CreateTexTriangle(const std::vector<Triangle>& parValue);
+		GLuint CreateTexPrimitive(const std::vector<Primitive>& parValue, int parNbMat);
+		GLuint CreateTexMat(const std::vector<Materiau>& parValue);
+		
 		GLuint CreateTexNoeud(const std::vector<Node>& parValue);
 		
 		void InjectTex(GLuint parShaderID, size_t parIndex, const std::string& parName, GLuint parOffset);
