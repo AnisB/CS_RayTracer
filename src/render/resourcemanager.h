@@ -20,7 +20,8 @@ struct Texture
 
 struct ObjFile
 {
-	std::list<Triangle> listTriangle; 
+	std::list<Triangle> listTriangle;
+	Materiau material;
 };
 
 class ResourceManager: public Singleton<ResourceManager>

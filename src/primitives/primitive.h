@@ -85,6 +85,7 @@ struct Materiau
     float diff;
     float spec;
     int texAlbedo;
+    int texSpec;
     int texRough;
 };
 

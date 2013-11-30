@@ -114,7 +114,14 @@ vec4 IntersectToLight(in Ray parRay, vec3 lightPos)
         {
             if( listMateriau[i].reflectance > 0)
             {
-            	colorFilter*=vec4(0.5);
+                if( listMateriau[i].reflectance == 1.0)
+                {
+                	return  vec4(0.0);
+                }
+                else
+                {
+                	return colorFilter*listMateriau[i].reflectance;
+                }
             }
         }
     }
