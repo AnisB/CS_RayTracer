@@ -21,4 +21,7 @@ void main()
      ivec2 storePos = ivec2(gl_GlobalInvocationID.xy);
      vec2 pixelFloat = vec2(storePos)/512.0;
      imageStore(renderCanvas, storePos, RayTrace(pixelFloat));
+     //vec2 pixelFloat2 = vec2(storePos.x/8.0,storePos.y/4.0);
+	 //imageStore(renderCanvas, storePos, texture(listTriangles,pixelFloat));
+    // imageStore(renderCanvas, storePos, texture(listTriangles,vec2(0.4/4.0, 5.4/9.0)));
 }

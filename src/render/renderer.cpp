@@ -33,7 +33,6 @@ Renderer::Renderer()
 : FIsRendering(false)
 , FVertexArrayID(0)
 , FVertexbuffer(0)
-, FManager()
 , FInitDone(false)
 , FLastTime(-1)
 , FFoward(false)
@@ -161,7 +160,7 @@ bool Renderer::Init()
 	PRINT_ORANGE("Version: "<<version);
 	// Everything went ok let's render
 	FIsRendering = true;
-	
+	CheckGLState("Vidage buffer");
 	// Loading the scene file
     LoadScene("data/scenes/scene_test.dat");
     
@@ -173,7 +172,7 @@ bool Renderer::Init()
 	InjectScene();
     
 	PRINT_GREEN("The renderer was created succesfully");
-
+	//ShaderManager::Instance().BindTexture(FRenderTexture);
 	FLastTime = glfwGetTime();
     return true;
 }
@@ -202,41 +201,41 @@ void Renderer::InitShaders()
 {
 
 	//Création du shader de la pipline fixe
-	FPipelineShaderID = FManager.CreateProgramVF();
+	FPipelineShaderID = ShaderManager::Instance().CreateProgramVF();
 
 	#ifndef SIMPLE
 	//Création du shader de calcul
-	FComputeShader = FManager.CreateProgramC(4,FScene->m_triangles.size(),1,1,1,FScene->m_primitives.size());
+	FComputeShader = ShaderManager::Instance().CreateProgramC(4,FScene->m_triangles.size(),1,1,1,FScene->m_primitives.size());
 	#endif
-	
 	//Création de la texture
-	GLuint renderTexture = FManager.GenerateTexture(512,512);
-	
-	//Activtion de la texture
-	FManager.BindTexture(renderTexture);
-	
+	FRenderTexture = ShaderManager::Instance().GenerateTexture(512,512);
+	FTriangleTex = ShaderManager::Instance().CreateTexTriangle(FScene->m_triangles);
 	//Mappage de la texturepour dessin
-	FManager.InjectTex(FPipelineShaderID,renderTexture,"displaySource");
+	ShaderManager::Instance().InjectTex(FPipelineShaderID,FRenderTexture,"bling",0);
+	ShaderManager::Instance().InjectTex(FPipelineShaderID,FTriangleTex,"tex2",1);
 	#ifndef SIMPLE
 	//Mappage de la texture pour écriture
-	FManager.InjectTex(FComputeShader,renderTexture,"renderCanvas");
+	ShaderManager::Instance().InjectTex(FComputeShader,FRenderTexture,"renderCanvas",0);
+	ShaderManager::Instance().InjectTex(FComputeShader,FTriangleTex,"listTriangles",1);
 	#endif
 }
 
 void Renderer::RayTracing()
 {
     #ifndef SIMPLE
-	FManager.BindProgram(FComputeShader);
-	glDispatchCompute(512/16, 512/16, 1); 
+	ShaderManager::Instance().BindProgram(FComputeShader);
+	glDispatchCompute(512/16, 512/16, 1);
+	ShaderManager::Instance().BindProgram(0);
 	#endif
 }
 
 void Renderer::RenderResultToScreen()
 {
-	  FManager.BindProgram(FPipelineShaderID);
+	  ShaderManager::Instance().BindProgram(FPipelineShaderID);
 	  glBindVertexArray (FVertexArrayID);
 	  glDrawArrays (GL_TRIANGLE_STRIP, 0, 4);
 	  glBindVertexArray (0);
+	  ShaderManager::Instance().BindProgram(0);
 }
 
 void Renderer::UpdateDisplacement()
@@ -267,6 +266,7 @@ void Renderer::Run()
 	{
 	  //START_COUNT_TIME(temps);
 	  glClear (GL_COLOR_BUFFER_BIT);
+
 	  RayTracing();
 	  RenderResultToScreen();
 	  UpdateDisplacement();
@@ -301,36 +301,37 @@ void Renderer::LoadScene(const std::string& parFilename)
 void Renderer::InjectScene()
 {
 	int index = 0;
+	
     foreach(triangle, FScene->m_triangles)
     {
-        FManager.InjectTriangle(FComputeShader, *triangle, index++);
+        ShaderManager::Instance().InjectTriangle(FComputeShader, *triangle, index++);
     }
     
     /*
     index = 0;
     foreach(plan, FScene->m_planes)
     {
-        FManager.InjectPlan(FComputeShader, *plan, index++);
+        ShaderManager::Instance().InjectPlan(FComputeShader, *plan, index++);
     }
     index = 0;
     foreach(quadric, FScene->m_quadrics)
     {
-        FManager.InjectQuadrique(FComputeShader, *quadric, index++);
+        ShaderManager::Instance().InjectQuadrique(FComputeShader, *quadric, index++);
     }
     */
 	index = 0;
     foreach(light, FScene->m_lights)
     {
-        FManager.InjectLight(FComputeShader, *light, index++);
+        ShaderManager::Instance().InjectLight(FComputeShader, *light, index++);
     }
     index = 0;
     foreach(primitive, FScene->m_primitives)
     {
-        FManager.InjectPrimitive(FComputeShader, *primitive, index++);
+        ShaderManager::Instance().InjectPrimitive(FComputeShader, *primitive, index++);
     }
     index = 0;
     foreach(materiau, FScene->m_materiaux)
     {
-        FManager.InjectMateriau(FComputeShader, *materiau, index++);
+        ShaderManager::Instance().InjectMateriau(FComputeShader, *materiau, index++);
     }
 }

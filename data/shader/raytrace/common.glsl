@@ -105,7 +105,10 @@ struct Light
 vec4 CouleurPixel(Ray parRayon);
 //void proc_subtree (double tx0, double ty0, double tz0, double tx1, double ty1, double tz1, Node node);
 
-uniform	sampler2D textures[NB_TEX];
+
+uniform sampler2D listTriangles;
+
+//uniform	sampler2D textures[NB_TEX];
 
 uniform	Quadrique listQuadrique[NB_QUAD];
 uniform	Triangle listTriangle[NB_TRIANGLE];
@@ -113,4 +116,6 @@ uniform	Plan listPlan[NB_PLAN];
 uniform	Primitive listPrim[NB_PRIM];
 uniform	Materiau listMateriau[NB_MAT];
 uniform	Light listLight[NB_LIGHTS];
+
+
 

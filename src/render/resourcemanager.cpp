@@ -141,10 +141,10 @@ const Texture* ResourceManager::LoadTexture(const std::string& parFileName)
     glBindTexture(GL_TEXTURE_2D, 0);
 
 
-	GLint tex0 = glGetUniformLocation(Renderer::Instance().GetComputeProgID(), concatenate("listTex",FTexIndex).c_str());
-	glActiveTexture(GL_TEXTURE0+ FTexIndex + 1);
-	glBindTexture(GL_TEXTURE_2D, newTex->id);
-	glUniform1i(tex0, FTexIndex + 1);
+	//GLint tex0 = glGetUniformLocation(Renderer::Instance().GetComputeProgID(), concatenate("listTex",FTexIndex).c_str());
+	//glActiveTexture(GL_TEXTURE0+ FTexIndex + 1);
+	//glBindTexture(GL_TEXTURE_2D, newTex->id);
+	//glUniform1i(tex0, FTexIndex + 1);
 	FTexIndex++;
 	return newTex;
 }

@@ -25,7 +25,7 @@
 #define compute_shader_raytrace "data/shader/raytrace/raytrace.glsl"
 #define compute_shader_final "data/shader/raytrace/final.glsl"
 
-#define TRIANGLE_LIST 
+#define TO_GLSL_UNIT(Val) (Val/400.0 +0.5)
 
 
 std::string ReadFile(const std::string& parFileName)
@@ -126,14 +126,12 @@ GLuint ShaderManager::CreateProgramVF()
     glShaderSource(vertexShaderID, 1, &vsc_str, NULL);
     glCompileShader(vertexShaderID);
     CheckShader(vertexShaderID);
-    
     GLuint fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
     std::string FragmentShaderCode = ReadFile(fragment_shader);
     const char *fsc_str = FragmentShaderCode.c_str();
     glShaderSource(fragmentShaderID, 1, (&fsc_str) , NULL);
     glCompileShader(fragmentShaderID);
     CheckShader(fragmentShaderID);
-
     GLuint programID = glCreateProgram();
     glAttachShader(programID, vertexShaderID);
     glAttachShader(programID, fragmentShaderID);
@@ -146,38 +144,37 @@ GLuint ShaderManager::CreateProgramVF()
 
 GLuint ShaderManager::GenerateTexture(size_t parW, size_t parH) 
 {
-    GLuint newTexture;
-    glGenTextures(1, &newTexture);
-
-    glBindTexture(GL_TEXTURE_2D, newTexture);
+    glGenTextures(1, &FTexture);
+    glBindTexture(GL_TEXTURE_2D, FTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, parW, parH, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
     #ifndef MACOSX
-    glBindImageTexture(0, newTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+    glBindImageTexture(0, FTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
     #endif
     glBindTexture(GL_TEXTURE_2D, 0);
-
-    return newTexture;
+    return FTexture;
 }
 
-void ShaderManager::InjectTex(GLuint parShaderID, size_t parIndexTex, const std::string& parName)
+void ShaderManager::InjectTex(GLuint parShaderID, size_t parIndexTex, const std::string& parName, GLuint parOffset)
 {
-    BindProgram(parShaderID);
-    glUniform1i(glGetUniformLocation(parShaderID, parName.c_str()), 0);
+	BindProgram(parShaderID);
+   	glActiveTexture(GL_TEXTURE0+parOffset);
+    glBindTexture(GL_TEXTURE_2D, parIndexTex);
+    GLint texRef = glGetUniformLocation(parShaderID, parName.c_str());
+    glUniform1i(texRef, 0+parOffset);
+    BindProgram(0);
 }
 
 void ShaderManager::Injectd(GLuint parShaderID, double parValue, const std::string& parName)
 {
-    BindProgram(parShaderID);
     glUniform1f(glGetUniformLocation(parShaderID, parName.c_str()), parValue);
 }
 void ShaderManager::InjectVec3(GLuint parShaderID, const Vector3& parValue, const std::string& parName)
 {
-    //PRINT_ORANGE("Injected "<<parValue);
-    BindProgram(parShaderID);
+	BindProgram(parShaderID);
     glUniform3f(glGetUniformLocation(parShaderID, parName.c_str()), parValue.x, parValue.y, parValue.z);
 }
 
@@ -255,6 +252,53 @@ void ShaderManager::InjectTriangle(GLuint parShaderID, const Triangle& parValue,
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"normale").c_str()), parValue.normale.x, parValue.normale.y, parValue.normale.z);
 }
 
+GLuint ShaderManager::CreateTexTriangle(const std::vector<Triangle>& parValue)
+{
+	GLuint triangleTex;
+	GLfloat * triangleData = new GLfloat[18*parValue.size()];
+	int index = 0;
+	foreach(triangle, parValue)
+	{
+		//PRINT_ORANGE("First "<<
+		triangleData[index*18+0] = TO_GLSL_UNIT(triangle->p0.x);
+		triangleData[index*18+1] = TO_GLSL_UNIT(triangle->p0.y); 
+		triangleData[index*18+2] = TO_GLSL_UNIT(triangle->p0.z);
+		
+		triangleData[index*18+3] = TO_GLSL_UNIT(triangle->uv0.u); 
+		triangleData[index*18+4] = TO_GLSL_UNIT(triangle->uv0.v);	
+			
+		triangleData[index*18+5] = TO_GLSL_UNIT(triangle->p1.x);
+		triangleData[index*18+6] = TO_GLSL_UNIT(triangle->p1.y); 
+		triangleData[index*18+7] = TO_GLSL_UNIT(triangle->p1.z);
+		
+		triangleData[index*18+8] = TO_GLSL_UNIT(triangle->uv1.u); 
+		triangleData[index*18+9] = TO_GLSL_UNIT(triangle->uv1.v);
+		
+		triangleData[index*18+10] = TO_GLSL_UNIT(triangle->p2.x);
+		triangleData[index*18+11] = TO_GLSL_UNIT(triangle->p2.y); 
+		triangleData[index*18+12] = TO_GLSL_UNIT(triangle->p2.z);
+		
+		triangleData[index*18+13] = TO_GLSL_UNIT(triangle->uv2.u); 
+		triangleData[index*18+14] = TO_GLSL_UNIT(triangle->uv2.v);	
+		
+		triangleData[index*18+15] = TO_GLSL_UNIT(triangle->normale.x);
+		triangleData[index*18+16] = TO_GLSL_UNIT(triangle->normale.y); 
+		triangleData[index*18+17] = TO_GLSL_UNIT(triangle->normale.z);
+		PRINT_ORANGE("First "<<triangleData[index*18+0]<<" "<<triangleData[index*18+1]<<" "<<triangleData[index*18+2]);
+		index++;		
+	}
+	
+	glGenTextures(1, &triangleTex);
+	glBindTexture (GL_TEXTURE_2D, triangleTex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, 18.0, parValue.size(),0, GL_RED, GL_FLOAT, triangleData);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glBindTexture (GL_TEXTURE_2D, 0);
+	return triangleTex;
+}
+
 void ShaderManager::InjectPlan(GLuint parShaderID, const Plan& parValue, int parIndex)
 {
 	BindProgram(parShaderID);
@@ -282,7 +326,7 @@ void ShaderManager::InjectQuadrique(GLuint parShaderID, const Quadrique& parValu
 void ShaderManager::InjectMateriau(GLuint parShaderID, const Materiau& parValue, int parIndex)
 {
 	BindProgram(parShaderID);
-	PRINT_ORANGE("On injecte le materiau :"<<std::endl<<parValue);
+	//PRINT_ORANGE("On injecte le materiau :"<<std::endl<<parValue);
     glUniform4f(glGetUniformLocation(parShaderID, concatenate("listMateriau",parIndex,"color").c_str()), parValue.color.x, parValue.color.y, parValue.color.z, parValue.color.w); 
     glUniform1f(glGetUniformLocation(parShaderID, concatenate("listMateriau",parIndex,"reflectance").c_str()), parValue.coeffReflexion);  
     glUniform1f(glGetUniformLocation(parShaderID, concatenate("listMateriau",parIndex,"refractance").c_str()), parValue.coeffRefraction);  
@@ -290,7 +334,7 @@ void ShaderManager::InjectMateriau(GLuint parShaderID, const Materiau& parValue,
 void ShaderManager::InjectPrimitive(GLuint parShaderID, const Primitive& parValue, int parIndex)
 {
 	BindProgram(parShaderID);
-	PRINT_ORANGE("On injecte la primitive :"<<std::endl<<parValue);
+	//PRINT_ORANGE("On injecte la primitive :"<<std::endl<<parValue);
     glUniform1i(glGetUniformLocation(parShaderID, concatenate("listPrim",parIndex,"type").c_str()), parValue.type);  
     glUniform1i(glGetUniformLocation(parShaderID, concatenate("listPrim",parIndex,"index").c_str()), parValue.index);  
     glUniform1i(glGetUniformLocation(parShaderID, concatenate("listPrim",parIndex,"materiau").c_str()), parValue.materiau);  
@@ -299,7 +343,7 @@ void ShaderManager::InjectPrimitive(GLuint parShaderID, const Primitive& parValu
 void ShaderManager::InjectLight(GLuint parShaderID, const Light& parLight, int parIndex)
 {
 	BindProgram(parShaderID);
-	PRINT_ORANGE("On injecte la lumière :"<<std::endl<<parLight);
+	//PRINT_ORANGE("On injecte la lumière :"<<std::endl<<parLight);
     glUniform3f(glGetUniformLocation(parShaderID, concatenate("listLight",parIndex,"position").c_str()), parLight.position.x, parLight.position.y, parLight.position.z);    
     glUniform1i(glGetUniformLocation(parShaderID, concatenate("listLight",parIndex,"intensity").c_str()), parLight.intensity);  
     glUniform4f(glGetUniformLocation(parShaderID, concatenate("listLight",parIndex,"colorSpec").c_str()), parLight.color.x, parLight.color.y, parLight.color.z, 1.0);   

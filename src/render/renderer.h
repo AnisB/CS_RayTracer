@@ -54,7 +54,8 @@ class Renderer : public Singleton<Renderer>
 		GLuint FPipelineShaderID;
 
 		GLuint FComputeShader;
-		
+		GLuint FRenderTexture;
+		GLuint FTriangleTex;
 		
 		bool FFoward;
 		bool FBackward;
