@@ -1,65 +1,58 @@
-// octree
-//uniform Octree octree;
 uint a; // utile pour la traversee de l'octree
 
 
 struct Node {
 	//int		id;
 	//bool	is_terminal;
-	Node[8]	child; // int
+	int[8]	child_id; // int
 	int[10] objects_id;
+	float[6]	coords;  // xmin,ymin,zmin,xmax,ymax,zmax
 };
 
-void proc_subtree (double tx0, double ty0, double tz0, double tx1, double ty1, double tz1, Node node);
+int stack_id[600]; // pile pour l'algorithme recursif
+int stackcounter; // index de la pile
+Node nodes[600]; // pile pour l'algorithme recursif
 
-struct Octree {
-	Node		root;
-	float		xmin;
-	float		xmax;
-	float		ymin;
-	float		ymax;
-	float		zmin;
-	float		zmax;
-	float		sizeX;
-	float		sizeY;
-	float		sizeZ;
-};
-
+int[NB_PRIM]  proc_subtree (double tx0, double ty0, double tz0, double tx1, double ty1, double tz1, int node_id);
 
 
 // ------------------------------------
 // void ray_parameter (OCTREE)
 // ------------------------------------
 
-void ray_paramter ( Octree octree, Ray ray){
+int[NB_PRIM] ray_paramter ( Ray ray){
 	a = 0;
-	
+	Node octree = nodes[0];
+	float sizeX = octree.coords[3] - octree.coords[0];
+	float sizeY = octree.coords[4] - octree.coords[1];
+	float sizeZ = octree.coords[5] - octree.coords[2];
+
 	// GENERALISING FOR RAYS WITH NEGATIVE DIRECTIONS
 	if (ray.direction[0]<0.0){
-		ray.origin[0] = octree.sizeX-ray.origin[0];
+		ray.origin[0] = sizeX-ray.origin[0];
 		ray.direction[0] = -ray.direction[0];
 		a |= 4;
 	}
 	if (ray.direction[1]<0.0){
-		ray.origin[1] = octree.sizeY-ray.origin[1];
+		ray.origin[1] = sizeY-ray.origin[1];
 		ray.direction[1] = -ray.direction[1];
 		a |= 2;
 	}
 	if (ray.direction[2]<0.0){
-		ray.origin[2] = octree.sizeZ-ray.origin[2];
+		ray.origin[2] = sizeZ-ray.origin[2];
 		ray.direction[2] = -ray.direction[2];
 		a |= 1;
 	}
 	 
-	double tx0 = (octree.xmin - ray.origin[0]) * ray.direction[0];
-	double tx1 = (octree.xmax - ray.origin[0]) * ray.direction[0];
-	double ty0 = (octree.ymin - ray.origin[1]) * ray.direction[1];
-	double ty1 = (octree.ymax - ray.origin[1]) * ray.direction[1];
-	double tz0 = (octree.zmin - ray.origin[2]) * ray.direction[2];
-	double tz1 = (octree.zmax - ray.origin[2]) * ray.direction[2];
+	double tx0 = (octree.coords[0] - ray.origin[0]) * ray.direction[0];
+	double tx1 = (octree.coords[3] - ray.origin[0]) * ray.direction[0];
+	double ty0 = (octree.coords[1] - ray.origin[1]) * ray.direction[1];
+	double ty1 = (octree.coords[4] - ray.origin[1]) * ray.direction[1];
+	double tz0 = (octree.coords[2] - ray.origin[2]) * ray.direction[2];
+	double tz1 = (octree.coords[5] - ray.origin[2]) * ray.direction[2];
 	
 	if( max(max(tx0,ty0),tz0) < min(min(tx1,ty1),tz1) ){
-		proc_subtree(tx0,ty0,tz0,tx1,ty1,tz1,octree.root);
+		return proc_subtree(tx0,ty0,tz0,tx1,ty1,tz1,0);
 	}
 }
 
@@ -110,59 +103,87 @@ uint new_node(double txm, int x, double tym, int y, double tzm, int z){
 // void proc_subtree (OCTREE)
 // ------------------------------------
 
-void proc_subtree (double tx0, double ty0, double tz0, double tx1, double ty1, double tz1, Node node)
+int[NB_PRIM] proc_subtree (double tx0, double ty0, double tz0, double tx1, double ty1, double tz1, int node_id)
 {
 	double txm, tym, tzm;
 	uint currNode;
- 
-	if(tx1 < 0.0 || ty1 < 0.0 || tz1 < 0.0) return; 	
-	/*
-	 * if(node.is_terminal){
-		// TODO Noeud terminal atteint : node.id;
-		return;
+	int listePrim[NB_PRIM];
+	// init de listePrim
+	for (int i =0;i<NB_PRIM;i++){
+		listePrim[i]=-1;
 	}
-	*/
-	txm = 0.5*(tx0 + tx1);
-	tym = 0.5*(ty0 + ty1);
-	tzm = 0.5*(tz0 + tz1);
+ 	// init de la pile (empty stack)
+	for (int i =0;i<600;i++){
+		stack_id[i]=-2;
+	}
+	stackcounter = 0;
+	stack_id[stackcounter] = 0;
 	
-	currNode = first_node(tx0,ty0,tz0,txm,tym,tzm);
-	do{ 		
-		switch (currNode) 	{
-		case 0: {  			
-			proc_subtree(tx0,ty0,tz0,txm,tym,tzm,node.child[a]);
-			currNode = new_node(txm,4,tym,2,tzm,1);
-			break;}
-		case 1: {
-			proc_subtree(tx0,ty0,tzm,txm,tym,tz1,node.child[1^a]);
-			currNode = new_node(txm,5,tym,3,tz1,8);
-			break;}
-		case 2: {
-			proc_subtree(tx0,tym,tz0,txm,ty1,tzm,node.child[2^a]);
-			currNode = new_node(txm,6,ty1,8,tzm,3);
-			break;}
-		case 3: {
-			proc_subtree(tx0,tym,tzm,txm,ty1,tz1,node.child[3^a]);
-			currNode = new_node(txm,7,ty1,8,tz1,8);
-			break;}
-		case 4: {
-			proc_subtree(txm,ty0,tz0,tx1,tym,tzm,node.child[4^a]);
-			currNode = new_node(tx1,8,tym,6,tzm,5);
-			break;}
-		case 5: {
-			proc_subtree(txm,ty0,tzm,tx1,tym,tz1,node.child[5^a]);
-			currNode = new_node(tx1,8,tym,7,tz1,8);
-			break;}
-		case 6: {
-			proc_subtree(txm,tym,tz0,tx1,ty1,tzm,node.child[6^a]);
-			currNode = new_node(tx1,8,ty1,8,tzm,7);
-			break;}
-		case 7: {
-			proc_subtree(txm,tym,tzm,tx1,ty1,tz1,node.child[7^a]);
-			currNode = 8;
-			break;}
+	while ( stackcounter != -1 ){ // tant que la pile nest pas vide
+		Node node = nodes[stack_id[stackcounter]]; stackcounter--; // Pop stack
+
+		if(tx1 < 0.0 || ty1 < 0.0 || tz1 < 0.0) continue; // continue ? (return en recursif)
+		
+		if(node.child_id[0] == -1){ // noeud terminal
+			// TODO : ajouter les primitives a la liste des primitives
+			// parcourir le tableau des objects_id
+				// mettre 1 a chaque index de listePrim quand que cest bon
+			continue; // continue ? (return en recursif)
 		}
-	} while (currNode<8);
+
+		// points milieu
+		txm = 0.5*(node.coords[0] + node.coords[3]);
+		tym = 0.5*(node.coords[1] + node.coords[4]);
+		tzm = 0.5*(node.coords[2] + node.coords[5]);
+		
+		
+		currNode = first_node(node.coords[0],node.coords[1],node.coords[2],txm,tym,tzm);
+		do{ 		
+			switch (currNode) 	{
+			case 0: {  			
+				stackcounter++;stack_id[stackcounter] = node.child_id[a];
+				currNode = new_node(txm,4,tym,2,tzm,1);
+				break;}
+			case 1: {
+				stackcounter++;stack_id[stackcounter] = node.child_id[1^a];
+				currNode = new_node(txm,5,tym,3,tz1,8);
+				break;}
+			case 2: {
+				stackcounter++;stack_id[stackcounter] = node.child_id[2^a];
+				//proc_subtree(tx0,tym,tz0,txm,ty1,tzm,nodes[node_id].child[2^a]);
+				currNode = new_node(txm,6,ty1,8,tzm,3);
+				break;}
+			case 3: {
+				stackcounter++;stack_id[stackcounter] = node.child_id[3^a];
+				//proc_subtree(tx0,tym,tzm,txm,ty1,tz1,nodes[node_id].child[3^a]);
+				currNode = new_node(txm,7,ty1,8,tz1,8);
+				break;}
+			case 4: {
+				stackcounter++;stack_id[stackcounter] = node.child_id[4^a];
+				//proc_subtree(txm,ty0,tz0,tx1,tym,tzm,nodes[node_id].child[4^a]);
+				currNode = new_node(tx1,8,tym,6,tzm,5);
+				break;}
+			case 5: {
+				stackcounter++;stack_id[stackcounter] = node.child_id[5^a];
+				//proc_subtree(txm,ty0,tzm,tx1,tym,tz1,nodes[node_id].child[5^a]);
+				currNode = new_node(tx1,8,tym,7,tz1,8);
+				break;}
+			case 6: {
+				stackcounter++;stack_id[stackcounter] = node.child_id[6^a];
+				//proc_subtree(txm,tym,tz0,tx1,ty1,tzm,nodes[node_id].child[6^a]);
+				currNode = new_node(tx1,8,ty1,8,tzm,7);
+				break;}
+			case 7: {
+				stackcounter++;stack_id[stackcounter] = node.child_id[7^a];
+				//proc_subtree(txm,tym,tzm,tx1,ty1,tz1,nodes[node_id].child[7^a]);
+				currNode = 8;
+				break;}
+			}
+		} while (currNode<8);
+	
+	}
+	
+	return listePrim;
 }
 
 int[NB_PRIM] getPrimitives(Ray parRay)
@@ -170,5 +191,7 @@ int[NB_PRIM] getPrimitives(Ray parRay)
 	int listePrim[NB_PRIM];
         for(int i = 0; i < NB_PRIM; i++)
                 listePrim[i] = i;
+                
+    //listePrim = ray_paramter(parRay);
 	return  listePrim;
 }

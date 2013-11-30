@@ -84,6 +84,13 @@ void Octree::build(int cur_node_id, float xmin,float ymin,float zmin,float xmax,
 		}
 	}
 	
+	// on pourrait directement passer ces infos dans le noeud plutot quen parametre (TODO)
+	m_nodes[cur_node_id].coords[0] = xmin;
+	m_nodes[cur_node_id].coords[1] = ymin;
+	m_nodes[cur_node_id].coords[2] = zmin;
+	m_nodes[cur_node_id].coords[3] = xmax;
+	m_nodes[cur_node_id].coords[4] = ymax;
+	m_nodes[cur_node_id].coords[5] = zmax;
 
 	
 	if ( local_objects_number > m_objects_max && m_level<m_max_level) { // si le critere d'arret nest pas atteint (NOEUD INTERNE)
@@ -92,7 +99,8 @@ void Octree::build(int cur_node_id, float xmin,float ymin,float zmin,float xmax,
 			
 			int child_id = m_nodes.size(); // id enfant
 			m_nodes[cur_node_id].child[i] = child_id;
-			m_nodes.push_back(*(new Node())); // ajouter le noeud au vecteur
+			Node* new_node = new Node();
+			m_nodes.push_back(*new_node); // ajouter le noeud au vecteur
 			
 			float zm = (zmin + zmax)/2.0; // milieu
 			float ym = (ymin + ymax)/2.0; // milieu
