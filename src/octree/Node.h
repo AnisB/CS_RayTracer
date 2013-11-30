@@ -10,8 +10,9 @@ struct Node {
 	//bool	is_terminal;
 	//	int[3]	object_id; // objets a afficher
 	int	child[8]; // enfants
-	std::vector<int> objects_id; // objets a afficher
 	float	coords[6]; // xmin,ymin,zmin,xmax,ymax,zmax
+	std::vector<int> objects_id; // objets a afficher 10?
+
 	//int[10] objects_id; // objets a afficher
 };
 

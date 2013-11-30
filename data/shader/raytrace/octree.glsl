@@ -1,17 +1,66 @@
 uint a; // utile pour la traversee de l'octree
-
+uniform sampler2D listeNoeuds;
+// HARDCODED
+#define NODE_NUMBER 600
+#define OBJECTS_NUMBER 10
+#define NODE_STRIDE 24.0
 
 struct Node {
-	//int		id;
-	//bool	is_terminal;
 	int[8]	child_id; // int
-	int[10] objects_id;
 	float[6]	coords;  // xmin,ymin,zmin,xmax,ymax,zmax
+	int[OBJECTS_NUMBER] objects_id; //
+
 };
 
-int stack_id[600]; // pile pour l'algorithme recursif
+int stack_id[NODE_NUMBER]; // pile pour l'algorithme recursif 
 int stackcounter; // index de la pile
-Node nodes[600]; // pile pour l'algorithme recursif
+Node nodes[NODE_NUMBER]; // pile pour l'algorithme recursif
+bool nodes_loaded = false;
+
+void loadNodes()
+{
+	if (nodes_loaded) return;
+	float maxx = NODE_STRIDE-1.0;
+	float maxy = NODE_NUMBER-1.0;
+	for (int i=0;i<NODE_NUMBER;i++) {
+		float y = (float(i)/NODE_NUMBER);
+		
+		// childs
+		nodes[i].child_id[0] = int(texture(listeNoeuds, vec2(0.0/maxx,y)).r);
+		nodes[i].child_id[1] = int(texture(listeNoeuds, vec2(1.0/maxx,y)).r);
+		nodes[i].child_id[2] = int(texture(listeNoeuds, vec2(2.0/maxx,y)).r);
+		nodes[i].child_id[3] = int(texture(listeNoeuds, vec2(3.0/maxx,y)).r);
+		nodes[i].child_id[4] = int(texture(listeNoeuds, vec2(4.0/maxx,y)).r);
+		nodes[i].child_id[5] = int(texture(listeNoeuds, vec2(5.0/maxx,y)).r);
+		nodes[i].child_id[6] = int(texture(listeNoeuds, vec2(6.0/maxx,y)).r);
+		nodes[i].child_id[7] = int(texture(listeNoeuds, vec2(7.0/maxx,y)).r);
+
+
+		// coords
+		nodes[i].coords[0] = texture(listeNoeuds, vec2(8.0/maxx,y)).r;
+		nodes[i].coords[1] = texture(listeNoeuds, vec2(9.0/maxx,y)).r;
+		nodes[i].coords[2] = texture(listeNoeuds, vec2(10.0/maxx,y)).r;
+		nodes[i].coords[3] = texture(listeNoeuds, vec2(11.0/maxx,y)).r;
+		nodes[i].coords[4] = texture(listeNoeuds, vec2(12.0/maxx,y)).r;
+		nodes[i].coords[5] = texture(listeNoeuds, vec2(13.0/maxx,y)).r;
+
+		
+		// objects_ids
+		nodes[i].objects_id[0] = int(texture(listeNoeuds, vec2(14.0/maxx,y)).r);
+		nodes[i].objects_id[1] = int(texture(listeNoeuds, vec2(15.0/maxx,y)).r);
+		nodes[i].objects_id[2] = int(texture(listeNoeuds, vec2(16.0/maxx,y)).r);
+		nodes[i].objects_id[3] = int(texture(listeNoeuds, vec2(17.0/maxx,y)).r);
+		nodes[i].objects_id[4] = int(texture(listeNoeuds, vec2(18.0/maxx,y)).r);
+		nodes[i].objects_id[5] = int(texture(listeNoeuds, vec2(19.0/maxx,y)).r);
+		nodes[i].objects_id[6] = int(texture(listeNoeuds, vec2(20.0/maxx,y)).r);
+		nodes[i].objects_id[7] = int(texture(listeNoeuds, vec2(21.0/maxx,y)).r);
+		nodes[i].objects_id[8] = int(texture(listeNoeuds, vec2(22.0/maxx,y)).r);
+		nodes[i].objects_id[9] = int(texture(listeNoeuds, vec2(23.0/maxx,y)).r);
+
+	}
+    nodes_loaded = true;
+    return;
+}
 
 int[NB_PRIM]  proc_subtree (double tx0, double ty0, double tz0, double tx1, double ty1, double tz1, int node_id);
 
@@ -22,6 +71,7 @@ int[NB_PRIM]  proc_subtree (double tx0, double ty0, double tz0, double tx1, doub
 
 int[NB_PRIM] ray_paramter ( Ray ray){
 	a = 0;
+	loadNodes();
 	Node octree = nodes[0];
 	float sizeX = octree.coords[3] - octree.coords[0];
 	float sizeY = octree.coords[4] - octree.coords[1];
