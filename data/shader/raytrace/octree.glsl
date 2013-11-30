@@ -4,9 +4,10 @@ uint a; // utile pour la traversee de l'octree
 
 
 struct Node {
-	int		id;
-	bool	is_terminal;
-	Node[8]	child;
+	//int		id;
+	//bool	is_terminal;
+	Node[8]	child; // int
+	int[10] objects_id;
 };
 
 void proc_subtree (double tx0, double ty0, double tz0, double tx1, double ty1, double tz1, Node node);
@@ -115,11 +116,12 @@ void proc_subtree (double tx0, double ty0, double tz0, double tx1, double ty1, d
 	uint currNode;
  
 	if(tx1 < 0.0 || ty1 < 0.0 || tz1 < 0.0) return; 	
-	if(node.is_terminal){
+	/*
+	 * if(node.is_terminal){
 		// TODO Noeud terminal atteint : node.id;
 		return;
 	}
-	
+	*/
 	txm = 0.5*(tx0 + tx1);
 	tym = 0.5*(ty0 + ty1);
 	tzm = 0.5*(tz0 + tz1);

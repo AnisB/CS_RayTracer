@@ -6,6 +6,7 @@
 #include "camera.h"
 #include "defines.h"
 #include "common/singleton.h"
+#include "octree/Octree.h"
 
 class Renderer : public Singleton<Renderer>
 {
@@ -46,6 +47,9 @@ class Renderer : public Singleton<Renderer>
         // Loading scene
         Parser FParser;
         Scene* FScene;
+		
+		// Octree;
+		Octree* octree;
 		
 		// RenderToQuad
 		GLuint FVertexArrayID;

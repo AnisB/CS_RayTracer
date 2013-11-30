@@ -164,6 +164,9 @@ bool Renderer::Init()
 	// Loading the scene file
     LoadScene("data/scenes/scene_test.dat");
     
+    // Octree
+    octree = new Octree(FScene);
+    
 	InitShaders();
 	//Creating the render to quad
 	CreateRenderQuad();
