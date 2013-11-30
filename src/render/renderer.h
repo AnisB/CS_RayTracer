@@ -29,6 +29,8 @@ class Renderer : public Singleton<Renderer>
 	protected:
 		void CreateRenderQuad();
         void LoadScene(const string & parFilename);
+        void InjectScene();
+        void UpdateDisplacement();
 		
 	protected:
 		bool FIsRendering;
@@ -52,7 +54,14 @@ class Renderer : public Singleton<Renderer>
 		GLuint FPipelineShaderID;
 
 		GLuint FComputeShader;
-
+		GLuint FRenderTexture;
+		GLuint FTriangleTex;
+		
+		bool FFoward;
+		bool FBackward;
+		bool FLeftward;
+		bool FRightward;
+						
 };
 
 

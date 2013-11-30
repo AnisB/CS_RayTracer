@@ -24,17 +24,14 @@ Camera::~Camera()
 void Camera::Yaw(double parAngle)
 {
 	FTransformation = FTransformation*Matrix4::rotateYAxis(parAngle);
-	PRINT_ORANGE("Camera tourne de "<<parAngle<<" axe de Y");
 }
 void Camera::Translate(const Vector3& parDir)
 {
 	FTransformation = FTransformation*Matrix4::translate(parDir);
-	PRINT_ORANGE("Camera avance de "<<FTransformation);
 }
 void Camera::Pitch(double parAngle)
 {
 	FTransformation = FTransformation*Matrix4::rotateXAxis(parAngle);
-	PRINT_ORANGE("Camera tourne de "<<parAngle<<" axe de X");
 }
 void Camera::InjectFixedValues(GLuint parShaderID)
 {

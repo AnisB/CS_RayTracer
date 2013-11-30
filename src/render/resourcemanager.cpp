@@ -141,25 +141,30 @@ const Texture* ResourceManager::LoadTexture(const std::string& parFileName)
     glBindTexture(GL_TEXTURE_2D, 0);
 
 
-	GLint tex0 = glGetUniformLocation(Renderer::Instance().GetComputeProgID(), concatenate("listTex",FTexIndex).c_str());
-	glActiveTexture(GL_TEXTURE0+ FTexIndex + 1);
-	glBindTexture(GL_TEXTURE_2D, newTex->id);
-	glUniform1i(tex0, FTexIndex + 1);
+	//GLint tex0 = glGetUniformLocation(Renderer::Instance().GetComputeProgID(), concatenate("listTex",FTexIndex).c_str());
+	//glActiveTexture(GL_TEXTURE0+ FTexIndex + 1);
+	//glBindTexture(GL_TEXTURE_2D, newTex->id);
+	//glUniform1i(tex0, FTexIndex + 1);
 	FTexIndex++;
 	return newTex;
 }
 
-const ObjFile* ResourceManager::LoadModel(const std::string& parFileName)
+ObjFile* ResourceManager::LoadModel(const std::string& parFileName)
 {
 	std::vector<Vector3> vertices;
 	std::vector<Vector3> normales;
 	std::vector<vec2> mapping;
+	std::vector<short> index;
 	fstream in;
 	in.open(parFileName.c_str(), std::fstream::in);
   	if (!in) 
   	{ 
   		PRINT_RED("Cannot find model obj: "<<parFileName); 
   		return NULL;
+  	}
+  	else
+  	{
+  		PRINT_ORANGE("Parsing model obj: "<<parFileName<<" ..."); 
   	}
  	ObjFile * newModel = new ObjFile();
 	string line;
@@ -173,17 +178,23 @@ const ObjFile* ResourceManager::LoadModel(const std::string& parFileName)
 	      s >> v.y; 
 	      s >> v.z; 
 	      vertices.push_back(v);
-	    }  
+	    }
+	    /*  
 	    else if (line.substr(0,2) == "f ") 
 	    {
 	      stringstream s(line.substr(2));
 	      short a,b,c;
 	      s >> a; s >> b; s >> c;
-	      //a--; b--; c--;
-	      //elements.push_back(a); elements.push_back(b); elements.push_back(c);
+	      a--; 
+	      b--; 
+	      c--;
+	      index.push_back(a); 
+	      index.push_back(b); 
+	      index.push_back(c);
 	    }
+	    */
 	    else if(line[0] == 'v' && line[1] == 't') 
-	    { 
+	    { 	
 			istringstream s(line.substr(2));
 			float u,v;
 			s >> u;
@@ -219,15 +230,18 @@ const ObjFile* ResourceManager::LoadModel(const std::string& parFileName)
 	{
 		Triangle newTriangle;
 		// Coordonnées
+		//newTriangle.p0 = vertices[index[i]];
+		//newTriangle.p1 = vertices[index[i+1]];
+		//newTriangle.p2 = vertices[index[i+2]];
 		newTriangle.p0 = vertices[i];
 		newTriangle.p1 = vertices[i+1];
-		newTriangle.p2 = vertices[i+2];
+		newTriangle.p2 = vertices[i+2];	
 		// Mappage
-		newTriangle.uv0 = mapping[i];
-		newTriangle.uv1 = mapping[i+1];
-		newTriangle.uv2 = mapping[i+2];
+		//newTriangle.uv0 = mapping[i];
+		//newTriangle.uv1 = mapping[i+1];
+		//newTriangle.uv2 = mapping[i+2];
 		// Normale
-		newTriangle.normale = normales[i/3];
+		//newTriangle.normale = normales[i/3];
  		newModel->listTriangle.push_back(newTriangle);
 	}
 	return newModel;

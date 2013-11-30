@@ -31,7 +31,7 @@ public:
 	~ResourceManager();
 
 	const Texture* LoadTexture(const std::string& parFileName);
-	const ObjFile* LoadModel(const std::string& parFileName);
+	ObjFile* LoadModel(const std::string& parFileName);
 
 protected:
 	std::map<std::string, Texture*> FTextures;

@@ -8,7 +8,7 @@
 #define PRIMITIVE_PLAN      1
 #define PRIMITIVE_QUADRIQUE 2
 
-const vec4 backGroundColor = vec4(0.3,0.5,0.8,1.0); 
+const vec4 backGroundColor = vec4(0.0,0,0,1.0); 
 // Données relatives a la caméra
 // Camera position
 
@@ -108,7 +108,10 @@ struct Light
 vec4 CouleurPixel(Ray parRayon);
 //void proc_subtree (double tx0, double ty0, double tz0, double tx1, double ty1, double tz1, Node node);
 
-uniform	sampler2D textures[NB_TEX];
+
+uniform sampler2D listTriangles;
+
+//uniform	sampler2D textures[NB_TEX];
 
 uniform	Quadrique listQuadrique[NB_QUAD];
 uniform	Triangle listTriangle[NB_TRIANGLE];
@@ -116,4 +119,6 @@ uniform	Plan listPlan[NB_PLAN];
 uniform	Primitive listPrim[NB_PRIM];
 uniform	Materiau listMateriau[NB_MAT];
 uniform	Light listLight[NB_LIGHTS];
+
+
 
