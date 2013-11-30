@@ -32,4 +32,4 @@ Poly: polygon_1
 Lumiere: light_1
         position: 10.0 100.0 3.0
         intens:   1.0
-        color: 0.0 0.0 0.0
+        colorSpec: 1.0 1.0 1.0
