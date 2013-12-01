@@ -207,7 +207,7 @@ void Renderer::InitShaders()
 
 	#ifndef SIMPLE
 	//Création du shader de calcul
-	FComputeShader = ShaderManager::Instance().CreateProgramC(3,FScene->m_triangles.size(),1,1,int(octree->m_nodes.size()),octree->m_nb_prim_max);
+	FComputeShader = ShaderManager::Instance().CreateProgramC(2,FScene->m_triangles.size(),1,1,int(octree->m_nodes.size()),octree->m_nb_prim_max);
 	//Création des texture
 	FRenderTexture = ShaderManager::Instance().GenerateTexture(512,512);
 	FTriangleTex = ShaderManager::Instance().CreateTexTriangle(FScene->m_triangles);
@@ -229,10 +229,10 @@ void Renderer::InitShaders()
 	ShaderManager::Instance().InjectTex(FComputeShader,FTriangleTex,"listTriangles",1);
 	ShaderManager::Instance().InjectTex(FComputeShader,FPrimitiveTex,"listPrimitives",2);
 	ShaderManager::Instance().InjectTex(FComputeShader,FMateriauTex,"listMateriaux",3);
-	ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->albTex->id,"listTex[0]",4);
-	ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->rugTex->id,"listTex[1]",5);
-	ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->specTex->id,"listTex[2]",6);
-	//ShaderManager::Instance().InjectTex(FComputeShader,FNoeudTex,"listNoeuds",4);
+	//ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->albTex->id,"listTex[0]",4);
+	//ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->rugTex->id,"listTex[1]",5);
+	//ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->specTex->id,"listTex[2]",6);
+	ShaderManager::Instance().InjectTex(FComputeShader,FNoeudTex,"listNoeuds",4);
 	#endif
 }
 
