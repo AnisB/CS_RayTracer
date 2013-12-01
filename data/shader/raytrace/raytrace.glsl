@@ -28,7 +28,7 @@ vec4 CouleurPixel@NB_ITER@(Ray parRayon)
 	if(parRayon.energy>ENERGY_MIN)
 	{
 		vec4 finalColor = vec4(1.0);
-		int primitives[NB_PRIM] = getPrimitives(parRayon);
+		int primitives[NB_PRIM]; //= getPrimitives(parRayon);
 		Intersection intersect = IntersectWithScene(parRayon,primitives);
 		//finalColor = listTex[getMateriauByIndex(getPrimitiveByIndex(intersect.obj).materiau).texAlbedo];
 		finalColor = getMateriauByIndex(getPrimitiveByIndex(intersect.obj).materiau).color;
