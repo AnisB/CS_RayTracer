@@ -67,8 +67,6 @@ void Renderer::HandleMouse(float parX, float parY)
 		FOldY = parY;
 		FInitDone = true;
 	}
-
-
 }
 void Renderer::HandleKey(int parKey, int parAction)
 {
