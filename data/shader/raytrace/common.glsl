@@ -153,7 +153,22 @@ uniform	Light listLight[NB_LIGHTS];
 Triangle getTriangleByIndex(int parIndexTriangle)
 {
 	Triangle unTriangle;
+	/*
+		Triangle unTriangle;
 
+	float triNormIndex = float(parIndexTriangle)/(float(NB_TRIANGLE)-1);
+	
+    unTriangle.p0 = texture(listTriangles, vec2(0.0/6.0,triNormIndex)).r;
+    unTriangle.uv0 = texture(listTriangles, vec2(0.0/6.0,triNormIndex)).r;
+
+    unTriangle.p1 = texture(listTriangles, vec2(2.0/6.0,triNormIndex)).rgb;    
+    unTriangle.uv1 = texture(listTriangles, vec2(3.0/6.0,triNormIndex)).rg;
+
+    unTriangle.p2 = texture(listTriangles, vec2(4.0/6.0,triNormIndex)).rgb;    
+    unTriangle.uv2 = texture(listTriangles, vec2(5.0/6.0,triNormIndex)).rg;
+
+    unTriangle.normale = texture(listTriangles, vec2(6.0/6.0,triNormIndex)).rgb;
+    */
 	float triNormIndex = float(parIndexTriangle)/(float(NB_TRIANGLE)-1);
     unTriangle.p0.x = texture(listTriangles, vec2(p0x,triNormIndex)).r;
     unTriangle.p0.y = texture(listTriangles, vec2(p0y,triNormIndex)).r;
