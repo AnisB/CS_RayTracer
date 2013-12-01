@@ -166,7 +166,11 @@ Intersection IntersectWithScene(in Ray parRay,in int parPrim[NB_PRIM])
     intersectResult.obj = 0;
     for(int i=0; i<NB_PRIM; i++)
     {
-        Primitive prim = getPrimitiveByIndex(parPrim[i]);
+		//Primitive prim = getPrimitiveByIndex(parPrim[i]);
+		// en fait le tableau parPrim est un tableau de -1 ou 1, selon qu'on test ou non la primitive i
+		if (parPrim[i]!=1) continue;
+        Primitive prim = getPrimitiveByIndex(i);
+        
         switch(prim.type)
         {
         case PRIMITIVE_TRIANGLE :
@@ -186,7 +190,8 @@ Intersection IntersectWithScene(in Ray parRay,in int parPrim[NB_PRIM])
         if(intersectCourant.isValid && (!intersectResult.isValid || intersectCourant.distance < intersectResult.distance))
         {
             intersectResult = intersectCourant;
-            intersectResult.obj = parPrim[i];
+            //intersectResult.obj = parPrim[i];
+            intersectResult.obj = i;
         }
     }
     return intersectResult;

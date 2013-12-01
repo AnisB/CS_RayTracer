@@ -161,7 +161,7 @@ bool Renderer::Init()
 	FIsRendering = true;
 	CheckGLState("Vidage buffer");
 	// Loading the scene file
-    LoadScene("data/scenes/scene_octree.dat");
+    LoadScene("data/scenes/scene_test.dat");
     
     // Octree
     octree = new Octree(FScene);
@@ -301,7 +301,8 @@ void Renderer::LoadScene(const std::string& parFilename)
     if(FScene == NULL)
     {
         PRINT_RED("Fichier de scene " << parFilename << " non trouve.");
-    }
+   }
+   
     FEarModel = ResourceManager::Instance().LoadModel("data/model/final/ear.obj", "data/model/final/diff.bmp","data/model/final/rugo.bmp", "data/model/final/spec.bmp");
     #ifndef SIMPLE
     
@@ -313,6 +314,7 @@ void Renderer::LoadScene(const std::string& parFilename)
     }
     
     #endif
+    
 }
 
 void Renderer::InjectScene()

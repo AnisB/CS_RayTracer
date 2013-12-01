@@ -91,6 +91,8 @@ void Octree::build(int cur_node_id, float xmin,float ymin,float zmin,float xmax,
 		}
 	}
 	
+	//PRINT_ORANGE("nb objets " << int(m_nodes[cur_node_id].objects_id.size()));
+	
 	// on pourrait directement passer ces infos dans le noeud plutot quen parametre (TODO)
 	m_nodes[cur_node_id].coords[0] = xmin;
 	m_nodes[cur_node_id].coords[1] = ymin;
@@ -162,7 +164,7 @@ void Octree::build(int cur_node_id, float xmin,float ymin,float zmin,float xmax,
 		//std::cout << "le noeud est terminal" << std::endl; // NOEUD TERMINAL
 		for (int i = 0; i<8;i++) {m_nodes[cur_node_id].child[i] = -1;} // enfants a -1
 		m_nb_prim_max = std::max(m_nb_prim_max,int(m_nodes[cur_node_id].objects_id.size()));
-		std::cout << m_nb_prim_max << std::endl;
+		//std::cout << m_nb_prim_max << std::endl;
 		//m_nodes[cur_node_id].objects_id = objects_id;
 		return;
 	}

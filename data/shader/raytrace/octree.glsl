@@ -168,8 +168,8 @@ int[NB_PRIM] proc_subtree (double tx0, double ty0, double tz0, double tx1, doubl
 		listePrim[i]=-1;
 	}
  	// init de la pile (empty stack)
-	for (int i =0;i<600;i++){
-		stack_id[i]=-2;
+	for (int i =0;i<NB_NOEUD;i++){
+		stack_id[i]=-1;
 	}
 	stackcounter = 0;
 	stack_id[stackcounter] = 0;
@@ -180,9 +180,10 @@ int[NB_PRIM] proc_subtree (double tx0, double ty0, double tz0, double tx1, doubl
 		if(tx1 < 0.0 || ty1 < 0.0 || tz1 < 0.0) continue; // continue ? (return en recursif)
 		
 		if(node.child_id[0] == -1){ // noeud terminal
-			// TODO : ajouter les primitives a la liste des primitives
-			// parcourir le tableau des objects_id
-				// mettre 1 a chaque index de listePrim quand que cest bon
+			// ajouter les primitives a la liste des primitives
+			for(int i =0;i<NB_PRIM_MAX;i++){
+				listePrim[node.objects_id[i]]=1; // mettre 1 a chaque index de listePrim quand que cest bon
+			}
 			continue; // continue ? (return en recursif)
 		}
 
@@ -250,7 +251,8 @@ int[NB_PRIM] getPrimitives(Ray parRay)
 	}
 	else {
 		for(int i = 0; i < NB_PRIM; i++)
-			listePrims[i] = i;
+			//listePrims[i] = i;
+			listePrims[i] = 1;
 	}
 	return  listePrims;
 }
