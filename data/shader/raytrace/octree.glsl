@@ -1,7 +1,7 @@
 uint a; // utile pour la traversee de l'octree
 
 
-#define OCTREE_ACTIVE true
+#define OCTREE_ACTIVE false
 
 float NODE_STRIDE = 14.0 + NB_PRIM_MAX;
 
