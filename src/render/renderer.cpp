@@ -292,7 +292,6 @@ void Renderer::Run()
 
 void Renderer::LoadScene(const std::string& parFilename)
 {
-    
     FScene = FParser.GetSceneFromFile(parFilename);
     if(FScene == NULL)
     {
@@ -300,10 +299,11 @@ void Renderer::LoadScene(const std::string& parFilename)
     }
     
     FEarModel = ResourceManager::Instance().LoadModel("data/model/final/ear.obj", "data/model/final/diff.jpg","data/model/final/rugo.jpg", "data/model/final/spec.jpg");
-    
+    FScene->AddMateriau(FEarModel->material);
     foreach(triangle, FEarModel->listTriangle)
     {
-    	FScene->AddTriangle(*triangle, FEarModel->material);
+        //Ajoute un triangle ayant pour materiau le dernier materiau ajoute dans la scene
+        FScene->AddTriangle(*triangle);
     }
 }
 
