@@ -161,10 +161,10 @@ bool Renderer::Init()
 	FIsRendering = true;
 	CheckGLState("Vidage buffer");
 	// Loading the scene file
-    LoadScene("data/scenes/scene_test.dat");
+    LoadScene("data/scenes/scene_octree.dat");
     
     // Octree
-    //octree = new Octree(FScene);
+    octree = new Octree(FScene);
     
 	InitShaders();
 	//Creating the render to quad
@@ -207,7 +207,7 @@ void Renderer::InitShaders()
 
 	#ifndef SIMPLE
 	//Création du shader de calcul
-	FComputeShader = ShaderManager::Instance().CreateProgramC(3,FScene->m_triangles.size(),1,1,1,FScene->m_primitives.size());
+	FComputeShader = ShaderManager::Instance().CreateProgramC(3,FScene->m_triangles.size(),1,1,int(octree->m_nodes.size()),octree->m_nb_prim_max);
 	//Création des texture
 	FRenderTexture = ShaderManager::Instance().GenerateTexture(512,512);
 	FTriangleTex = ShaderManager::Instance().CreateTexTriangle(FScene->m_triangles);
@@ -215,7 +215,7 @@ void Renderer::InitShaders()
 	FMateriauTex = ShaderManager::Instance().CreateTexMat(FScene->m_materiaux);
 	#endif
 
-	//FNoeudTex = ShaderManager::Instance().CreateTexNoeud(octree->m_nodes);
+	//FNoeudTex = ShaderManager::Instance().CreateTexNoeud(octree->m_nodes, octree->m_nb_prim_max);
 
 	//Mappage de la texturepour dessin
 	ShaderManager::Instance().InjectTex(FPipelineShaderID,FRenderTexture,"bling",0);
@@ -304,12 +304,14 @@ void Renderer::LoadScene(const std::string& parFilename)
     }
     FEarModel = ResourceManager::Instance().LoadModel("data/model/final/ear.obj", "data/model/final/diff.bmp","data/model/final/rugo.bmp", "data/model/final/spec.bmp");
     #ifndef SIMPLE
-    FScene->AddMateriau(FEarModel->material);
+    
+     FScene->AddMateriau(FEarModel->material);
     foreach(triangle, FEarModel->listTriangle)
     {
         //Ajoute un triangle ayant pour materiau le dernier materiau ajoute dans la scene
         FScene->AddTriangle(*triangle);
     }
+    
     #endif
 }
 

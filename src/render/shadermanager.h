@@ -27,7 +27,7 @@ class ShaderManager : public Singleton<ShaderManager>
 		GLuint CreateTexPrimitive(const std::vector<Primitive>& parValue, int parNbMat);
 		GLuint CreateTexMat(const std::vector<Materiau>& parValue);
 		
-		GLuint CreateTexNoeud(const std::vector<Node>& parValue);
+		GLuint CreateTexNoeud(const std::vector<Node>& parValue, int nb_prim);
 		
 		void InjectTex(GLuint parShaderID, size_t parIndex, const std::string& parName, GLuint parOffset);
 		

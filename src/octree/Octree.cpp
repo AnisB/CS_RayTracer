@@ -10,7 +10,7 @@ Octree::Octree(Scene* scene)
 	m_objects_max = 1;  // criteres d'arret
 	m_level = 0; // niveau actuel
 	m_objects_number = m_scene->m_triangles.size() + m_scene->m_planes.size() + m_scene->m_quadrics.size(); // nombre d'objets
-	
+	m_nb_prim_max = 0;
 	
     // Boite englobantes
 	for (int i =0; i< m_scene->m_triangles.size(); i++){
@@ -72,9 +72,10 @@ void Octree::build(int cur_node_id, float xmin,float ymin,float zmin,float xmax,
 	// init
 	//std::vector<int> objects_id;
 	//int objects_id[10]; 
-	for(int i=0;i<10;i++){
+	/*for(int i=0;i<10;i++){
 		m_nodes[cur_node_id].objects_id[i] = -1;
 	}
+	* */
 	int objects_id_counter = 0;
 	int local_objects_number = 0; 
 	//std::cout << "cur_node_id " << cur_node_id << std::endl;
@@ -85,7 +86,8 @@ void Octree::build(int cur_node_id, float xmin,float ymin,float zmin,float xmax,
 	for (int i =0; i< m_scene->m_triangles.size(); i++){
 		if ( isTriangleInNode(m_scene->m_triangles[i],xmin,ymin,zmin,xmax,ymax,zmax)){
 			local_objects_number++;
-			m_nodes[cur_node_id].objects_id[objects_id_counter] = i;objects_id_counter++;
+			//m_nodes[cur_node_id].objects_id[objects_id_counter] = i;objects_id_counter++;
+			m_nodes[cur_node_id].objects_id.push_back(i);
 		}
 	}
 	
@@ -159,6 +161,8 @@ void Octree::build(int cur_node_id, float xmin,float ymin,float zmin,float xmax,
 	else { 
 		//std::cout << "le noeud est terminal" << std::endl; // NOEUD TERMINAL
 		for (int i = 0; i<8;i++) {m_nodes[cur_node_id].child[i] = -1;} // enfants a -1
+		m_nb_prim_max = std::max(m_nb_prim_max,int(m_nodes[cur_node_id].objects_id.size()));
+		std::cout << m_nb_prim_max << std::endl;
 		//m_nodes[cur_node_id].objects_id = objects_id;
 		return;
 	}

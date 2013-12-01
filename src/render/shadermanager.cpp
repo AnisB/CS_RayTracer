@@ -209,6 +209,7 @@ GLuint ShaderManager::CreateProgramC(int parMaxRecur, int parNbTriangle, int par
     ss<<"#define NB_MAT " << convertToString(parNbTriangle)<<std::endl;
     ss<<"#define NB_NOEUD " << convertToString(parNbNoeud)<<std::endl;
     ss<<"#define NB_PRIM " << convertToString(parNbTriangle)<<std::endl;
+    ss<<"#define NB_PRIM_MAX " << convertToString(parNbPrimMax)<<std::endl;
 	ss<<"#define NB_TEX " << convertToString(10)<<std::endl;
 	ss<<"#define NB_LIGHTS " << convertToString(1)<<std::endl;
     computeShader+=ss.str();
@@ -306,7 +307,7 @@ GLuint ShaderManager::CreateTexTriangle(const std::vector<Triangle>& parValue)
 }
 
 
-GLuint ShaderManager::CreateTexNoeud(const std::vector<Node>& parValue)
+GLuint ShaderManager::CreateTexNoeud(const std::vector<Node>& parValue, int par_nb_prim)
 {
 	PRINT_ORANGE("CreateTexNoeud" );
 	GLuint noeudTex;
@@ -334,6 +335,15 @@ GLuint ShaderManager::CreateTexNoeud(const std::vector<Node>& parValue)
 		noeudData[index*NODE_STRIDE+13] = TO_GLSL_UNIT(node->coords[5]);
 		
 		// objects_ids
+		for (int j=0;j<par_nb_prim;j++){
+			if (j < int(node->objects_id.size())){ //data
+				noeudData[index*NODE_STRIDE+14+j] = TO_GLSL_UNIT(node->objects_id[j]);
+			}
+			else { // no data
+				noeudData[index*NODE_STRIDE+14+j] = TO_GLSL_UNIT(-1);
+			}
+		}
+		/*
 		noeudData[index*NODE_STRIDE+14] = TO_GLSL_UNIT(node->objects_id[0]);
 		noeudData[index*NODE_STRIDE+15] = TO_GLSL_UNIT(node->objects_id[1]);
 		noeudData[index*NODE_STRIDE+16] = TO_GLSL_UNIT(node->objects_id[2]);
@@ -344,6 +354,7 @@ GLuint ShaderManager::CreateTexNoeud(const std::vector<Node>& parValue)
 		noeudData[index*NODE_STRIDE+21] = TO_GLSL_UNIT(node->objects_id[7]);
 		noeudData[index*NODE_STRIDE+22] = TO_GLSL_UNIT(node->objects_id[8]);
 		noeudData[index*NODE_STRIDE+23] = TO_GLSL_UNIT(node->objects_id[9]);
+		* */
 
      	
 		index++;		

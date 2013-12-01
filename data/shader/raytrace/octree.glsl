@@ -1,31 +1,29 @@
 uint a; // utile pour la traversee de l'octree
-uniform sampler2D listNoeuds;
-// HARDCODED
-#define NODE_NUMBER 600
-#define OBJECTS_NUMBER 10
-#define NODE_STRIDE 24.0
+
+
 #define OCTREE_ACTIVE false
 
+float NODE_STRIDE = 14.0 + NB_PRIM_MAX;
 
 struct Node {
 	int[8]	child_id; // int
 	float[6]	coords;  // xmin,ymin,zmin,xmax,ymax,zmax
-	int[OBJECTS_NUMBER] objects_id; //
+	int[NB_PRIM_MAX] objects_id; //
 
 };
 
-int stack_id[NODE_NUMBER]; // pile pour l'algorithme recursif 
+int stack_id[NB_NOEUD]; // pile pour l'algorithme recursif 
 int stackcounter; // index de la pile
-Node nodes[NODE_NUMBER]; // pile pour l'algorithme recursif
+Node nodes[NB_NOEUD]; // pile pour l'algorithme recursif
 bool nodes_loaded = false;
 
 void loadNodes()
 {
 	if (nodes_loaded) return;
 	float maxx = NODE_STRIDE-1.0;
-	float maxy = NODE_NUMBER-1.0;
-	for (int i=0;i<NODE_NUMBER;i++) {
-		float y = (float(i)/NODE_NUMBER);
+	float maxy = NB_NOEUD-1.0;
+	for (int i=0;i<NB_NOEUD;i++) {
+		float y = (float(i)/NB_NOEUD);
 		
 		// childs
 		nodes[i].child_id[0] = int(texture(listNoeuds, vec2(0.0/maxx,y)).r);
@@ -48,6 +46,10 @@ void loadNodes()
 
 		
 		// objects_ids
+		for (int j=0;j<NB_PRIM_MAX;j++){
+			nodes[i].objects_id[j] = int(texture(listNoeuds, vec2((14.0+j)/maxx,y)).r);
+		}
+		/*
 		nodes[i].objects_id[0] = int(texture(listNoeuds, vec2(14.0/maxx,y)).r);
 		nodes[i].objects_id[1] = int(texture(listNoeuds, vec2(15.0/maxx,y)).r);
 		nodes[i].objects_id[2] = int(texture(listNoeuds, vec2(16.0/maxx,y)).r);
@@ -58,6 +60,7 @@ void loadNodes()
 		nodes[i].objects_id[7] = int(texture(listNoeuds, vec2(21.0/maxx,y)).r);
 		nodes[i].objects_id[8] = int(texture(listNoeuds, vec2(22.0/maxx,y)).r);
 		nodes[i].objects_id[9] = int(texture(listNoeuds, vec2(23.0/maxx,y)).r);
+		* */
 
 	}
     nodes_loaded = true;
