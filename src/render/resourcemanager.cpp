@@ -44,7 +44,7 @@ const Texture* ResourceManager::LoadTexture(const std::string& parFileName)
     unsigned long size;        // size of the new texture in bytes.
     int format = GL_RGB;
 
-    cinfo.err = jpeg_std_error (&jerr);
+    /*cinfo.err = jpeg_std_error (&jerr);
     jpeg_create_decompress (&cinfo);
 
     if (0 == (fd = fopen(parFileName.c_str(), "rb")))
@@ -87,7 +87,7 @@ const Texture* ResourceManager::LoadTexture(const std::string& parFileName)
         jpeg_read_scanlines (&cinfo, &line, 1);
     }
     jpeg_finish_decompress (&cinfo);
-    jpeg_destroy_decompress (&cinfo);
+    jpeg_destroy_decompress (&cinfo);*/
 
     glGenTextures(1, &newTex->id);
     glBindTexture(GL_TEXTURE_2D, newTex->id);

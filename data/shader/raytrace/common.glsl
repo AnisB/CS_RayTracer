@@ -194,8 +194,8 @@ Triangle getTriangleByIndex(int parIndexTriangle)
 
 Primitive getPrimitiveByIndex(int parIndexPrim)
 {
-	Primitive unePrim;
-	float primIndex = float(parIndexPrim)/(float(NB_PRIM)-1);
+    Primitive unePrim;
+    float primIndex = float(parIndexPrim)/(float(NB_PRIM)-1);
     float type = texture(listPrimitives, vec2(0.0,primIndex)).r;
     float index = texture(listPrimitives,vec2(0.5,primIndex)).r;
     float materiau = texture(listPrimitives, vec2(1.0,primIndex)).r;
@@ -205,9 +205,9 @@ Primitive getPrimitiveByIndex(int parIndexPrim)
     type*=2.0;
     materiau*=float(NB_MAT);
     
-	unePrim.index = int(index);
-	unePrim.type = int(type);
-	unePrim.materiau = int(materiau);
+    unePrim.index = int(index);
+    unePrim.type = int(type);
+    unePrim.materiau = int(materiau);
     return unePrim;
 }
 

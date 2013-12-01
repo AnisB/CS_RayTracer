@@ -11,8 +11,10 @@ class Scene
     Scene() {}
     ~Scene() {}
     void AddTriangle(const Triangle &triangle, const Materiau &materiau);
+    void AddTriangle(const Triangle &triangle);
     void AddPlane(const Plan &plane, const Materiau &materiau);
     void AddQuadric(const Quadrique &quadric, const Materiau &materiau);
+    void AddMateriau(const Materiau &materiau);
     void AddLight(const Light& light);
     std::vector<Plan> m_planes;
     std::vector<Triangle> m_triangles;

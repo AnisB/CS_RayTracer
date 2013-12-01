@@ -31,13 +31,23 @@ void Scene::AddPlane(const Plan& plane, const Materiau& materiau)
 }
 
 
-void Scene::AddTriangle(const Triangle& triangle, const Materiau& materiau)
+void Scene::AddTriangle(const Triangle &triangle, const Materiau &materiau)
+{
+    m_materiaux.push_back(materiau);
+    AddTriangle(triangle);
+}
+
+void Scene::AddTriangle(const Triangle &triangle)
 {
     m_triangles.push_back(triangle);
-    m_materiaux.push_back(materiau);
     Primitive primitive;
     primitive.type = PRIMITIVE_TRIANGLE;
     primitive.materiau = m_materiaux.size() - 1;
     primitive.index = m_triangles.size() - 1;
     m_primitives.push_back(primitive);
+}
+
+void Scene::AddMateriau(const Materiau &materiau)
+{
+    m_materiaux.push_back(materiau);
 }

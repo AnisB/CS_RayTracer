@@ -1,0 +1,57 @@
+* --- fichier test pour Ray-Tracer ---
+
+* --- triangle a droite ---
+Poly: polygon_1
+       point: 0 -10.0  -10.0 -80.0
+       uv: 0 0.7 0.9
+       point: 1 -10.0   0.0 -80.0
+       uv: 1 0.1 0.2
+       point: 2  0.0  -10.0 -80.0
+       uv: 2 0.5 0.7
+       color:  1.0 0 0.1
+       reflect: 0.8
+       refract: 0
+        
+* --- triangle a gauche ---
+Poly: polygon_1
+       point: 0 0.0  0.0 -80.0
+       uv: 0 0.5 0.5
+       point: 1 0.0  10.0 -80.0
+       uv: 1 0.1 0.3
+       point: 2 10.0 -0.0 -80.0
+       uv: 2 0.9 1.0
+       color:  0.1 1.0 0.1
+       reflect: 0.8
+       refract: 0
+
+* --- triangle en haut ---
+Poly: polygon_1
+       point: 0 20.0  20.0 -80.0
+       uv: 0 0.8 1.0
+       point: 1 20.0   30.0 -80.0
+       uv: 0 0.0 1.0
+       point: 2  30.0  20.0 -80.0
+       uv: 0 0.1 0.2
+       color:  0.1 0.1 1.0
+       reflect: 0.8
+       refract: 0
+       
+Quad: sphere_1
+        v_quad:      1.0 1.0 1.0
+        v_linear:  0.0 0.0 0.0
+        v_const:   0.0
+        color:  200 10 10
+        ambient:  0.0
+        diffus:   0.1
+        reflect: 0.9
+       
+
+
+* --- lumiere ---
+Lumiere: light_1
+        position: 10.0 0.0 3.0
+        colorSpec: 1.0 1.0 1.0
+        intens:   1.0
+        
+        
+
