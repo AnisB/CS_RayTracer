@@ -33,7 +33,7 @@ vec4 CouleurPixel@NB_ITER@(Ray parRayon)
 		//finalColor = listTex[getMateriauByIndex(getPrimitiveByIndex(intersect.obj).materiau).texAlbedo];
 		finalColor = getMateriauByIndex(getPrimitiveByIndex(intersect.obj).materiau).color;
 		//finalColor = vec4(intersect.uv.x,intersect.uv.y,0.0,1.0);
-		finalColor *=SecondRayTrace(intersect);
+		//finalColor *=SecondRayTrace(intersect);
 
 		//finalColor = computeBRDF(parRayon, intersect);
 		

@@ -137,10 +137,10 @@ struct Light
 vec4 CouleurPixel(Ray parRayon);
 //void proc_subtree (double tx0, double ty0, double tz0, double tx1, double ty1, double tz1, Node node);
 
-
-uniform sampler2D listTriangles;
+uniform sampler2D  listTriangles;
 uniform sampler2D listPrimitives;
 uniform sampler2D listMateriaux;
+uniform sampler2D listNoeuds;
 
 uniform	sampler2D listTex[NB_TEX];
 
@@ -153,6 +153,7 @@ uniform	Light listLight[NB_LIGHTS];
 Triangle getTriangleByIndex(int parIndexTriangle)
 {
 	Triangle unTriangle;
+
 	float triNormIndex = float(parIndexTriangle)/(float(NB_TRIANGLE)-1);
     unTriangle.p0.x = texture(listTriangles, vec2(p0x,triNormIndex)).r;
     unTriangle.p0.y = texture(listTriangles, vec2(p0y,triNormIndex)).r;
@@ -178,7 +179,7 @@ Triangle getTriangleByIndex(int parIndexTriangle)
     unTriangle.normale.x = texture(listTriangles, vec2(nx,triNormIndex)).r;
     unTriangle.normale.y = texture(listTriangles, vec2(ny,triNormIndex)).r;
     unTriangle.normale.z = texture(listTriangles, vec2(nz,triNormIndex)).r;
-    
+ 	
     unTriangle.p0-= vec3(0.5);
     unTriangle.p1-= vec3(0.5);
     unTriangle.p2-= vec3(0.5);
