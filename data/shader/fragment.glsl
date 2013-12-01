@@ -1,4 +1,4 @@
-#version 410 
+#version 430 
 
 uniform sampler2D bling; 
 uniform sampler2D tex2;

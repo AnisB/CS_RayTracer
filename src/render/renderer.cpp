@@ -219,7 +219,6 @@ void Renderer::InitShaders()
 
 	//Mappage de la texturepour dessin
 	ShaderManager::Instance().InjectTex(FPipelineShaderID,FRenderTexture,"bling",0);
-	ShaderManager::Instance().InjectTex(FPipelineShaderID,FEarModel->albTex->id,"tex2",1);
 	//ShaderManager::Instance().InjectTex(FPipelineShaderID,FEarModel->rugTex->id,"tex2",1);
 
 
@@ -229,8 +228,8 @@ void Renderer::InitShaders()
 	ShaderManager::Instance().InjectTex(FComputeShader,FTriangleTex,"listTriangles",1);
 	ShaderManager::Instance().InjectTex(FComputeShader,FPrimitiveTex,"listPrimitives",2);
 	ShaderManager::Instance().InjectTex(FComputeShader,FMateriauTex,"listMateriaux",3);
-	//ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->albTex->id,"listTex[0]",4);
-	//ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->rugTex->id,"listTex[1]",5);
+	ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->albTex->id,"listTex[0]",4);
+	ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->rugTex->id,"listTex[1]",5);
 	//ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->specTex->id,"listTex[2]",6);
 	//ShaderManager::Instance().InjectTex(FComputeShader,FNoeudTex,"listNoeuds",4);
 	#endif
