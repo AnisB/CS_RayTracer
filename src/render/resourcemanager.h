@@ -15,7 +15,7 @@ struct Texture
 	GLuint id;
 	int w;
 	int l;
-	GLubyte * content;
+	unsigned char * content;
 };
 
 

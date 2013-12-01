@@ -36,66 +36,48 @@ std::string concatenate(const std::string& parBase, int parIndex)
 
 const Texture* ResourceManager::LoadTexture(const std::string& parFileName)
 {
+    PRINT_GREEN("Chargement de la texture: " << parFileName);
+
     Texture * newTex = new Texture();
-    FILE *fd;
-    struct jpeg_decompress_struct cinfo;
-    struct jpeg_error_mgr jerr;
-    unsigned char * line;
-    unsigned long size;        // size of the new texture in bytes.
-    int format = GL_RGB;
+    FILE* f = fopen(parFileName.c_str(), "rb");
 
-    /*cinfo.err = jpeg_std_error (&jerr);
-    jpeg_create_decompress (&cinfo);
-
-    if (0 == (fd = fopen(parFileName.c_str(), "rb")))
+    if(f==NULL)
     {
-        PRINT_RED("Error reading from file " << parFileName);
-        delete newTex;
-        return 0;
-    }
-
-
-    jpeg_stdio_src (&cinfo, fd);
-    jpeg_read_header (&cinfo, TRUE);
-    newTex->w = cinfo.output_width;
-    newTex->l = cinfo.output_height;
-    size = newTex->w * newTex->l * 3;
-    newTex->content = (GLubyte *) malloc(size);
-
-    if (GL_RGB == format)
-    {
-        if (cinfo.out_color_space == JCS_GRAYSCALE)
-        {
-            PRINT_RED("Error reading from file " << parFileName);
-            delete newTex;
-            return 0;
-        }
+    	PRINT_RED("Erreur ouverture fichier "<<parFileName);	
     }
     else
-        if (cinfo.out_color_space != JCS_GRAYSCALE)
-        {
-            PRINT_RED("Error reading from file " << parFileName);
-            delete newTex;
-            return 0;
-        }
-
-    jpeg_start_decompress (&cinfo);
-
-    while (cinfo.output_scanline < cinfo.output_height)
     {
-        line = newTex->content + (GL_RGB == format ? 3 * size : size) * cinfo.output_scanline;
-        jpeg_read_scanlines (&cinfo, &line, 1);
-    }
-    jpeg_finish_decompress (&cinfo);
-    jpeg_destroy_decompress (&cinfo);*/
+    	PRINT_GREEN("Fichier ouvert"<<parFileName);	
 
+    }
+    unsigned char info[54];
+    fread(info, sizeof(unsigned char), 54, f); // read the 54-byte header
+
+    // extract image height and width from header
+    newTex->w = *(int*)&info[18];
+    newTex->l = *(int*)&info[22];
+
+
+    int size = 3 * newTex->w  * newTex->l ;
+    unsigned char* data = new unsigned char[size]; // allocate 3 bytes per pixel
+    fread(data, sizeof(unsigned char), size, f); // read the rest of the data at once
+    fclose(f);
+
+    for(int i = 0; i < size; i += 3)
+    {
+            unsigned char tmp = data[i];
+            data[i] = data[i+2];
+            data[i+2] = tmp;
+    }
+
+    newTex->content = data;
     glGenTextures(1, &newTex->id);
     glBindTexture(GL_TEXTURE_2D, newTex->id);
-	glTexImage2D(GL_TEXTURE_2D, 0, 3, newTex->w, newTex->l, 0, GL_RGB, GL_FLOAT, newTex->content);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, newTex->w, newTex->l, 0, GL_RGB, GL_UNSIGNED_BYTE, newTex->content);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glBindTexture(GL_TEXTURE_2D, 0);
 	FTexIndex++;
 	return newTex;
@@ -166,11 +148,6 @@ ObjFile* ResourceManager::LoadModel(const std::string& parFileName, const std::s
 		  uvindex.p1--;
 		  uvindex.p2--;
 		  uvList.push_back(uvindex);
-		  
-	      PRINT_ORANGE("Indexes "<<triangleIndex.p0<<" "<<triangleIndex.p1<<" "<<triangleIndex.p2);
-	      //index.push_back(a); 
-	      //index.push_back(b); 
-	      //index.push_back(c);
 	    }
 	    else if(line[0] == 'v' && line[1] == 't') 
 	    { 	

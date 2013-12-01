@@ -208,25 +208,30 @@ void Renderer::InitShaders()
 	#ifndef SIMPLE
 	//Création du shader de calcul
 	FComputeShader = ShaderManager::Instance().CreateProgramC(3,FScene->m_triangles.size(),1,1,1,FScene->m_primitives.size());
-	#endif
 	//Création des texture
 	FRenderTexture = ShaderManager::Instance().GenerateTexture(512,512);
 	FTriangleTex = ShaderManager::Instance().CreateTexTriangle(FScene->m_triangles);
 	FPrimitiveTex = ShaderManager::Instance().CreateTexPrimitive(FScene->m_primitives, FScene->m_materiaux.size());
 	FMateriauTex = ShaderManager::Instance().CreateTexMat(FScene->m_materiaux);
+	#endif
+
 	//FNoeudTex = ShaderManager::Instance().CreateTexNoeud(octree->m_nodes);
 
 	//Mappage de la texturepour dessin
 	ShaderManager::Instance().InjectTex(FPipelineShaderID,FRenderTexture,"bling",0);
+	//ShaderManager::Instance().InjectTex(FPipelineShaderID,FEarModel->albTex->id,"tex2",1);
+	//ShaderManager::Instance().InjectTex(FPipelineShaderID,FEarModel->rugTex->id,"tex2",1);
+
+
 	#ifndef SIMPLE
 	//Mappage de la texture pour écriture
 	ShaderManager::Instance().InjectTex(FComputeShader,FRenderTexture,"renderCanvas",0);
 	ShaderManager::Instance().InjectTex(FComputeShader,FTriangleTex,"listTriangles",1);
 	ShaderManager::Instance().InjectTex(FComputeShader,FPrimitiveTex,"listPrimitives",2);
 	ShaderManager::Instance().InjectTex(FComputeShader,FMateriauTex,"listMateriaux",3);
-	//ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->albTex->id,"listTex[0]",4);
-	//ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->rugTex->id,"listTex[1]",5);
-	//ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->specTex->id,"listTex[2]",6);
+	ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->albTex->id,"listTex[0]",4);
+	ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->rugTex->id,"listTex[1]",5);
+	ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->specTex->id,"listTex[2]",6);
 	//ShaderManager::Instance().InjectTex(FComputeShader,FNoeudTex,"listNoeuds",4);
 	#endif
 }
@@ -277,7 +282,6 @@ void Renderer::Run()
 	{
 	  //START_COUNT_TIME(temps);
 	  glClear (GL_COLOR_BUFFER_BIT);
-
 	  RayTracing();
 	  RenderResultToScreen();
 	  UpdateDisplacement();
@@ -292,27 +296,31 @@ void Renderer::Run()
 
 void Renderer::LoadScene(const std::string& parFilename)
 {
+
     FScene = FParser.GetSceneFromFile(parFilename);
     if(FScene == NULL)
     {
         PRINT_RED("Fichier de scene " << parFilename << " non trouve.");
     }
-    
-    FEarModel = ResourceManager::Instance().LoadModel("data/model/final/ear.obj", "data/model/final/diff.jpg","data/model/final/rugo.jpg", "data/model/final/spec.jpg");
+    FEarModel = ResourceManager::Instance().LoadModel("data/model/final/ear.obj", "data/model/final/diff.bmp","data/model/final/rugo.bmp", "data/model/final/spec.bmp");
+    #ifndef SIMPLE
     FScene->AddMateriau(FEarModel->material);
     foreach(triangle, FEarModel->listTriangle)
     {
         //Ajoute un triangle ayant pour materiau le dernier materiau ajoute dans la scene
         FScene->AddTriangle(*triangle);
     }
+    #endif
 }
 
 void Renderer::InjectScene()
 {
+	#ifndef SIMPLE
 	int index = 0;
 	index = 0;
     foreach(light, FScene->m_lights)
     {
         ShaderManager::Instance().InjectLight(FComputeShader, *light, index++);
     }
+    #endif
 }
