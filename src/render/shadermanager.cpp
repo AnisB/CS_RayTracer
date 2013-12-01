@@ -267,7 +267,9 @@ GLuint ShaderManager::CreateTexTriangle(const std::vector<Triangle>& parValue)
 		triangleData[index*18+0] = TO_GLSL_UNIT(triangle->p0.x);
 		triangleData[index*18+1] = TO_GLSL_UNIT(triangle->p0.y); 
 		triangleData[index*18+2] = TO_GLSL_UNIT(triangle->p0.z);
-		
+		PRINT_ORANGE(TO_GLSL_UNIT(triangle->p0.x));
+		PRINT_ORANGE(TO_GLSL_UNIT(triangle->p0.y));
+		PRINT_ORANGE(TO_GLSL_UNIT(triangle->p0.z));
 		triangleData[index*18+3] = triangle->uv0.u; 
 		triangleData[index*18+4] = triangle->uv0.v;	
 			
