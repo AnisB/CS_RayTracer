@@ -1,4 +1,4 @@
-uint a; // utile pour la traversee de l'octree
+int a; // utile pour la traversee de l'octree
 
 
 #define OCTREE_ACTIVE false
@@ -17,37 +17,38 @@ int stackcounter; // index de la pile
 Node nodes[NB_NOEUD]; // pile pour l'algorithme recursif
 bool nodes_loaded = false;
 
-void loadNodes()
+
+Node[NB_NOEUD] loadNodes()
 {
-	if (nodes_loaded) return;
+	Node local_nodes[NB_NOEUD];
 	float maxx = NODE_STRIDE-1.0;
 	float maxy = NB_NOEUD-1.0;
 	for (int i=0;i<NB_NOEUD;i++) {
 		float y = (float(i)/NB_NOEUD);
 		
-		// childs
-		nodes[i].child_id[0] = int(texture(listNoeuds, vec2(0.0/maxx,y)).r);
-		nodes[i].child_id[1] = int(texture(listNoeuds, vec2(1.0/maxx,y)).r);
-		nodes[i].child_id[2] = int(texture(listNoeuds, vec2(2.0/maxx,y)).r);
-		nodes[i].child_id[3] = int(texture(listNoeuds, vec2(3.0/maxx,y)).r);
-		nodes[i].child_id[4] = int(texture(listNoeuds, vec2(4.0/maxx,y)).r);
-		nodes[i].child_id[5] = int(texture(listNoeuds, vec2(5.0/maxx,y)).r);
-		nodes[i].child_id[6] = int(texture(listNoeuds, vec2(6.0/maxx,y)).r);
-		nodes[i].child_id[7] = int(texture(listNoeuds, vec2(7.0/maxx,y)).r);
+		// childs (int)
+		local_nodes[i].child_id[0] = int(round(texture(listNoeuds, vec2(0.0/maxx,y)).r *float(NB_NOEUD-1))-1);
+		local_nodes[i].child_id[1] = int(round(texture(listNoeuds, vec2(1.0/maxx,y)).r *float(NB_NOEUD-1))-1);
+		local_nodes[i].child_id[2] = int(round(texture(listNoeuds, vec2(2.0/maxx,y)).r *float(NB_NOEUD-1))-1);
+		local_nodes[i].child_id[3] = int(round(texture(listNoeuds, vec2(3.0/maxx,y)).r *float(NB_NOEUD-1))-1);
+		local_nodes[i].child_id[4] = int(round(texture(listNoeuds, vec2(4.0/maxx,y)).r *float(NB_NOEUD-1))-1);
+		local_nodes[i].child_id[5] = int(round(texture(listNoeuds, vec2(5.0/maxx,y)).r *float(NB_NOEUD-1))-1);
+		local_nodes[i].child_id[6] = int(round(texture(listNoeuds, vec2(6.0/maxx,y)).r *float(NB_NOEUD-1))-1);
+		local_nodes[i].child_id[7] = int(round(texture(listNoeuds, vec2(7.0/maxx,y)).r *float(NB_NOEUD-1))-1);
 
 
-		// coords
-		nodes[i].coords[0] = texture(listNoeuds, vec2(8.0/maxx,y)).r;
-		nodes[i].coords[1] = texture(listNoeuds, vec2(9.0/maxx,y)).r;
-		nodes[i].coords[2] = texture(listNoeuds, vec2(10.0/maxx,y)).r;
-		nodes[i].coords[3] = texture(listNoeuds, vec2(11.0/maxx,y)).r;
-		nodes[i].coords[4] = texture(listNoeuds, vec2(12.0/maxx,y)).r;
-		nodes[i].coords[5] = texture(listNoeuds, vec2(13.0/maxx,y)).r;
+		// coords (float)
+		local_nodes[i].coords[0] = texture(listNoeuds, vec2(8.0/maxx,y)).r;
+		local_nodes[i].coords[1] = texture(listNoeuds, vec2(9.0/maxx,y)).r;
+		local_nodes[i].coords[2] = texture(listNoeuds, vec2(10.0/maxx,y)).r;
+		local_nodes[i].coords[3] = texture(listNoeuds, vec2(11.0/maxx,y)).r;
+		local_nodes[i].coords[4] = texture(listNoeuds, vec2(12.0/maxx,y)).r;
+		local_nodes[i].coords[5] = texture(listNoeuds, vec2(13.0/maxx,y)).r;
 
 		
-		// objects_ids
+		// objects_ids (int)
 		for (int j=0;j<NB_PRIM_MAX;j++){
-			nodes[i].objects_id[j] = int(texture(listNoeuds, vec2((14.0+j)/maxx,y)).r);
+			local_nodes[i].objects_id[j] = int(round(texture(listNoeuds, vec2((14.0+j)/maxx,y)).r *float(NB_PRIM-1))-1); // round au lieu de int a cause des erreurs darrondi
 		}
 		/*
 		nodes[i].objects_id[0] = int(texture(listNoeuds, vec2(14.0/maxx,y)).r);
@@ -64,10 +65,12 @@ void loadNodes()
 
 	}
     nodes_loaded = true;
-    return;
+    return local_nodes;
 }
 
 int[NB_PRIM]  proc_subtree (double tx0, double ty0, double tz0, double tx1, double ty1, double tz1, int node_id);
+
+
 
 
 // ------------------------------------
@@ -76,7 +79,8 @@ int[NB_PRIM]  proc_subtree (double tx0, double ty0, double tz0, double tx1, doub
 
 int[NB_PRIM] ray_paramter ( Ray ray){
 	a = 0;
-	loadNodes();
+	if (!nodes_loaded) {nodes = loadNodes();}
+	
 	Node octree = nodes[0];
 	float sizeX = octree.coords[3] - octree.coords[0];
 	float sizeY = octree.coords[4] - octree.coords[1];
@@ -107,6 +111,7 @@ int[NB_PRIM] ray_paramter ( Ray ray){
 	double tz1 = (octree.coords[5] - ray.origin[2]) * ray.direction[2];
 	
 	if( max(max(tx0,ty0),tz0) < min(min(tx1,ty1),tz1) ){
+		
 		return proc_subtree(tx0,ty0,tz0,tx1,ty1,tz1,0);
 	}
 }
@@ -116,7 +121,7 @@ int[NB_PRIM] ray_paramter ( Ray ray){
 // ------------------------------------	
 
 uint first_node(double tx0, double ty0, double tz0, double txm, double tym, double tzm){
-	uint answer = 0;	// 00000000
+	int answer = 0;	// 00000000
 	double maximum = max(max(tx0,ty0),tz0);
 
 	if(maximum == tx0){ // PLANE YZ
@@ -160,6 +165,12 @@ uint new_node(double txm, int x, double tym, int y, double tzm, int z){
 
 int[NB_PRIM] proc_subtree (double tx0, double ty0, double tz0, double tx1, double ty1, double tz1, int node_id)
 {
+	///////////////
+	int listePrims[NB_PRIM];
+	for(int i = 0; i < NB_PRIM; i++){
+			listePrims[i] = 1;
+	}
+	///////////////
 	double txm, tym, tzm;
 	uint currNode;
 	int listePrim[NB_PRIM];
@@ -172,17 +183,22 @@ int[NB_PRIM] proc_subtree (double tx0, double ty0, double tz0, double tx1, doubl
 		stack_id[i]=-1;
 	}
 	stackcounter = 0;
-	stack_id[stackcounter] = 0;
+	stack_id[stackcounter] = node_id; // root
 	
 	while ( stackcounter != -1 ){ // tant que la pile nest pas vide
+		
+		
 		Node node = nodes[stack_id[stackcounter]]; stackcounter--; // Pop stack
 
 		if(tx1 < 0.0 || ty1 < 0.0 || tz1 < 0.0) continue; // continue ? (return en recursif)
-		
+
 		if(node.child_id[0] == -1){ // noeud terminal
+			
 			// ajouter les primitives a la liste des primitives
 			for(int i =0;i<NB_PRIM_MAX;i++){
-				listePrim[node.objects_id[i]]=1; // mettre 1 a chaque index de listePrim quand que cest bon
+				if (node.objects_id[i] !=-1){
+					listePrim[node.objects_id[i]]=1; // mettre 1 a chaque index de listePrim quand que cest bon
+				}
 			}
 			continue; // continue ? (return en recursif)
 		}
@@ -194,6 +210,7 @@ int[NB_PRIM] proc_subtree (double tx0, double ty0, double tz0, double tx1, doubl
 		
 		
 		currNode = first_node(node.coords[0],node.coords[1],node.coords[2],txm,tym,tzm);
+
 		do{ 		
 			switch (currNode) 	{
 			case 0: {  			
@@ -238,7 +255,7 @@ int[NB_PRIM] proc_subtree (double tx0, double ty0, double tz0, double tx1, doubl
 		} while (currNode<8);
 	
 	}
-	
+	//return listePrims;
 	return listePrim;
 }
 
@@ -250,9 +267,10 @@ int[NB_PRIM] getPrimitives(Ray parRay)
 		listePrims = ray_paramter(parRay);
 	}
 	else {
-		for(int i = 0; i < NB_PRIM; i++)
+		for(int i = 0; i < NB_PRIM; i++){
 			//listePrims[i] = i;
 			listePrims[i] = 1;
+		}
 	}
 	return  listePrims;
 }

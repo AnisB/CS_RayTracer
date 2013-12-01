@@ -6,7 +6,7 @@ Octree::Octree(Scene* scene)
     
     // init
     m_scene = scene; // scene
-	m_max_level = 2; // criteres d'arret
+	m_max_level = 1; // criteres d'arret
 	m_objects_max = 1;  // criteres d'arret
 	m_level = 0; // niveau actuel
 	m_objects_number = m_scene->m_triangles.size() + m_scene->m_planes.size() + m_scene->m_quadrics.size(); // nombre d'objets

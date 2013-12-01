@@ -309,7 +309,7 @@ GLuint ShaderManager::CreateTexTriangle(const std::vector<Triangle>& parValue)
 }
 
 
-GLuint ShaderManager::CreateTexNoeud(const std::vector<Node>& parValue, int par_nb_prim)
+GLuint ShaderManager::CreateTexNoeud(const std::vector<Node>& parValue, int par_nb_prim_max, int par_nb_prim)
 {
 	PRINT_ORANGE("CreateTexNoeud" );
 	GLuint noeudTex;
@@ -318,17 +318,18 @@ GLuint ShaderManager::CreateTexNoeud(const std::vector<Node>& parValue, int par_
 	int index = 0;
 	foreach(node, parValue)
 	{
-		// childs
-		noeudData[index*NODE_STRIDE+0] = TO_GLSL_UNIT(node->child[0]);
-		noeudData[index*NODE_STRIDE+1] = TO_GLSL_UNIT(node->child[1]);
-		noeudData[index*NODE_STRIDE+2] = TO_GLSL_UNIT(node->child[2]);
-		noeudData[index*NODE_STRIDE+3] = TO_GLSL_UNIT(node->child[3]);
-		noeudData[index*NODE_STRIDE+4] = TO_GLSL_UNIT(node->child[4]);
-		noeudData[index*NODE_STRIDE+5] = TO_GLSL_UNIT(node->child[5]);
-		noeudData[index*NODE_STRIDE+6] = TO_GLSL_UNIT(node->child[6]);
-		noeudData[index*NODE_STRIDE+7] = TO_GLSL_UNIT(node->child[7]);
+		
+		// childs (int)
+		noeudData[index*NODE_STRIDE+0] = ((node->child[0]+1)/((float)parValue.size()-1)); 
+		noeudData[index*NODE_STRIDE+1] = ((node->child[1]+1)/((float)parValue.size()-1)); 
+		noeudData[index*NODE_STRIDE+2] = ((node->child[2]+1)/((float)parValue.size()-1)); 
+		noeudData[index*NODE_STRIDE+3] = ((node->child[3]+1)/((float)parValue.size()-1)); 
+		noeudData[index*NODE_STRIDE+4] = ((node->child[4]+1)/((float)parValue.size()-1)); 
+		noeudData[index*NODE_STRIDE+5] = ((node->child[5]+1)/((float)parValue.size()-1)); 
+		noeudData[index*NODE_STRIDE+6] = ((node->child[6]+1)/((float)parValue.size()-1)); 
+		noeudData[index*NODE_STRIDE+7] = ((node->child[7]+1)/((float)parValue.size()-1)); 
 
-		// coords
+		// coords (float)
 		noeudData[index*NODE_STRIDE+8] = TO_GLSL_UNIT(node->coords[0]);
 		noeudData[index*NODE_STRIDE+9] = TO_GLSL_UNIT(node->coords[1]);
 		noeudData[index*NODE_STRIDE+10] = TO_GLSL_UNIT(node->coords[2]);
@@ -336,13 +337,14 @@ GLuint ShaderManager::CreateTexNoeud(const std::vector<Node>& parValue, int par_
 		noeudData[index*NODE_STRIDE+12] = TO_GLSL_UNIT(node->coords[4]);
 		noeudData[index*NODE_STRIDE+13] = TO_GLSL_UNIT(node->coords[5]);
 		
-		// objects_ids
-		for (int j=0;j<par_nb_prim;j++){
+		// objects_ids (int)
+		for (int j=0;j<par_nb_prim_max;j++){
 			if (j < int(node->objects_id.size())){ //data
-				noeudData[index*NODE_STRIDE+14+j] = TO_GLSL_UNIT(node->objects_id[j]);
+				noeudData[index*NODE_STRIDE+14+j] = ((node->objects_id[j]+1)/((float)par_nb_prim-1)); 
 			}
 			else { // no data
-				noeudData[index*NODE_STRIDE+14+j] = TO_GLSL_UNIT(-1);
+				//noeudData[index*NODE_STRIDE+14+j] = (-1+1)/((float)par_nb_prim-1);
+				noeudData[index*NODE_STRIDE+14+j] = 0.0;
 			}
 		}
 		/*
