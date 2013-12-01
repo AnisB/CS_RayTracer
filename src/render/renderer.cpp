@@ -67,8 +67,6 @@ void Renderer::HandleMouse(float parX, float parY)
 		FOldY = parY;
 		FInitDone = true;
 	}
-
-
 }
 void Renderer::HandleKey(int parKey, int parAction)
 {
@@ -176,6 +174,8 @@ bool Renderer::Init()
 	PRINT_GREEN("The renderer was created succesfully");
 	//ShaderManager::Instance().BindTexture(FRenderTexture);
 	FLastTime = glfwGetTime();
+
+    glfwSetInputMode(FWindow,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
     return true;
 }
 

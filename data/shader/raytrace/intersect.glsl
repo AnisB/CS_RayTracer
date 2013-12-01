@@ -169,8 +169,9 @@ Intersection IntersectWithScene(in Ray parRay,in int parPrim[NB_PRIM])
 		//Primitive prim = getPrimitiveByIndex(parPrim[i]);
 		// en fait le tableau parPrim est un tableau de -1 ou 1, selon qu'on test ou non la primitive i
 		//if (parPrim[i]!=1) continue;
+
         Primitive prim = getPrimitiveByIndex(i);
-        
+
         switch(prim.type)
         {
         case PRIMITIVE_TRIANGLE :
