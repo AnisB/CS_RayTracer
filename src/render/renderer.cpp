@@ -301,19 +301,18 @@ void Renderer::LoadScene(const std::string& parFilename)
     {
         PRINT_RED("Fichier de scene " << parFilename << " non trouve.");
    }
-   
+   	
     FEarModel = ResourceManager::Instance().LoadModel("data/model/final/ear.obj", "data/model/final/diff.bmp","data/model/final/rugo.bmp", "data/model/final/spec.bmp");
+   
     #ifndef SIMPLE
-    
-     FScene->AddMateriau(FEarModel->material);
+    FScene->AddMateriau(FEarModel->material);
     foreach(triangle, FEarModel->listTriangle)
     {
         //Ajoute un triangle ayant pour materiau le dernier materiau ajoute dans la scene
         FScene->AddTriangle(*triangle);
     }
-    
+
     #endif
-    
 }
 
 void Renderer::InjectScene()
