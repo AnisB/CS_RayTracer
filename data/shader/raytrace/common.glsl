@@ -35,6 +35,7 @@
 #define ny 16.0/TRIANGLE_PARAM
 #define nz 17.0/TRIANGLE_PARAM
 
+
 const vec4 backGroundColor = vec4(0.0,0,0,1.0); 
 // Données relatives a la caméra
 // Camera position
@@ -278,7 +279,6 @@ Primitive getPrimitiveByIndex(int parIndexPrim)
     return unePrim;
 }
 
-
 Materiau getMateriauByIndex(int parMateriauIndex)
 {
 	Materiau unMat;
@@ -299,3 +299,11 @@ Materiau getMateriauByIndex(int parMateriauIndex)
     
     return unMat;
 }
+
+vec4 getMateriauColorByPrimID(int parIndexPrim)
+{
+	Primitive prim = getPrimitiveByIndex(parIndexPrim);
+	return getMateriauByIndex(prim.materiau).color;
+}
+
+

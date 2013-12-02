@@ -1,6 +1,14 @@
 
 #include "renderer.h"
 
+#include <sys/time.h>
+
+double getTime()
+{
+timeval tv;
+gettimeofday (&tv, NULL);
+return double (tv.tv_sec) + 0.000001 * tv.tv_usec;
+}
 
 #include "helper.h"
 
@@ -38,6 +46,7 @@ Renderer::Renderer()
 , FBackward(false)
 , FLeftward(false)
 , FRightward(false)
+, FOreille(false)
 {
 	
 }
@@ -104,8 +113,10 @@ void Renderer::HandleKey(int parKey, int parAction)
 	}	
 }
 
-bool Renderer::Init()
+bool Renderer::Init(const char* scene, bool parOreille)
 {
+	FOreille = parOreille;
+	PRINT_ORANGE("Oreille activée "<<FOreille);
     // Initialise GLFW
     if(!glfwInit())
     {
@@ -131,7 +142,7 @@ bool Renderer::Init()
 	
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
 	// Open a window and create its OpenGL context
-	FWindow = glfwCreateWindow(512, 287, "CS_RayTracer", NULL, NULL);
+	FWindow = glfwCreateWindow(1280, 720, "CS_RayTracer", NULL, NULL);
 	if(FWindow == NULL)
 	{
 		PRINT_RED("The glfw open windows failed");
@@ -159,7 +170,7 @@ bool Renderer::Init()
 	FIsRendering = true;
 	CheckGLState("Vidage buffer");
 	// Loading the scene file
-    LoadScene("data/scenes/scene_test_quad.dat");
+    LoadScene(scene);
     
     // Octree
     octree = new Octree(FScene);
@@ -207,7 +218,7 @@ void Renderer::InitShaders()
 
 	#ifndef SIMPLE
 	//Création du shader de calcul
-	FComputeShader = ShaderManager::Instance().CreateProgramC(3,FScene->m_triangles.size(),1,FScene->m_quadrics.size(),octree->m_nodes.size(),FScene->m_primitives.size());
+	FComputeShader = ShaderManager::Instance().CreateProgramC(2,FScene->m_triangles.size(),1,FScene->m_quadrics.size(),octree->m_nodes.size(),FScene->m_primitives.size(),FScene->m_materiaux.size(),FOreille );
 	//Création des texture
 	FRenderTexture = ShaderManager::Instance().GenerateTexture(512,512);
 	FTriangleTex = ShaderManager::Instance().CreateTexTriangle(FScene->m_triangles);
@@ -230,10 +241,13 @@ void Renderer::InitShaders()
 	ShaderManager::Instance().InjectTex(FComputeShader,FPrimitiveTex,"listPrimitives",2);
 	ShaderManager::Instance().InjectTex(FComputeShader,FMateriauTex,"listMateriaux",3);
 	ShaderManager::Instance().InjectTex(FComputeShader,FQuadTex,"listQuadriques",4);
-	ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->albTex->id,"listTex[0]",5);
-	ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->rugTex->id,"listTex[1]",6);
-	ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->specTex->id,"listTex[2]",7);
-	
+	if(FOreille)
+	{
+		ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->albTex->id,"listTex[0]",5);
+		ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->rugTex->id,"listTex[1]",6);
+		ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->specTex->id,"listTex[2]",7);
+		ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->normalTex->id,"listTex[3]",8);
+	}
 	//ShaderManager::Instance().InjectTex(FComputeShader,FNoeudTex,"listNoeuds",4);
 	#endif
 }
@@ -282,15 +296,15 @@ void Renderer::Run()
 	FCamera.UpdateValues(FComputeShader);
 	while (!glfwWindowShouldClose (FWindow)) 
 	{
-	  //START_COUNT_TIME(temps);
+	  double timeA = getTime();
 	  glClear (GL_COLOR_BUFFER_BIT);
 	  RayTracing();
 	  RenderResultToScreen();
 	  UpdateDisplacement();
 	  glfwPollEvents ();
 	  glfwSwapBuffers (FWindow);
-	  //END_COUNT_TIME(temps);
-	  //PRINT_ORANGE("Temps pour la frame"<<temps);
+	   double timeB = getTime();
+	  PRINT_ORANGE("Temps pour la frame"<<(timeB-timeA));
 
 	}
 }
@@ -298,16 +312,22 @@ void Renderer::Run()
 
 void Renderer::LoadScene(const std::string& parFilename)
 {
-
+	PRINT_GREEN("Fichier de scene demandé " << parFilename);
     FScene = FParser.GetSceneFromFile(parFilename);
     if(FScene == NULL)
     {
         PRINT_RED("Fichier de scene " << parFilename << " non trouve.");
-   }
-   	
-    FEarModel = ResourceManager::Instance().LoadModel("data/model/final/ear.obj", "data/model/final/diff.bmp","data/model/final/rugo.bmp", "data/model/final/spec.bmp");
+    }
+    else
+    {
+    	PRINT_GREEN("Fichier de scene " << parFilename << " trouve.");
+    }
+   	if(FOreille)
+   	{
+   	PRINT_ORANGE("Oreille  chargée");
+    FEarModel = ResourceManager::Instance().LoadModel("data/model/final/ear.obj", "data/model/final/diff.bmp","data/model/final/rugo.bmp", "data/model/final/spec.bmp","data/model/final/normal.bmp");
    
-   	/*
+
     #ifndef SIMPLE
     FScene->AddMateriau(FEarModel->material);
     foreach(triangle, FEarModel->listTriangle)
@@ -316,7 +336,11 @@ void Renderer::LoadScene(const std::string& parFilename)
         FScene->AddTriangle(*triangle);
     }
     #endif
-	*/
+	}
+	else
+	{
+		PRINT_ORANGE("Oreille non chargée");
+	}
     
 }
 

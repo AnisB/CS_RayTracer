@@ -74,8 +74,8 @@ const Texture* ResourceManager::LoadTexture(const std::string& parFileName)
     glGenTextures(1, &newTex->id);
     glBindTexture(GL_TEXTURE_2D, newTex->id);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, newTex->w, newTex->l, 0, GL_RGB, GL_UNSIGNED_BYTE, newTex->content);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -83,7 +83,7 @@ const Texture* ResourceManager::LoadTexture(const std::string& parFileName)
 	return newTex;
 }
 
-ObjFile* ResourceManager::LoadModel(const std::string& parFileName, const std::string& parAlbTexFileName, const std::string& parRugTexFileName, const std::string& parSpecTexFileName )
+ObjFile* ResourceManager::LoadModel(const std::string& parFileName, const std::string& parAlbTexFileName, const std::string& parRugTexFileName, const std::string& parSpecTexFileName, const std::string& parNormalTexFileName )
 {
 	// Liste des points
 	std::vector<Vector3> vertices;
@@ -182,6 +182,7 @@ ObjFile* ResourceManager::LoadModel(const std::string& parFileName, const std::s
 			// Il fuat les calculer
 		}
  	}
+ 	
 	for (int i = 0; i < indexes.size(); i+=1) 
 	{
 		Triangle newTriangle;
@@ -190,7 +191,9 @@ ObjFile* ResourceManager::LoadModel(const std::string& parFileName, const std::s
 		newTriangle.p2 = vertices[indexes[i].p2];
 		newTriangle.uv0 = mapping[uvList[i].p0];
 		newTriangle.uv1 = mapping[uvList[i].p1];
-		newTriangle.uv2 = mapping[uvList[i].p2];	
+		newTriangle.uv2 = mapping[uvList[i].p2];
+    	//newTriangle.normale = Vector3::crossProduct(newTriangle.p1-newTriangle.p0,newTriangle.p2-newTriangle.p0);
+        newTriangle.normale = Vector3(0.0,0.0,1.0);
  		newModel->listTriangle.push_back(newTriangle);
 	}
 	foreach(triangle,newModel->listTriangle)
@@ -204,6 +207,7 @@ ObjFile* ResourceManager::LoadModel(const std::string& parFileName, const std::s
 	newModel->albTex = LoadTexture(parAlbTexFileName);
 	newModel->rugTex = LoadTexture(parRugTexFileName);
 	newModel->specTex = LoadTexture(parSpecTexFileName);
+	newModel->normalTex = LoadTexture(parNormalTexFileName);
 	
 	return newModel;
 }

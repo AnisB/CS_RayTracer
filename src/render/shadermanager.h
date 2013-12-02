@@ -17,7 +17,7 @@ class ShaderManager : public Singleton<ShaderManager>
 		~ShaderManager();
 		
 		GLuint CreateProgramVF();
-		GLuint CreateProgramC(int parMaxRecur, int parNbTriangle, int parNbPlan, int parNbQuad, int parNbNoeud, int parNbPrimMax);
+		GLuint CreateProgramC(int parMaxRecur, int parNbTriangle, int parNbPlan, int parNbQuad, int parNbNoeud, int parNbPrimMax, int nbMat, bool oreille);
 		void BindProgram( GLuint parProgram);
 
 

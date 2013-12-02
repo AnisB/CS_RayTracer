@@ -15,7 +15,7 @@ class Renderer : public Singleton<Renderer>
 		Renderer();
 		~Renderer();
 
-		bool Init();
+		bool Init(const char* scene, bool parOreille);
 		void InitShaders();
 
 		void Run();
@@ -30,7 +30,7 @@ class Renderer : public Singleton<Renderer>
 		
 	protected:
 		void CreateRenderQuad();
-        void LoadScene(const string & parFilename);
+        void LoadScene(const std::string& parFilename);
         void InjectScene();
         void UpdateDisplacement();
 		
@@ -40,6 +40,8 @@ class Renderer : public Singleton<Renderer>
 		float FOldX;
 		float FOldY;
 		bool FInitDone;
+		
+		bool FOreille;
 		
 		double FLastTime;
 		ShaderManager FManager;

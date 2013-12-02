@@ -26,6 +26,7 @@ struct ObjFile
 	const Texture* albTex;
 	const Texture* rugTex;
 	const Texture* specTex;
+	const Texture* normalTex;
 };
 
 class ResourceManager: public Singleton<ResourceManager>
@@ -35,7 +36,7 @@ public:
 	~ResourceManager();
 
 	const Texture* LoadTexture(const std::string& parFileName);
-	ObjFile* LoadModel(const std::string& parFileName, const std::string& parAlbTexFileName, const std::string& parRugTexFileName, const std::string& parSpecTexFileName );
+	ObjFile* LoadModel(const std::string& parFileName, const std::string& parAlbTexFileName, const std::string& parRugTexFileName, const std::string& parSpecTexFileName, const std::string& parNormalTexFileName );
 
 protected:
 	std::map<std::string, Texture*> FTextures;

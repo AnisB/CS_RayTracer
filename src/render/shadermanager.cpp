@@ -187,7 +187,7 @@ void ShaderManager::UnbindTexture()
     glBindTexture(GL_TEXTURE_2D, 0);
 }   
 
-GLuint ShaderManager::CreateProgramC(int parMaxRecur, int parNbTriangle, int parNbPlan, int parNbQuad, int parNbNoeud, int parNbPrimMax)
+GLuint ShaderManager::CreateProgramC(int parMaxRecur, int parNbTriangle, int parNbPlan, int parNbQuad, int parNbNoeud, int parNbPrimMax, int nbMat, bool oreille)
 {
     GLuint computeShaderID = glCreateShader(GL_COMPUTE_SHADER);
 
@@ -210,8 +210,16 @@ GLuint ShaderManager::CreateProgramC(int parMaxRecur, int parNbTriangle, int par
     ss<<"#define NB_NOEUD " << convertToString(parNbNoeud)<<std::endl;
     ss<<"#define NB_PRIM " << convertToString(parNbPrimMax)<<std::endl;
     ss<<"#define NB_PRIM_MAX " << convertToString(parNbPrimMax)<<std::endl;
-	ss<<"#define NB_TEX " << convertToString(10)<<std::endl;
+	ss<<"#define NB_TEX " << convertToString(nbMat)<<std::endl;
 	ss<<"#define NB_LIGHTS " << convertToString(1)<<std::endl;
+	if(oreille)
+	{
+		ss<<"#define BRDF_DEFINED true" <<std::endl;
+	}
+	else
+	{
+		ss<<"#define BRDF_DEFINED false" <<std::endl;
+	}
     computeShader+=ss.str();
     computeShader+=computeShaderCommon;
     computeShader+=computeShaderOctree;

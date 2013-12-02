@@ -2,11 +2,11 @@
 
 * --- triangle2 plan ---
 Poly: polygon_1
-        point: 0  50.0  50.0 -180.0
+        point: 0  50.0  50.0 -80.0
         uv: 0 0.2 0.4
-        point: 1 50.0  -50.0 -180.0
+        point: 1 50.0  -50.0 -80.0
         uv: 1 0.5 0.6
-        point: 2 -50.0  -50.0 -180.0
+        point: 2 -50.0  -50.0 -80.0
         uv: 2 0.3 0.5
         color:  1.0 0 0.7
         reflect: 0.8
@@ -17,7 +17,7 @@ Poly: polygon_1
 Poly: polygon_1
         point: 0 -50.0  -50.0 -150.0
         uv: 0 0.1 0.0
-        point: 1 -50.0   50.0 -150.0
+        point: 1 -50.0   50.0 -150
         uv: 1 0.2 0.5
         point: 2  50.0  50.0 -150.0
         uv: 2  0.1 0.3
@@ -27,37 +27,37 @@ Poly: polygon_1
         
 * --- triangle a droite ---
 Poly: polygon_1
-       point: 0 -10.0  -10.0 -80.0
+       point: 0 -10.0  -10.0 -30.0
        uv: 0 0.7 0.9
-       point: 1 -10.0   0.0 -80.0
+       point: 1 -10.0   0.0 -30
        uv: 1 0.1 0.2
-       point: 2  0.0  -10.0 -80.0
+       point: 2  0.0  -10.0 -30.0
        uv: 2 0.5 0.7
-       color:  1.0 0 0.1
+       color:  0.5 0 0.1
        reflect: 0.8
        refract: 0
         
 * --- triangle a gauche ---
 Poly: polygon_1
-       point: 0 0.0  0.0 -80.0
+       point: 0 0.0  0.0 -30.0
        uv: 0 0.5 0.5
-       point: 1 0.0  10.0 -80.0
+       point: 1 0.0  10.0 -30.0
        uv: 1 0.1 0.3
-       point: 2 10.0 -0.0 -80.0
+       point: 2 10.0 -0.0 -30.0
        uv: 2 0.9 1.0
-       color:  0.1 1.0 0.1
+       color:  0.1 1.0 0.5
        reflect: 0.8
        refract: 0
 
 * --- triangle en haut ---
 Poly: polygon_1
-       point: 0 20.0  20.0 -80.0
+       point: 0 20.0  20.0 -30.0
        uv: 0 0.8 1.0
-       point: 1 20.0   30.0 -80.0
+       point: 1 20.0   30.0 -30.0
        uv: 0 0.0 1.0
-       point: 2  30.0  20.0 -80.0
+       point: 2  30.0  20.0 -30.0
        uv: 0 0.1 0.2
-       color:  0.1 0.1 1.0
+       color:  0.1 0.5 1.0
        reflect: 0.8
        refract: 0
        
@@ -66,7 +66,7 @@ Poly: polygon_1
 
 * --- lumiere ---
 Lumiere: light_1
-        position: 10.0 0.0 3.0
+        position: 0.0 -20.0 30.0
         colorSpec: 1.0 1.0 1.0
         intens:   1.0
         

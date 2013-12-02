@@ -59,96 +59,6 @@ Intersection IntersectWithQuadric(Ray parRay, Quadrique parTheQuadric)
     intersect.distance = 0.0;
     intersect.obj = 0;
 
-/*
-    float ACoeff = parRay.direction.x * ( parTheQuadric.A * parRay.direction.x   +
-                                             parTheQuadric.F       * parRay.direction.y   +
-                                             parTheQuadric.E       * parRay.direction.z ) +
-                        parRay.direction.y * ( parTheQuadric.B * parRay.direction.y   +
-                                             parTheQuadric.D       * parRay.direction.z ) +
-                        parRay.direction.z * ( parTheQuadric.C * parRay.direction.z );
-
-    float BCoeff = parRay.direction.x * ( parTheQuadric.A * parRay.origin.x + 2 *
-                                           ( parTheQuadric.F * parRay.origin.y + parTheQuadric.E * parRay.origin.z + parTheQuadric.G ) ) +
-                        parRay.direction.y * ( parTheQuadric.B * parRay.origin.y + 2                     *
-                                           ( parTheQuadric.F * parRay.origin.x + parTheQuadric.D * parRay.origin.z + parTheQuadric.H ) ) +
-                        parRay.direction.z * ( parTheQuadric.C * parRay.origin.z + 2                     *
-                                           ( parTheQuadric.E * parRay.origin.x + parTheQuadric.D * parRay.origin.y + parTheQuadric.I ) );
-
-    float CCoeff = parRay.origin.x * ( parTheQuadric.A * parRay.origin.x   +
-                                          parTheQuadric.F       * parRay.origin.y   +
-                                          parTheQuadric.E       * parRay.origin.z   +
-                                          parTheQuadric.G                    ) +
-                        parRay.origin.y * ( parTheQuadric.B * parRay.origin.y   +
-                                          parTheQuadric.D       * parRay.origin.z   +
-                                          parTheQuadric.H                    ) +
-                        parRay.origin.z * ( parTheQuadric.C * parRay.origin.z   +
-                                          parTheQuadric.I                    ) +
-                        parTheQuadric.J;
-
-
-    if( ACoeff != 0.0 )
-    {
-        float Ka    = -BCoeff / ACoeff;
-        float Kb    =  CCoeff / ACoeff;
-        float Delta = Ka * Ka - Kb;
-        if( Delta > 0 )
-        {
-            Delta   = sqrt( Delta );
-            float T0 = Ka - Delta;
-            float T1 = Ka + Delta;
-
-            float Distance = min( T0, T1 );
-            if( Distance < EPSILON )
-                Distance = max( T0, T1 );
-
-            if( !( Distance < 0 ) )
-            {
-                intersect.distance = Distance;
-                // Calcule la normale de surface
-                vec3 HitPt = parRay.origin + Distance * parRay.direction;
-
-                vec3 Normal;
-                Normal.x = 2.0 * parTheQuadric.A * HitPt.x +
-                           parTheQuadric.E * HitPt.z                            +
-                           parTheQuadric.F * HitPt.y                            +
-                           parTheQuadric.G;
-
-                Normal.y = 2.0 * parTheQuadric.B * HitPt.y +
-                           parTheQuadric.D * HitPt.z                            +
-                           parTheQuadric.F * HitPt.x                            +
-                           parTheQuadric.H;
-
-                Normal.z = 2.0 * parTheQuadric.C * HitPt.z +
-                           parTheQuadric.D * HitPt.y                            +
-                           parTheQuadric.E * HitPt.x                            +
-                           parTheQuadric.I;
-                intersect.point = HitPt;
-                intersect.normal = normalize(Normal);
-                vec3 centre = vec3(-parTheQuadric.D/(2*parTheQuadric.A), -parTheQuadric.E/(2*parTheQuadric.B), -parTheQuadric.F/(2*parTheQuadric.C));
-                float u = 0.5 + atan(centre.z, centre.x)/(2*PI);
-                float v = 0.5 - asin(centre.y)/PI;
-                intersect.uv = vec2(u, v);
-                intersect.isValid = true;
-            }
-        }
-    }*/
-//    else
-//    {
-//        Result.AjusterSurface ( this );
-//        Result.AjusterDistance( -RENDRE_REEL( 0.5 ) * ( CCoeff / BCoeff ) );
-//        Result.AjusterNormale ( CVecteur3::Normaliser( m_Lineaire ) );
-//    }
-
-//    parTheQuadric.A = 1;
-//    parTheQuadric.B = 1;
-//    parTheQuadric.C = 1;
-//    parTheQuadric.D = 0;
-//    parTheQuadric.E = 0;
-//    parTheQuadric.F = 0;
-//    parTheQuadric.G = 0;
-//    parTheQuadric.H = 0;
-//    parTheQuadric.I = 0;
-//    parTheQuadric.J = -1;
 
     float ACoeff =      parTheQuadric.A * parRay.direction.x * parRay.direction.x +
                         parTheQuadric.B * parRay.direction.y * parRay.direction.y +
@@ -184,6 +94,7 @@ Intersection IntersectWithQuadric(Ray parRay, Quadrique parTheQuadric)
         if( Delta > 0 )
         {
             intersect.isValid = true;
+            
             return intersect;
         }
     }
@@ -255,7 +166,7 @@ vec4 IntersectToLight(in Ray parRay, vec3 lightPos)
         float distanceToLight = length(lightPos-intersect.point);
         if(intersect.isValid && distanceToLight < distance)
         {
-             colorFilter= colorFilter*0.5;
+             return colorFilter*0.5;
         }
     }
     return colorFilter;
