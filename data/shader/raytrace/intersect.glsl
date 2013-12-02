@@ -139,16 +139,16 @@ Intersection IntersectWithQuadric(Ray parRay, Quadrique parTheQuadric)
 //        Result.AjusterNormale ( CVecteur3::Normaliser( m_Lineaire ) );
 //    }
 
-    parTheQuadric.A = 1;
-    parTheQuadric.B = 1;
-    parTheQuadric.C = 1;
-    parTheQuadric.D = 0;
-    parTheQuadric.E = 0;
-    parTheQuadric.F = 0;
-    parTheQuadric.G = 0;
-    parTheQuadric.H = 0;
-    parTheQuadric.I = 0;
-    //parTheQuadric.J = 0;
+//    parTheQuadric.A = 1;
+//    parTheQuadric.B = 1;
+//    parTheQuadric.C = 1;
+//    parTheQuadric.D = 0;
+//    parTheQuadric.E = 0;
+//    parTheQuadric.F = 0;
+//    parTheQuadric.G = 0;
+//    parTheQuadric.H = 0;
+//    parTheQuadric.I = 0;
+//    parTheQuadric.J = -1;
 
     float ACoeff =      parTheQuadric.A * parRay.direction.x * parRay.direction.x +
                         parTheQuadric.B * parRay.direction.y * parRay.direction.y +

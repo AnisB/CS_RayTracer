@@ -458,7 +458,7 @@ GLuint ShaderManager::CreateTexPrimitive(const std::vector<Primitive>& parValue,
 	foreach(prim, parValue)
 	{
 		primData[index*3+0] = (prim->type/2.0);
-		primData[index*3+1] = (prim->index/((float)parValue.size()-1)); 
+        primData[index*3+1] = (prim->index/((float)parValue.size()-1));
 		primData[index*3+2] = (prim->materiau/((float)parNbMateriau -1));
 
 		PRINT_ORANGE("Prim "<<primData[index*3+0]<<" "<<primData[index*3+1]<<" "<<primData[index*3+2]);
