@@ -24,6 +24,7 @@ class ShaderManager : public Singleton<ShaderManager>
 		GLuint GenerateTexture(size_t parW, size_t parH);
 		
 		GLuint CreateTexTriangle(const std::vector<Triangle>& parValue);
+		GLuint CreateTexQuad(const std::vector<Quadrique>& parValue);
 		GLuint CreateTexPrimitive(const std::vector<Primitive>& parValue, int parNbMat);
 		GLuint CreateTexMat(const std::vector<Materiau>& parValue);
 		

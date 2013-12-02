@@ -62,6 +62,7 @@ class Renderer : public Singleton<Renderer>
 		GLuint FComputeShader;
 		GLuint FRenderTexture;
 		GLuint FTriangleTex;
+		GLuint FQuadTex;
 		GLuint FPrimitiveTex;
 		GLuint FMateriauTex;
 		

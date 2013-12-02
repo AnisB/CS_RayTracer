@@ -208,7 +208,7 @@ GLuint ShaderManager::CreateProgramC(int parMaxRecur, int parNbTriangle, int par
     ss<<"#define NB_QUAD " << convertToString(parNbQuad)<<std::endl;
     ss<<"#define NB_MAT " << convertToString(parNbTriangle)<<std::endl;
     ss<<"#define NB_NOEUD " << convertToString(parNbNoeud)<<std::endl;
-    ss<<"#define NB_PRIM " << convertToString(parNbTriangle)<<std::endl;
+    ss<<"#define NB_PRIM " << convertToString(parNbPrimMax)<<std::endl;
     ss<<"#define NB_PRIM_MAX " << convertToString(parNbPrimMax)<<std::endl;
 	ss<<"#define NB_TEX " << convertToString(10)<<std::endl;
 	ss<<"#define NB_LIGHTS " << convertToString(1)<<std::endl;
@@ -263,6 +263,35 @@ GLuint ShaderManager::CreateTexTriangle(const std::vector<Triangle>& parValue)
 	int index = 0;
 	foreach(triangle, parValue)
 	{
+		/*
+				triangleData[index*21+0] = TO_GLSL_UNIT(triangle->p0.x);
+		triangleData[index*21+1] = TO_GLSL_UNIT(triangle->p0.y); 
+		triangleData[index*21+2] = TO_GLSL_UNIT(triangle->p0.z);
+		
+		triangleData[index*21+3] = triangle->uv0.u; 
+		triangleData[index*21+4] = triangle->uv0.v;
+		triangleData[index*21+5] = triangle->uv0.v;	
+			
+		triangleData[index*21+6] = TO_GLSL_UNIT(triangle->p1.x);
+		triangleData[index*21+7] = TO_GLSL_UNIT(triangle->p1.y); 
+		triangleData[index*21+8] = TO_GLSL_UNIT(triangle->p1.z);
+		
+		triangleData[index*21+9] = triangle->uv1.u; 
+		triangleData[index*21+10] = triangle->uv1.v;
+		triangleData[index*21+11] = triangle->uv0.v;	
+		
+		triangleData[index*21+12] = TO_GLSL_UNIT(triangle->p2.x);
+		triangleData[index*21+13] = TO_GLSL_UNIT(triangle->p2.y); 
+		triangleData[index*21+14] = TO_GLSL_UNIT(triangle->p2.z);
+		
+		triangleData[index*21+15] = triangle->uv2.u; 
+		triangleData[index*21+16] = triangle->uv2.v;
+		triangleData[index*21+17] = triangle->uv2.v;
+		
+		triangleData[index*21+18] = triangle->normale.x;
+		triangleData[index*21+19] = triangle->normale.y; 
+		triangleData[index*21+20] = triangle->normale.z;
+		*/
 		//PRINT_ORANGE("First "<<
 		triangleData[index*18+0] = TO_GLSL_UNIT(triangle->p0.x);
 		triangleData[index*18+1] = TO_GLSL_UNIT(triangle->p0.y); 
@@ -290,7 +319,7 @@ GLuint ShaderManager::CreateTexTriangle(const std::vector<Triangle>& parValue)
 		triangleData[index*18+15] = triangle->normale.x;
 		triangleData[index*18+16] = triangle->normale.y; 
 		triangleData[index*18+17] = triangle->normale.z;
-		//PRINT_ORANGE("First "<<triangleData[index*18+0]<<" "<<triangleData[index*18+1]<<" "<<triangleData[index*18+2]);
+		PRINT_ORANGE("First "<<triangleData[index*18+0]<<" "<<triangleData[index*18+1]<<" "<<triangleData[index*18+2]);
 
 		index++;		
 	}
@@ -312,6 +341,45 @@ GLuint ShaderManager::CreateTexTriangle(const std::vector<Triangle>& parValue)
 	return triangleTex;
 }
 
+
+GLuint ShaderManager::CreateTexQuad(const std::vector<Quadrique>& parValue)
+{
+	GLuint quadTex;
+	GLfloat * quadData = new GLfloat[10*parValue.size()];
+	int index = 0;
+	foreach(quad, parValue)
+	{
+
+		quadData[index*10+0] = TO_GLSL_UNIT(quad->A);
+		quadData[index*10+1] = TO_GLSL_UNIT(quad->B); 
+		quadData[index*10+2] = TO_GLSL_UNIT(quad->C);
+		
+		quadData[index*10+3] = TO_GLSL_UNIT(quad->D);
+		quadData[index*10+4] = TO_GLSL_UNIT(quad->E);	
+		quadData[index*10+5] = TO_GLSL_UNIT(quad->F);
+				
+		quadData[index*10+6] = TO_GLSL_UNIT(quad->G);
+		quadData[index*10+7] = TO_GLSL_UNIT(quad->H);
+		quadData[index*10+8] = TO_GLSL_UNIT(quad->I);
+		
+		quadData[index*10+9] = TO_GLSL_UNIT(quad->J);	
+		PRINT_ORANGE("Quad "<<quadData[index*10+0]<<" "<<quadData[index*10+1]<<" "<<quadData[index*10+2]);
+
+		index++;		
+	}
+	
+	glGenTextures(1, &quadTex);
+	glBindTexture (GL_TEXTURE_2D, quadTex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, 10, parValue.size(),0, GL_RED, GL_FLOAT, quadData);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glBindTexture (GL_TEXTURE_2D, 0);
+	
+	delete [] quadData;
+	return quadTex;
+}
 
 GLuint ShaderManager::CreateTexNoeud(const std::vector<Node>& parValue, int par_nb_prim_max, int par_nb_prim)
 {
@@ -393,7 +461,7 @@ GLuint ShaderManager::CreateTexPrimitive(const std::vector<Primitive>& parValue,
 		primData[index*3+1] = (prim->index/((float)parValue.size()-1)); 
 		primData[index*3+2] = (prim->materiau/((float)parNbMateriau -1));
 
-		//PRINT_ORANGE("Prim "<<primData[index*3+0]<<" "<<primData[index*3+1]<<" "<<primData[index*3+2]);
+		PRINT_ORANGE("Prim "<<primData[index*3+0]<<" "<<primData[index*3+1]<<" "<<primData[index*3+2]);
 		index++;		
 	}
 	

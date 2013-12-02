@@ -4,22 +4,21 @@ vec4 Reflect@NB_ITER@(Ray parRay, Intersection parIntersect)
 {
 	vec4 color = vec4(1.0);
 	Ray reflected;
-    reflected.energy = 0.4;
-	reflected.origin = parIntersect.point;		
-	reflected.direction = reflect(parRay.direction,parIntersect.normal);
-	color = 0.4*CouleurPixel@NB_ITER2@(reflected);
+    reflected.energy = 0.2*parRay.energy ;
+	reflected.origin = parIntersect.point-parIntersect.normal*0.01;		
+	reflected.direction = reflect(parRay.direction,-parIntersect.normal);
+	color = 0.2*CouleurPixel@NB_ITER2@(reflected);
 	return color;
 }
 vec4 Refract@NB_ITER@(Ray parRay, Intersection parIntersect)
 {
 	vec4 color = vec4(1.0);
 	Ray refracted;
-    refracted.energy = 0.1;
-
-	refracted.origin = parIntersect.point ;	
+    refracted.energy = 0.1*parRay.energy ;
+	refracted.origin = parIntersect.point;	
 	// Indice de réraction a changer	
-	refracted.direction = refract(parRay.direction,parIntersect.normal,1.0);
-	color = 0.4*CouleurPixel@NB_ITER2@(refracted);
+	refracted.direction = refract(parRay.direction,-parIntersect.normal,1.0);
+	color = 0.1*CouleurPixel@NB_ITER2@(refracted);
 	return color;
 }
 
@@ -30,19 +29,16 @@ vec4 CouleurPixel@NB_ITER@(Ray parRayon)
 		vec4 finalColor = vec4(1.0);
 		int primitives[NB_PRIM]; //= getPrimitives(parRayon);
 		Intersection intersect = IntersectWithScene(parRayon,primitives);
-		finalColor = texture(listTex[1],intersect.uv);
-		//finalColor = getMateriauByIndex(getPrimitiveByIndex(intersect.obj).materiau).color;
-		//finalColor = vec4(intersect.uv.x,intersect.uv.y,0.0,1.0);
-		//finalColor *=SecondRayTrace(intersect);
+		finalColor = texture(listTex[0],intersect.uv);
+		finalColor *=SecondRayTrace(intersect);
 
 		//finalColor = computeBRDF(parRayon, intersect);
 		
 		// Commente a cause du "recursive call" a CouleurPixel
 		if(intersect.isValid)
 		{
-			//finalColor =vec4(1.0,0.0,0.0,1.0);
-			//finalColor+=Reflect@NB_ITER@(parRayon, intersect);
-			//finalColor+=Refract@NB_ITER@(parRayon, intersect);		
+			finalColor+=Reflect@NB_ITER@(parRayon, intersect);
+			finalColor+=Refract@NB_ITER@(parRayon, intersect);		
 			return finalColor;
 		}
 		else
