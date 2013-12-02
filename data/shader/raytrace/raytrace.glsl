@@ -4,9 +4,9 @@ vec4 Reflect@NB_ITER@(Ray parRay, Intersection parIntersect)
 {
 	vec4 color = vec4(1.0);
 	Ray reflected;
-    reflected.energy = 0.2;
+    reflected.energy = 0.2*parRay.energy ;
 	reflected.origin = parIntersect.point-parIntersect.normal*0.01;		
-	reflected.direction = reflect(parRay.direction,parIntersect.normal);
+	reflected.direction = reflect(parRay.direction,-parIntersect.normal);
 	color = 0.2*CouleurPixel@NB_ITER2@(reflected);
 	return color;
 }
@@ -14,11 +14,10 @@ vec4 Refract@NB_ITER@(Ray parRay, Intersection parIntersect)
 {
 	vec4 color = vec4(1.0);
 	Ray refracted;
-    refracted.energy = 0.1;
-
-	refracted.origin = parIntersect.point+parIntersect.normal*0.01 ;	
+    refracted.energy = 0.1*parRay.energy ;
+	refracted.origin = parIntersect.point;	
 	// Indice de réraction a changer	
-	refracted.direction = refract(parRay.direction,parIntersect.normal,1.0);
+	refracted.direction = refract(parRay.direction,-parIntersect.normal,1.0);
 	color = 0.1*CouleurPixel@NB_ITER2@(refracted);
 	return color;
 }
@@ -38,7 +37,7 @@ vec4 CouleurPixel@NB_ITER@(Ray parRayon)
 		// Commente a cause du "recursive call" a CouleurPixel
 		if(intersect.isValid)
 		{
-			//finalColor+=Reflect@NB_ITER@(parRayon, intersect);
+			finalColor+=Reflect@NB_ITER@(parRayon, intersect);
 			finalColor+=Refract@NB_ITER@(parRayon, intersect);		
 			return finalColor;
 		}

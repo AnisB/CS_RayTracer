@@ -1,7 +1,7 @@
 // Constantes necessaires
 #define PI 3.14159265359
 #define EPSILON 0.000001
-#define ENERGY_MIN 0.1
+#define ENERGY_MIN 0.01
 #define INDICE_PEAU 1.44
 
 #define PRIMITIVE_TRIANGLE  0
@@ -141,10 +141,11 @@ uniform sampler2D  listTriangles;
 uniform sampler2D listPrimitives;
 uniform sampler2D listMateriaux;
 uniform sampler2D listNoeuds;
+uniform	sampler2D listQuadriques;
 
 uniform	sampler2D listTex[NB_TEX];
 
-uniform	Quadrique listQuadrique[NB_QUAD];
+
 uniform	Plan listPlan[NB_PLAN];
 uniform	Light listLight[NB_LIGHTS];
 
@@ -207,6 +208,56 @@ Triangle getTriangleByIndex(int parIndexTriangle)
     return unTriangle;
 }
 
+Quadrique getQuadricByIndex(int parIndexQuad)
+{
+	Quadrique uneQuad;
+
+	float quadNormIndex = 0.0;
+    uneQuad.A = texture(listQuadriques, vec2(0.0,quadNormIndex)).r;
+    uneQuad.B = texture(listQuadriques, vec2(1.0/9.0,quadNormIndex)).r;
+ 	uneQuad.C = texture(listQuadriques, vec2(2.0/9.0,quadNormIndex)).r;
+
+    uneQuad.D = texture(listQuadriques, vec2(3.0/9.0,quadNormIndex)).r;
+    uneQuad.E = texture(listQuadriques, vec2(4.0/9.0,quadNormIndex)).r;
+ 	uneQuad.F = texture(listQuadriques, vec2(5.0/9.0,quadNormIndex)).r;
+ 	
+    uneQuad.G = texture(listQuadriques, vec2(6.0/9.0,quadNormIndex)).r;
+    uneQuad.H = texture(listQuadriques, vec2(7.0/9.0,quadNormIndex)).r;
+ 	uneQuad.I = texture(listQuadriques, vec2(8.0/9.0,quadNormIndex)).r; 
+ 	
+ 	uneQuad.J = texture(listQuadriques, vec2(9.0/9.0,quadNormIndex)).r; 
+ 	
+    uneQuad.A-= vec3(0.5);
+    uneQuad.B-= vec3(0.5);
+    uneQuad.C-= vec3(0.5);
+    
+    uneQuad.D-= vec3(0.5);
+    uneQuad.E-= vec3(0.5);
+    uneQuad.F-= vec3(0.5);
+    
+    uneQuad.G-= vec3(0.5);
+    uneQuad.H-= vec3(0.5);
+    uneQuad.I-= vec3(0.5);
+    
+    uneQuad.J-= vec3(0.5);
+    
+    uneQuad.A*=400;
+    uneQuad.B*=400;
+    uneQuad.C*=400;
+    
+    uneQuad.D*=400;
+    uneQuad.E*=400;
+    uneQuad.F*=400;
+    
+    uneQuad.G*=400;
+    uneQuad.H*=400;
+    uneQuad.I*=400;
+    
+    uneQuad.J*=400;
+
+    return uneQuad;
+}
+
 
 Primitive getPrimitiveByIndex(int parIndexPrim)
 {
@@ -217,9 +268,9 @@ Primitive getPrimitiveByIndex(int parIndexPrim)
     float materiau = texture(listPrimitives, vec2(1.0,primIndex)).r;
 
     
-    index*=float(NB_PRIM);
+    index*=float(NB_PRIM-1);
     type*=2.0;
-    materiau*=float(NB_MAT);
+    materiau*=float(NB_MAT-1);
     
     unePrim.index = int(index);
     unePrim.type = int(type);
