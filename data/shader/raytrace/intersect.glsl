@@ -53,7 +53,6 @@ Intersection IntersectWithQuadric(Ray parRay, Quadrique parTheQuadric)
 {
     Intersection intersect;
     intersect.isValid = false;
-    intersect.isValid = false;
     intersect.uv = vec2(0.0);
     intersect.point = vec3(0.0);
     intersect.normal = vec3(0.0);
@@ -92,7 +91,6 @@ Intersection IntersectWithQuadric(Ray parRay, Quadrique parTheQuadric)
         float Ka    = -BCoeff / ACoeff;
         float Kb    =  CCoeff / ACoeff;
         float Delta = Ka * Ka - Kb;
-
         if( Delta > 0 )
         {
             Delta   = sqrt( Delta );
@@ -173,20 +171,14 @@ Intersection IntersectWithScene(in Ray parRay,in int parPrim[NB_PRIM])
             Triangle tri = getTriangleByIndex(prim.index);
             intersectCourant = IntersectWithTriangle(parRay, tri);
             break;
-//        case PRIMITIVE_PLAN :
-//            Triangle tri = getTriangleByIndex(prim.index);
-//            intersectCourant = IntersectWithTriangle(parRay, tri);
-//            break;
         case PRIMITIVE_QUADRIQUE :
-            //Quadrique quad = getQuadricByIndex(prim.index);
-            Quadrique quad = listQuadrique[prim.index];
+            Quadrique quad = getQuadricByIndex(prim.index);
             intersectCourant = IntersectWithQuadric(parRay, quad);
             break;
         }
         if(intersectCourant.isValid && (!intersectResult.isValid || intersectCourant.distance < intersectResult.distance))
         {
             intersectResult = intersectCourant;
-            //intersectResult.obj = parPrim[i];
             intersectResult.obj = i;
         }
     }

@@ -39,7 +39,8 @@ Poly: polygon_1
 Quad: sphere_1
         v_quad:      1.0 1.0 1.0
         v_linear:  0.0 0.0 0.0
-        v_const:   0.0
+        v_mixte:  0.0 0.0 0.0
+        v_const:   10.0
         color:  200 10 10
         ambient:  0.0
         diffus:   0.1

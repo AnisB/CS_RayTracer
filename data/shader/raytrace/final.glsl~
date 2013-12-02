@@ -8,8 +8,7 @@ vec4 RayTrace(vec2 storePos)
 	vec3 screenPoint = coinSupGauche + unitX * storePos.x + unitY * storePos.y;
 	rayon.direction = normalize(screenPoint - cameraPosition);
 	// Lancer
-	return vec4(1.0,0.0,0.0,1.0);
-	//return CouleurPixel1(rayon);
+	return CouleurPixel1(rayon);
 }
 
 // Le main du programme
@@ -21,5 +20,7 @@ void main()
      // On récupère le point de la texture qui nous a été attribue
      ivec2 storePos = ivec2(gl_GlobalInvocationID.xy);
      vec2 pixelFloat = vec2(storePos)/512.0;
-     imageStore(renderCanvas, storePos, RayTrace(pixelFloat));
+     //imageStore(renderCanvas, storePos, RayTrace(pixelFloat));
+     Quadrique quad = getQuadricByIndex(0);
+     imageStore(renderCanvas, storePos, vec4(quad.A/2.0,quad.B/2.0,quad.C/2.0,1.0));
 }

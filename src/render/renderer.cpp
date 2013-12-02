@@ -131,7 +131,7 @@ bool Renderer::Init()
 	
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 
 	// Open a window and create its OpenGL context
-	FWindow = glfwCreateWindow(1280, 720, "CS_RayTracer", NULL, NULL);
+	FWindow = glfwCreateWindow(512, 287, "CS_RayTracer", NULL, NULL);
 	if(FWindow == NULL)
 	{
 		PRINT_RED("The glfw open windows failed");
@@ -207,10 +207,11 @@ void Renderer::InitShaders()
 
 	#ifndef SIMPLE
 	//Création du shader de calcul
-	FComputeShader = ShaderManager::Instance().CreateProgramC(2,FScene->m_triangles.size(),1,1,int(octree->m_nodes.size()),octree->m_nb_prim_max);
+	FComputeShader = ShaderManager::Instance().CreateProgramC(3,FScene->m_triangles.size(),1,FScene->m_quadrics.size(),octree->m_nodes.size(),FScene->m_primitives.size());
 	//Création des texture
 	FRenderTexture = ShaderManager::Instance().GenerateTexture(512,512);
 	FTriangleTex = ShaderManager::Instance().CreateTexTriangle(FScene->m_triangles);
+	FQuadTex = ShaderManager::Instance().CreateTexQuad(FScene->m_quadrics);
 	FPrimitiveTex = ShaderManager::Instance().CreateTexPrimitive(FScene->m_primitives, FScene->m_materiaux.size());
 	FMateriauTex = ShaderManager::Instance().CreateTexMat(FScene->m_materiaux);
 	#endif
@@ -228,9 +229,11 @@ void Renderer::InitShaders()
 	ShaderManager::Instance().InjectTex(FComputeShader,FTriangleTex,"listTriangles",1);
 	ShaderManager::Instance().InjectTex(FComputeShader,FPrimitiveTex,"listPrimitives",2);
 	ShaderManager::Instance().InjectTex(FComputeShader,FMateriauTex,"listMateriaux",3);
-	ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->albTex->id,"listTex[0]",4);
-	ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->rugTex->id,"listTex[1]",5);
-	//ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->specTex->id,"listTex[2]",6);
+	ShaderManager::Instance().InjectTex(FComputeShader,FQuadTex,"listQuadriques",4);
+	ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->albTex->id,"listTex[0]",5);
+	ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->rugTex->id,"listTex[1]",6);
+	ShaderManager::Instance().InjectTex(FComputeShader,FEarModel->specTex->id,"listTex[2]",7);
+	
 	//ShaderManager::Instance().InjectTex(FComputeShader,FNoeudTex,"listNoeuds",4);
 	#endif
 }
@@ -304,6 +307,7 @@ void Renderer::LoadScene(const std::string& parFilename)
    	
     FEarModel = ResourceManager::Instance().LoadModel("data/model/final/ear.obj", "data/model/final/diff.bmp","data/model/final/rugo.bmp", "data/model/final/spec.bmp");
    
+   	/*
     #ifndef SIMPLE
     FScene->AddMateriau(FEarModel->material);
     foreach(triangle, FEarModel->listTriangle)
@@ -311,8 +315,9 @@ void Renderer::LoadScene(const std::string& parFilename)
         //Ajoute un triangle ayant pour materiau le dernier materiau ajoute dans la scene
         FScene->AddTriangle(*triangle);
     }
-
     #endif
+	*/
+    
 }
 
 void Renderer::InjectScene()
