@@ -159,7 +159,7 @@ bool Renderer::Init()
 	FIsRendering = true;
 	CheckGLState("Vidage buffer");
 	// Loading the scene file
-    LoadScene("data/scenes/scene_test.dat");
+    LoadScene("data/scenes/scene_test_quad.dat");
     
     // Octree
     octree = new Octree(FScene);

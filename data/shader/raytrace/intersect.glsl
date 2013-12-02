@@ -60,7 +60,7 @@ Intersection IntersectWithQuadric(Ray parRay, Quadrique parTheQuadric)
     intersect.distance = 0.0;
     intersect.obj = 0;
 
-
+/*
     float ACoeff = parRay.direction.x * ( parTheQuadric.A * parRay.direction.x   +
                                              parTheQuadric.F       * parRay.direction.y   +
                                              parTheQuadric.E       * parRay.direction.z ) +
@@ -68,11 +68,11 @@ Intersection IntersectWithQuadric(Ray parRay, Quadrique parTheQuadric)
                                              parTheQuadric.D       * parRay.direction.z ) +
                         parRay.direction.z * ( parTheQuadric.C * parRay.direction.z );
 
-    float BCoeff = parRay.direction.x * ( parTheQuadric.A * parRay.origin.x + 0.5 *
+    float BCoeff = parRay.direction.x * ( parTheQuadric.A * parRay.origin.x + 2 *
                                            ( parTheQuadric.F * parRay.origin.y + parTheQuadric.E * parRay.origin.z + parTheQuadric.G ) ) +
-                        parRay.direction.y * ( parTheQuadric.B * parRay.origin.y + 0.5                     *
+                        parRay.direction.y * ( parTheQuadric.B * parRay.origin.y + 2                     *
                                            ( parTheQuadric.F * parRay.origin.x + parTheQuadric.D * parRay.origin.z + parTheQuadric.H ) ) +
-                        parRay.direction.z * ( parTheQuadric.C * parRay.origin.z + 0.5                     *
+                        parRay.direction.z * ( parTheQuadric.C * parRay.origin.z + 2                     *
                                            ( parTheQuadric.E * parRay.origin.x + parTheQuadric.D * parRay.origin.y + parTheQuadric.I ) );
 
     float CCoeff = parRay.origin.x * ( parTheQuadric.A * parRay.origin.x   +
@@ -133,13 +133,62 @@ Intersection IntersectWithQuadric(Ray parRay, Quadrique parTheQuadric)
                 intersect.isValid = true;
             }
         }
-    }
+    }*/
 //    else
 //    {
 //        Result.AjusterSurface ( this );
 //        Result.AjusterDistance( -RENDRE_REEL( 0.5 ) * ( CCoeff / BCoeff ) );
 //        Result.AjusterNormale ( CVecteur3::Normaliser( m_Lineaire ) );
 //    }
+
+    parTheQuadric.A = 1;
+    parTheQuadric.B = 1;
+    parTheQuadric.C = 1;
+    parTheQuadric.D = 0;
+    parTheQuadric.E = 0;
+    parTheQuadric.F = 0;
+    parTheQuadric.G = 0;
+    parTheQuadric.H = 0;
+    parTheQuadric.I = 0;
+    //parTheQuadric.J = 0;
+
+    float ACoeff =      parTheQuadric.A * parRay.direction.x * parRay.direction.x +
+                        parTheQuadric.B * parRay.direction.y * parRay.direction.y +
+                        parTheQuadric.C * parRay.direction.z * parRay.direction.z +
+                        parTheQuadric.D * parRay.direction.x * parRay.direction.y +
+                        parTheQuadric.E * parRay.direction.y * parRay.direction.z +
+                        parTheQuadric.F * parRay.direction.x * parRay.direction.z;
+
+    float BCoeff =      2*(parTheQuadric.A * parRay.origin.x * parRay.direction.x +
+                           parTheQuadric.B * parRay.origin.y * parRay.direction.y +
+                           parTheQuadric.C * parRay.origin.z * parRay.direction.z) +
+                        parTheQuadric.D * (parRay.origin.x * parRay.direction.y +
+                                           parRay.origin.y * parRay.direction.x) +
+                        parTheQuadric.E * (parRay.origin.y * parRay.direction.z +
+                                           parRay.origin.z * parRay.direction.y) +
+                        parTheQuadric.F * (parRay.origin.x * parRay.direction.z +
+                                           parRay.origin.z * parRay.direction.x) +
+                        parTheQuadric.G * parRay.direction.x +
+                        parTheQuadric.H * parRay.direction.y +
+                        parTheQuadric.I * parRay.direction.z;
+
+    float CCoeff =      parRay.origin.x * (parTheQuadric.G + parTheQuadric.D * parRay.origin.y) +
+                        parRay.origin.y * (parTheQuadric.H + parTheQuadric.E * parRay.origin.z) +
+                        parRay.origin.z * (parTheQuadric.I + parTheQuadric.F * parRay.origin.z) +
+                        parTheQuadric.A * parRay.origin.x * parRay.origin.x +
+                        parTheQuadric.B * parRay.origin.y * parRay.origin.y +
+                        parTheQuadric.C * parRay.origin.z * parRay.origin.z +
+                        parTheQuadric.J;
+    if( ACoeff != 0.0 )
+    {
+        float Delta = BCoeff * BCoeff - 4*ACoeff * CCoeff;
+
+        if( Delta > 0 )
+        {
+            intersect.isValid = true;
+            return intersect;
+        }
+    }
     return intersect;
 }
 
