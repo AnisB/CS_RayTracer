@@ -14,17 +14,22 @@
 class Camera
 {
 	public:
+		// Constructeur
 		Camera();
+		// Destructeur
 		~Camera();
-
+		// méthode de rotation
 		void Yaw(double parAngle);
 		void Pitch(double parAngle);
+		// Methode de translation
 		void Translate(const Vector3& parDir);
-		void InjectFixedValues(GLuint parShaderID);
+		// Mise a jour des valeurs dans un programme
 		void UpdateValues(GLuint parShaderID);
 
 	protected:
+		// Transformation
 		Matrix4 FTransformation;
+		// Informations de perspective
 		double FLens;
 		double FAngleView;
 		double FHauteurEcran;

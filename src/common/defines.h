@@ -16,8 +16,8 @@ namespace MathTools
 }
 
 // Taille de l'ecran
-static int USCREEN_X  = 512;
-static int USCREEN_Y  = 287;
+static int USCREEN_X  = 1280;
+static int USCREEN_Y  = 720;
 static double SCREEN_X  = USCREEN_X*1.0;
 static double SCREEN_Y  = USCREEN_Y*1.0;
 static double RATIO = SCREEN_X/SCREEN_Y;

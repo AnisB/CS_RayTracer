@@ -45,6 +45,13 @@ Vector3& Vector3::operator*=(double parFactor)
 	z*= parFactor;
 	return *this;
 }
+Vector3& Vector3::operator/=(double parFactor)
+{
+	x/= parFactor;
+	y/= parFactor;
+	z/= parFactor;
+	return *this;
+}
 
 Vector3 Vector3::operator*(double parFactor) const
 {

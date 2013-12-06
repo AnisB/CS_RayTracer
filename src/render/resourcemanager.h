@@ -6,15 +6,19 @@
 #ifndef RESOURCE_MANAGER
 #define RESOURCE_MANAGER
 
+
+// Includes projet
 #include <render/defines.h>
 #include <common/singleton.h>
 #include <primitives/primitive.h>
+
+// Includes autres
 #include <map>
 #include <list>
 #include <stdio.h>
 #include <stdlib.h>
-#include <jpeglib.h>
 
+// Structure d'une texture
 struct Texture
 {
 	GLuint id;
@@ -23,7 +27,7 @@ struct Texture
 	unsigned char * content;
 };
 
-
+// Structure d'un fichier obj
 struct ObjFile
 {
 	std::list<Triangle> listTriangle;
@@ -39,8 +43,10 @@ class ResourceManager: public Singleton<ResourceManager>
 public:
 	ResourceManager();
 	~ResourceManager();
-
+	
+	// Chargement d'une texture
 	const Texture* LoadTexture(const std::string& parFileName);
+	// Chargement d'un modèle obj
 	ObjFile* LoadModel(const std::string& parFileName, const std::string& parAlbTexFileName, const std::string& parRugTexFileName, const std::string& parSpecTexFileName, const std::string& parNormalTexFileName );
 
 protected:

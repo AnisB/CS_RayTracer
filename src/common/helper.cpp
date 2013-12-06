@@ -1,3 +1,8 @@
+/* 
+ * Auteur Anis Benyoub
+ * Petit fichier qui regroupe quelques fonctions d'aide au développment
+ *
+ */
 // Implémentaton de helper.h
 #include "helper.h"
 
@@ -20,6 +25,7 @@ std::string replaceAll(const std::string& parString, const std::string& parBase,
         result.replace(start_pos, parBase.length(), parReplace);
         start_pos += parReplace.length();
     }
+    // On retourne le resultat
     return result;
 }
 

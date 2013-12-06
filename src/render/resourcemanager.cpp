@@ -3,14 +3,17 @@
  * Classe qui permet de gérer les resources de l'application
  *
  */
+ 
+// Include header
 #include "resourcemanager.h"
 
+//Includes projet
 #include <common/defines.h>
 #include <common/helper.h>
-
 #include <render/helper.h>
 #include <render/renderer.h>
 
+// includes autres
 #include <fstream>
 #include <sstream>
 
@@ -39,43 +42,51 @@ std::string concatenate(const std::string& parBase, int parIndex)
     return result;
 }
 
+// Fonction de chargement de texture, ne gère que les BMP
 const Texture* ResourceManager::LoadTexture(const std::string& parFileName)
 {
     PRINT_GREEN("Chargement de la texture: " << parFileName);
-
+	// Creation de la texture
     Texture * newTex = new Texture();
+    // Onverture du fichier
     FILE* f = fopen(parFileName.c_str(), "rb");
 
     if(f==NULL)
     {
     	PRINT_RED("Erreur ouverture fichier "<<parFileName);	
+    	delete newTex;
+    	return NULL;
     }
     else
     {
     	PRINT_GREEN("Fichier ouvert"<<parFileName);	
 
     }
+    // Lecture de l'entete BMP de taille 54
     unsigned char info[54];
-    fread(info, sizeof(unsigned char), 54, f); // read the 54-byte header
+    fread(info, sizeof(unsigned char), 54, f); 
 
-    // extract image height and width from header
+    // Récupération des informations de taille de l'image
     newTex->w = *(int*)&info[18];
     newTex->l = *(int*)&info[22];
-
-
-    int size = 3 * newTex->w  * newTex->l ;
-    unsigned char* data = new unsigned char[size]; // allocate 3 bytes per pixel
-    fread(data, sizeof(unsigned char), size, f); // read the rest of the data at once
+	
+	// 3 composantesz RGB * tailleX * tailleY
+    int size = 3 * newTex->w  * newTex->l;
+    // Lecture de tout le reste du fichier
+    unsigned char* data = new unsigned char[size];
+    fread(data, sizeof(unsigned char), size, f);
+    // Fermeture du fichier
     fclose(f);
-
+	//Copie des données dans la structure data
     for(int i = 0; i < size; i += 3)
     {
             unsigned char tmp = data[i];
             data[i] = data[i+2];
             data[i+2] = tmp;
     }
-
+	// Copie dans la structure textures
     newTex->content = data;
+    // Génération d'une texture contenant ces données
     glGenTextures(1, &newTex->id);
     glBindTexture(GL_TEXTURE_2D, newTex->id);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, newTex->w, newTex->l, 0, GL_RGB, GL_UNSIGNED_BYTE, newTex->content);
@@ -88,6 +99,8 @@ const Texture* ResourceManager::LoadTexture(const std::string& parFileName)
 	return newTex;
 }
 
+// Chargement d'un fichier .obj avec 3 textures associées, on ignore le fichier .mtl
+// Inspiré de http://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Tutorial_Load_OBJ
 ObjFile* ResourceManager::LoadModel(const std::string& parFileName, const std::string& parAlbTexFileName, const std::string& parRugTexFileName, const std::string& parSpecTexFileName, const std::string& parNormalTexFileName )
 {
 	// Liste des points
@@ -101,6 +114,7 @@ ObjFile* ResourceManager::LoadModel(const std::string& parFileName, const std::s
 	// Liste des coordonnées de mappage
 	std::vector<vec2> mapping;
 	
+	// Onverture du fichier
 	fstream in;
 	in.open(parFileName.c_str(), std::fstream::in);
   	if (!in) 
@@ -112,10 +126,12 @@ ObjFile* ResourceManager::LoadModel(const std::string& parFileName, const std::s
   	{
   		PRINT_ORANGE("Parsing model obj: "<<parFileName<<" ..."); 
   	}
+  	// Creation de l'objet
  	ObjFile * newModel = new ObjFile();
 	string line;
 	while (getline(in, line)) 
 	{
+		// On a trouvé "v " on est dans le cas d'un vertice
 	    if (line.substr(0,2) == "v ") 
 	    {
 	      stringstream s(line.substr(2));
@@ -123,12 +139,13 @@ ObjFile* ResourceManager::LoadModel(const std::string& parFileName, const std::s
 	      s >> v.x; 
 	      s >> v.y; 
 	      s >> v.z; 
+	      // On sauvegarde un vertice
 	      vertices.push_back(v);
 	    }
 	    else if (line.substr(0,2) == "f ") 
 	    {
+	      // On a trouvé "f " C'est la définition d'un triangle avec son UV mapping
 	      stringstream s(line.substr(2));
-	      
 	      std::string a,b,c;
 	      std::vector<std::string> lineSplitted = split(line,' ');
 	      a = lineSplitted[1];
@@ -179,17 +196,10 @@ ObjFile* ResourceManager::LoadModel(const std::string& parFileName, const std::s
 	    	// Commentaire
 		}
 	}			
- 	if(normales.size()==0)
- 	{
- 		// Les normales n'ont pas été précalculées dans le obj
-		for (int i = 0; i < vertices.size(); i+=3) 
-		{
-			// Il fuat les calculer
-		}
- 	}
  	
 	for (int i = 0; i < indexes.size(); i+=1) 
 	{
+		// Création du triangle
 		Triangle newTriangle;
 		newTriangle.p0 = vertices[indexes[i].p0];
 		newTriangle.p1 = vertices[indexes[i].p1];
@@ -197,10 +207,12 @@ ObjFile* ResourceManager::LoadModel(const std::string& parFileName, const std::s
 		newTriangle.uv0 = mapping[uvList[i].p0];
 		newTriangle.uv1 = mapping[uvList[i].p1];
 		newTriangle.uv2 = mapping[uvList[i].p2];
-    	//newTriangle.normale = Vector3::crossProduct(newTriangle.p1-newTriangle.p0,newTriangle.p2-newTriangle.p0);
-        newTriangle.normale = Vector3(0.0,0.0,1.0);
+		// Calcul des normales
+    	newTriangle.normale = Vector3::crossProduct(newTriangle.p1-newTriangle.p0,newTriangle.p2-newTriangle.p0);
+    	newTriangle.normale/=newTriangle.normale.Norm();
  		newModel->listTriangle.push_back(newTriangle);
 	}
+	// Creation du fichier de texture en dur pour l'obj
 	foreach(triangle,newModel->listTriangle)
 	{
 		newModel->material.color = Vector4(0.2,0.3,0.8,1.0);
@@ -209,6 +221,7 @@ ObjFile* ResourceManager::LoadModel(const std::string& parFileName, const std::s
 		newModel->material.texRough = 1;
 		newModel->material.texSpec = 2;
 	}
+	// On charge les textures
 	newModel->albTex = LoadTexture(parAlbTexFileName);
 	newModel->rugTex = LoadTexture(parRugTexFileName);
 	newModel->specTex = LoadTexture(parSpecTexFileName);

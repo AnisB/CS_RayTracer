@@ -3,24 +3,22 @@
  * Classe qui permet de gérer les nuanceurs
  *
  */
+ // include header
 #include "shadermanager.h"
-
+//Include projet
 #include "helper.h"
-
-
 #include <common/defines.h>
 #include <common/helper.h>
-
-
+// Includes autres
 #include <fstream>
 #include <vector>
 #include <sstream>
 
-
-
+// Define des path vers les shaders d'affichage
 #define vertex_shader "data/shader/vertex.glsl"
 #define fragment_shader "data/shader/fragment.glsl"
 
+// Define des path de toutes les composantes du compute shader
 #define compute_shader_header "data/shader/raytrace/head.glsl"
 #define compute_shader_common "data/shader/raytrace/common.glsl"
 #define compute_shader_octree "data/shader/raytrace/octree.glsl"
@@ -30,9 +28,10 @@
 #define compute_shader_raytrace "data/shader/raytrace/raytrace.glsl"
 #define compute_shader_final "data/shader/raytrace/final.glsl"
 
+// Méthode de normalisation 400.0 étant la distance du far clipping plane
 #define TO_GLSL_UNIT(Val) (Val/400.0 +0.5)
 
-
+// Lecture d'un fichier et renvoie sous forme string
 std::string ReadFile(const std::string& parFileName)
 {
     PRINT_GREEN( "Loading file: "<<parFileName);
@@ -53,6 +52,7 @@ std::string ReadFile(const std::string& parFileName)
     return fileContent;
 }
 
+// Méthode d'écriture d'une string dans un fichier
 std::string WriteFile(const std::string& parFileName, const std::string & parContent)
 {
     PRINT_GREEN( "Loading file: "<<parFileName);
@@ -71,6 +71,8 @@ std::string WriteFile(const std::string& parFileName, const std::string & parCon
     return fileContent;
 }
 
+// Méthode de vérification d'un shader et d'affichage des erreurs 
+// pour un shader
 void CheckShader(GLuint parShaderID)
 {
     GLint Result = GL_FALSE;
@@ -88,7 +90,8 @@ void CheckShader(GLuint parShaderID)
     }
 }
 
-
+// Méthode de vérification d'un shader et d'affichage des erreurs 
+// pour le linkage
 void CheckProgram(GLuint parProgramID)
 {
     GLint Result = GL_FALSE;
@@ -103,6 +106,8 @@ void CheckProgram(GLuint parProgramID)
         PRINT_RED("Program linking error: "<<std::endl<<errorMessage );
     }
 }
+
+// Fonction de concatenation
 std::string concatenate(const std::string& parBase, int parIndex, const std::string& parAttrib)
 {
     std::string result = parBase;
@@ -112,17 +117,20 @@ std::string concatenate(const std::string& parBase, int parIndex, const std::str
     result+=parAttrib;
     return result;
 }
+
+// Constructeur du shader manager
 ShaderManager::ShaderManager()
 {
 
 }
 
-
+// Destructeur du shader manager
 ShaderManager::~ShaderManager()
 {
 
 }
-		
+
+// Méthode de création de la pipline d'affichage	
 GLuint ShaderManager::CreateProgramVF()
 {
     GLuint vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
@@ -146,7 +154,7 @@ GLuint ShaderManager::CreateProgramVF()
     return programID;
 }
 
-
+// Méthode de génération de la texture de communication
 GLuint ShaderManager::GenerateTexture(size_t parW, size_t parH) 
 {
     glGenTextures(1, &FTexture);
@@ -162,7 +170,7 @@ GLuint ShaderManager::GenerateTexture(size_t parW, size_t parH)
     glBindTexture(GL_TEXTURE_2D, 0);
     return FTexture;
 }
-
+// Méthode d'injectino d'une texture avec un offset
 void ShaderManager::InjectTex(GLuint parShaderID, size_t parIndexTex, const std::string& parName, GLuint parOffset)
 {
 	BindProgram(parShaderID);
@@ -255,20 +263,6 @@ GLuint ShaderManager::CreateProgramC(int parMaxRecur, int parNbTriangle, int par
     return programID;
 }
 
-
-void ShaderManager::InjectTriangle(GLuint parShaderID, const Triangle& parValue, int parIndex)
-{
-	//PRINT_ORANGE("On injecte le triangle :"<<std::endl<<parValue);
-	BindProgram(parShaderID);
-    glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"p0").c_str()), parValue.p0.x, parValue.p0.y, parValue.p0.z);      
-    glUniform2f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"uv0").c_str()), parValue.uv0.u, parValue.uv0.v);      
-    glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"p1").c_str()), parValue.p1.x, parValue.p1.y, parValue.p1.z);  
-    glUniform2f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"uv1").c_str()), parValue.uv1.u, parValue.uv1.v);      
-    glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"p2").c_str()), parValue.p2.x, parValue.p2.y, parValue.p2.z);
-    glUniform2f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"uv2").c_str()), parValue.uv2.u, parValue.uv2.v);      
-    glUniform3f(glGetUniformLocation(parShaderID, concatenate("listTriangle",parIndex,"normale").c_str()), parValue.normale.x, parValue.normale.y, parValue.normale.z);
-}
-
 GLuint ShaderManager::CreateTexTriangle(const std::vector<Triangle>& parValue)
 {
 	GLuint triangleTex;
@@ -276,42 +270,11 @@ GLuint ShaderManager::CreateTexTriangle(const std::vector<Triangle>& parValue)
 	int index = 0;
 	foreach(triangle, parValue)
 	{
-		/*
-				triangleData[index*21+0] = TO_GLSL_UNIT(triangle->p0.x);
-		triangleData[index*21+1] = TO_GLSL_UNIT(triangle->p0.y); 
-		triangleData[index*21+2] = TO_GLSL_UNIT(triangle->p0.z);
-		
-		triangleData[index*21+3] = triangle->uv0.u; 
-		triangleData[index*21+4] = triangle->uv0.v;
-		triangleData[index*21+5] = triangle->uv0.v;	
-			
-		triangleData[index*21+6] = TO_GLSL_UNIT(triangle->p1.x);
-		triangleData[index*21+7] = TO_GLSL_UNIT(triangle->p1.y); 
-		triangleData[index*21+8] = TO_GLSL_UNIT(triangle->p1.z);
-		
-		triangleData[index*21+9] = triangle->uv1.u; 
-		triangleData[index*21+10] = triangle->uv1.v;
-		triangleData[index*21+11] = triangle->uv0.v;	
-		
-		triangleData[index*21+12] = TO_GLSL_UNIT(triangle->p2.x);
-		triangleData[index*21+13] = TO_GLSL_UNIT(triangle->p2.y); 
-		triangleData[index*21+14] = TO_GLSL_UNIT(triangle->p2.z);
-		
-		triangleData[index*21+15] = triangle->uv2.u; 
-		triangleData[index*21+16] = triangle->uv2.v;
-		triangleData[index*21+17] = triangle->uv2.v;
-		
-		triangleData[index*21+18] = triangle->normale.x;
-		triangleData[index*21+19] = triangle->normale.y; 
-		triangleData[index*21+20] = triangle->normale.z;
-		*/
-		//PRINT_ORANGE("First "<<
+
 		triangleData[index*18+0] = TO_GLSL_UNIT(triangle->p0.x);
 		triangleData[index*18+1] = TO_GLSL_UNIT(triangle->p0.y); 
 		triangleData[index*18+2] = TO_GLSL_UNIT(triangle->p0.z);
-		//PRINT_ORANGE(TO_GLSL_UNIT(triangle->p0.x));
-		//PRINT_ORANGE(TO_GLSL_UNIT(triangle->p0.y));
-		//PRINT_ORANGE(TO_GLSL_UNIT(triangle->p0.z));
+
 		triangleData[index*18+3] = triangle->uv0.u; 
 		triangleData[index*18+4] = triangle->uv0.v;	
 			
@@ -432,19 +395,6 @@ GLuint ShaderManager::CreateTexNoeud(const std::vector<Node>& parValue, int par_
 				noeudData[index*NODE_STRIDE+14+j] = 0.0;
 			}
 		}
-		/*
-		noeudData[index*NODE_STRIDE+14] = TO_GLSL_UNIT(node->objects_id[0]);
-		noeudData[index*NODE_STRIDE+15] = TO_GLSL_UNIT(node->objects_id[1]);
-		noeudData[index*NODE_STRIDE+16] = TO_GLSL_UNIT(node->objects_id[2]);
-		noeudData[index*NODE_STRIDE+17] = TO_GLSL_UNIT(node->objects_id[3]);
-		noeudData[index*NODE_STRIDE+18] = TO_GLSL_UNIT(node->objects_id[4]);
-		noeudData[index*NODE_STRIDE+19] = TO_GLSL_UNIT(node->objects_id[5]);
-		noeudData[index*NODE_STRIDE+20] = TO_GLSL_UNIT(node->objects_id[6]);
-		noeudData[index*NODE_STRIDE+21] = TO_GLSL_UNIT(node->objects_id[7]);
-		noeudData[index*NODE_STRIDE+22] = TO_GLSL_UNIT(node->objects_id[8]);
-		noeudData[index*NODE_STRIDE+23] = TO_GLSL_UNIT(node->objects_id[9]);
-		* */
-
      	
 		index++;		
 	}
@@ -514,8 +464,6 @@ GLuint ShaderManager::CreateTexMat(const std::vector<Materiau>& parValue)
 		matData[index*11+9] = (mat->texRough);
 		matData[index*11+10] = (mat->texSpec);
 		
-		
-		//PRINT_ORANGE("Mat "<<matData[index*11+8]<<" "<<matData[index*11+9]<<" "<<matData[index*11+10]);
 		index++;		
 	}
 	
@@ -530,47 +478,6 @@ GLuint ShaderManager::CreateTexMat(const std::vector<Materiau>& parValue)
 	delete [] matData;
 	return matTex;	
 }
-void ShaderManager::InjectPlan(GLuint parShaderID, const Plan& parValue, int parIndex)
-{
-	BindProgram(parShaderID);
-    glUniform3f(glGetUniformLocation(parShaderID, concatenate("listPlan",parIndex,"p0").c_str()), parValue.p0.x, parValue.p0.y, parValue.p0.z);      
-    glUniform3f(glGetUniformLocation(parShaderID, concatenate("listPlan",parIndex,"p1").c_str()), parValue.p1.x, parValue.p1.y, parValue.p1.z);  
-    glUniform3f(glGetUniformLocation(parShaderID, concatenate("listPlan",parIndex,"p2").c_str()), parValue.p2.x, parValue.p2.y, parValue.p2.z);
-    glUniform3f(glGetUniformLocation(parShaderID, concatenate("listPlan",parIndex,"p3").c_str()), parValue.p3.x, parValue.p3.y, parValue.p3.z); 
-    glUniform3f(glGetUniformLocation(parShaderID, concatenate("listPlan",parIndex,"normale").c_str()), parValue.normale.x, parValue.normale.y, parValue.normale.z);
-
-}
-void ShaderManager::InjectQuadrique(GLuint parShaderID, const Quadrique& parValue, int parIndex)
-{
-	BindProgram(parShaderID);
-    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"A").c_str()), parValue.A);  
-    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"B").c_str()), parValue.B);  
-    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"C").c_str()), parValue.C);  
-    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"D").c_str()), parValue.D);  
-    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"E").c_str()), parValue.E);  
-    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"F").c_str()), parValue.F);  
-    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"G").c_str()), parValue.G);  
-    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"H").c_str()), parValue.H);  
-    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"I").c_str()), parValue.I);  
-    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listQuadrique",parIndex,"J").c_str()), parValue.J);  
-}
-void ShaderManager::InjectMateriau(GLuint parShaderID, const Materiau& parValue, int parIndex)
-{
-	BindProgram(parShaderID);
-	//PRINT_ORANGE("On injecte le materiau :"<<std::endl<<parValue);
-    glUniform4f(glGetUniformLocation(parShaderID, concatenate("listMateriau",parIndex,"color").c_str()), parValue.color.x, parValue.color.y, parValue.color.z, parValue.color.w); 
-    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listMateriau",parIndex,"reflectance").c_str()), parValue.coeffReflexion);  
-    glUniform1f(glGetUniformLocation(parShaderID, concatenate("listMateriau",parIndex,"refractance").c_str()), parValue.coeffRefraction);  
-}
-void ShaderManager::InjectPrimitive(GLuint parShaderID, const Primitive& parValue, int parIndex)
-{
-	BindProgram(parShaderID);
-	PRINT_ORANGE("On injecte la primitive :"<<std::endl<<parValue);
-    glUniform1i(glGetUniformLocation(parShaderID, concatenate("listPrim",parIndex,"type").c_str()), parValue.type);  
-    glUniform1i(glGetUniformLocation(parShaderID, concatenate("listPrim",parIndex,"index").c_str()), parValue.index);  
-    glUniform1i(glGetUniformLocation(parShaderID, concatenate("listPrim",parIndex,"materiau").c_str()), parValue.materiau);  
-}
-
 void ShaderManager::InjectLight(GLuint parShaderID, const Light& parLight, int parIndex)
 {
 	BindProgram(parShaderID);
