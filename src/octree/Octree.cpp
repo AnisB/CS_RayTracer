@@ -2,6 +2,7 @@
 /* 
  * Auteur Pierre Froumenty
  * Classe qui permet gérer l'octree
+ * utilisant l'intersection entre box et triangle (Mike Vandelay, http://www.planet-source-code.com/vb/scripts/ShowCode.asp?txtCodeId=10317&lngWId=3, 2006)
  */
 
 #include <octree/Octree.h>
@@ -15,10 +16,10 @@ Octree::Octree(Scene* scene)
 	m_max_level = 1; // criteres d'arret
 	m_objects_max = 1;  // criteres d'arret
 	m_level = 0; // niveau actuel
-	m_objects_number = m_scene->m_triangles.size() + m_scene->m_planes.size() + m_scene->m_quadrics.size(); // nombre d'objets
-	m_nb_prim_max = 0;
+	m_objects_number = m_scene->m_triangles.size() + m_scene->m_planes.size() + m_scene->m_quadrics.size(); // nombre d'objets dans la scene
+	m_nb_prim_max = 0; // nombre max de primitives trouvees dans un noeud (pour le passage des donnees au glsl)
 	
-    // Boite englobantes
+    // Calcul de la boite englobante de la scene
 	for (int i =0; i< m_scene->m_triangles.size(); i++){
 		if (i==0) {
 			m_xmin = m_scene->m_triangles[i].p0.x; 
@@ -38,10 +39,6 @@ Octree::Octree(Scene* scene)
 	m_sizeX = m_xmax - m_xmin;
 	m_sizeY = m_ymax - m_ymin;
 	m_sizeZ = m_zmax - m_zmin;
-	//std::cout << m_xmin << ";" << m_xmax  << ";" << m_ymin << ";" << m_ymax << ";" << m_zmin  << ";" << m_zmax <<std::endl;
-	//std::cout << m_sizeX << ";" << m_sizeY  << ";" << m_sizeZ << std::endl;
-	
-
 	
 	// construction de l'octree
 	m_root = new Node(); //Noeud racine
@@ -51,7 +48,7 @@ Octree::Octree(Scene* scene)
 }
 
 
-
+// Fonction qui verifie si un triangle est contenu partiellement ou totalement dans un noeud
 bool Octree::isTriangleInNode(Triangle triangle,float xmin,float ymin,float zmin,float xmax,float ymax,float zmax){
 
 	float zm = (zmin + zmax)/2.0; // milieu
@@ -75,31 +72,21 @@ bool Octree::isTriangleInNode(Triangle triangle,float xmin,float ymin,float zmin
 void Octree::build(int cur_node_id, float xmin,float ymin,float zmin,float xmax,float ymax,float zmax)
 {
 	
-	// init
-	//std::vector<int> objects_id;
-	//int objects_id[10]; 
-	/*for(int i=0;i<10;i++){
-		m_nodes[cur_node_id].objects_id[i] = -1;
-	}
-	* */
+
 	int objects_id_counter = 0;
 	int local_objects_number = 0; 
-	//std::cout << "cur_node_id " << cur_node_id << std::endl;
-	//std::cout << "niveau " << m_level << std::endl;
+
 	
-	
-	// Nombre d'objets dans le noeud
+	// Calcul du Nombre d'objets dans le noeud
 	for (int i =0; i< m_scene->m_triangles.size(); i++){
 		if ( isTriangleInNode(m_scene->m_triangles[i],xmin,ymin,zmin,xmax,ymax,zmax)){
 			local_objects_number++;
-			//m_nodes[cur_node_id].objects_id[objects_id_counter] = i;objects_id_counter++;
 			m_nodes[cur_node_id].objects_id.push_back(i);
 		}
 	}
 	
-	//PRINT_ORANGE("nb objets " << int(m_nodes[cur_node_id].objects_id.size()));
 	
-	// on pourrait directement passer ces infos dans le noeud plutot quen parametre (TODO)
+	// coordonnees du voxel/noeud
 	m_nodes[cur_node_id].coords[0] = xmin;
 	m_nodes[cur_node_id].coords[1] = ymin;
 	m_nodes[cur_node_id].coords[2] = zmin;
@@ -108,18 +95,22 @@ void Octree::build(int cur_node_id, float xmin,float ymin,float zmin,float xmax,
 	m_nodes[cur_node_id].coords[5] = zmax;
 
 	
-	if ( local_objects_number > m_objects_max && m_level<m_max_level) { // si le critere d'arret nest pas atteint (NOEUD INTERNE)
-		m_level++;
+	if ( local_objects_number > m_objects_max && m_level<m_max_level) { // si le critere d'arret nest pas atteint : NOEUD INTERNE
+		m_level++; // niveau de profondeur
 		for (int i = 0; i<8;i++) { // creer 8 fils pour le noeud courant
 			
-			int child_id = m_nodes.size(); // id enfant
+			// ajouter le nouveau noeud enfant au vecteur de noeuds
+			int child_id = m_nodes.size();
 			m_nodes[cur_node_id].child[i] = child_id;
 			Node* new_node = new Node();
-			m_nodes.push_back(*new_node); // ajouter le noeud au vecteur
+			m_nodes.push_back(*new_node); 
 			
+			// milieu
 			float zm = (zmin + zmax)/2.0; // milieu
 			float ym = (ymin + ymax)/2.0; // milieu
 			float xm = (xmin + xmax)/2.0; // milieu
+			
+			// parcours des enfants
 			switch (i){
 				case 0: {
 					//std::cout << "enfant 0" << std::endl;
@@ -163,15 +154,13 @@ void Octree::build(int cur_node_id, float xmin,float ymin,float zmin,float xmax,
 				}
 			}
 		}
-		m_level--;
+		m_level--; // decrementer le niveau de profondeur
 		return;
 	}
 	else { 
 		//std::cout << "le noeud est terminal" << std::endl; // NOEUD TERMINAL
-		for (int i = 0; i<8;i++) {m_nodes[cur_node_id].child[i] = -1;} // enfants a -1
-		m_nb_prim_max = std::max(m_nb_prim_max,int(m_nodes[cur_node_id].objects_id.size()));
-		//std::cout << m_nb_prim_max << std::endl;
-		//m_nodes[cur_node_id].objects_id = objects_id;
+		for (int i = 0; i<8;i++) {m_nodes[cur_node_id].child[i] = -1;} // enfants a -1 si le noeud est terminal
+		m_nb_prim_max = std::max(m_nb_prim_max,int(m_nodes[cur_node_id].objects_id.size())); // mise a jour du nombre max de primitives trouvees dans un noeud
 		return;
 	}
     

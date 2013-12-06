@@ -1,9 +1,16 @@
+/* 
+ * Code selon l'algorithme de l'article “An Efficient Parametric Algorithm for Octree Traversal”, J. Revelles , C. Ureña , M. Lastra, Journal of WSCG, p. 212-219, 2000 http://wscg.zcu.cz/wscg2000/Papers_2000/X31.pdf
+ * passé en itératif
+ * La fonction new_node est prise sur l'implementation de Jeroen Baert de l'algorithme en c++ (5 lignes)
+
+
+*/
 int a; // utile pour la traversee de l'octree
 
 
 #define OCTREE_ACTIVE false
 
-float NODE_STRIDE = 14.0 + NB_PRIM_MAX;
+float NODE_STRIDE = 14.0 + NB_PRIM_MAX; // taille prise pour stocker chaque noeud
 
 struct Node {
 	int[8]	child_id; // int
@@ -50,19 +57,6 @@ Node[NB_NOEUD] loadNodes()
 		for (int j=0;j<NB_PRIM_MAX;j++){
 			local_nodes[i].objects_id[j] = int(round(texture(listNoeuds, vec2((14.0+j)/maxx,y)).r *float(NB_PRIM-1))-1); // round au lieu de int a cause des erreurs darrondi
 		}
-		/*
-		nodes[i].objects_id[0] = int(texture(listNoeuds, vec2(14.0/maxx,y)).r);
-		nodes[i].objects_id[1] = int(texture(listNoeuds, vec2(15.0/maxx,y)).r);
-		nodes[i].objects_id[2] = int(texture(listNoeuds, vec2(16.0/maxx,y)).r);
-		nodes[i].objects_id[3] = int(texture(listNoeuds, vec2(17.0/maxx,y)).r);
-		nodes[i].objects_id[4] = int(texture(listNoeuds, vec2(18.0/maxx,y)).r);
-		nodes[i].objects_id[5] = int(texture(listNoeuds, vec2(19.0/maxx,y)).r);
-		nodes[i].objects_id[6] = int(texture(listNoeuds, vec2(20.0/maxx,y)).r);
-		nodes[i].objects_id[7] = int(texture(listNoeuds, vec2(21.0/maxx,y)).r);
-		nodes[i].objects_id[8] = int(texture(listNoeuds, vec2(22.0/maxx,y)).r);
-		nodes[i].objects_id[9] = int(texture(listNoeuds, vec2(23.0/maxx,y)).r);
-		* */
-
 	}
     nodes_loaded = true;
     return local_nodes;
@@ -74,7 +68,7 @@ int[NB_PRIM]  proc_subtree (double tx0, double ty0, double tz0, double tx1, doub
 
 
 // ------------------------------------
-// void ray_parameter (OCTREE)
+// void ray_parameter (OCTREE) - permet de lancer la traversee de l'octree, avec le rayon passé en parametre. (generalisation pour tous les rayons qqsoit la direction, cf. article)
 // ------------------------------------
 
 int[NB_PRIM] ray_paramter ( Ray ray){
@@ -117,7 +111,7 @@ int[NB_PRIM] ray_paramter ( Ray ray){
 }
 
 // ------------------------------------
-// int first_node (OCTREE)
+// int first_node (OCTREE) -- retourne le premier noeud a intersecter (0 a 7)
 // ------------------------------------	
 
 uint first_node(double tx0, double ty0, double tz0, double txm, double tym, double tzm){
@@ -145,7 +139,7 @@ uint first_node(double tx0, double ty0, double tz0, double txm, double tym, doub
 
 
 // ------------------------------------
-// uint new_node (OCTREE)
+// uint new_node (OCTREE) -- utilise pour la traversee de l'octree (savoir quel est le noeud suivant)
 // ------------------------------------	
 
 uint new_node(double txm, int x, double tym, int y, double tzm, int z){
@@ -160,17 +154,12 @@ uint new_node(double txm, int x, double tym, int y, double tzm, int z){
 
 
 // ------------------------------------
-// void proc_subtree (OCTREE)
+// void proc_subtree (OCTREE) - traversee de l'octree en iteratif
 // ------------------------------------
 
 int[NB_PRIM] proc_subtree (double tx0, double ty0, double tz0, double tx1, double ty1, double tz1, int node_id)
 {
-	///////////////
-	int listePrims[NB_PRIM];
-	for(int i = 0; i < NB_PRIM; i++){
-			listePrims[i] = 1;
-	}
-	///////////////
+
 	double txm, tym, tzm;
 	uint currNode;
 	int listePrim[NB_PRIM];
@@ -190,17 +179,17 @@ int[NB_PRIM] proc_subtree (double tx0, double ty0, double tz0, double tx1, doubl
 		
 		Node node = nodes[stack_id[stackcounter]]; stackcounter--; // Pop stack
 
-		if(tx1 < 0.0 || ty1 < 0.0 || tz1 < 0.0) continue; // continue ? (return en recursif)
+		if(tx1 < 0.0 || ty1 < 0.0 || tz1 < 0.0) continue; // continue (return en recursif)
 
 		if(node.child_id[0] == -1){ // noeud terminal
 			
 			// ajouter les primitives a la liste des primitives
 			for(int i =0;i<NB_PRIM_MAX;i++){
 				if (node.objects_id[i] !=-1){
-					listePrim[node.objects_id[i]]=1; // mettre 1 a chaque index de listePrim quand que cest bon
+					listePrim[node.objects_id[i]]=1; // mettre 1 a chaque index de listePrim quand la primitive est potentiellement traversee
 				}
 			}
-			continue; // continue ? (return en recursif)
+			continue; // continue (return en recursif)
 		}
 
 		// points milieu
@@ -255,10 +244,10 @@ int[NB_PRIM] proc_subtree (double tx0, double ty0, double tz0, double tx1, doubl
 		} while (currNode<8);
 	
 	}
-	//return listePrims;
 	return listePrim;
 }
 
+// Retourne la liste des primitives a tester pour l'intersection
 int[NB_PRIM] getPrimitives(Ray parRay)
 {
 	int listePrims[NB_PRIM];

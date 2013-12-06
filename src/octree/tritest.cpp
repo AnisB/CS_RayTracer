@@ -1,6 +1,8 @@
 
 /* 
- * Auteur Pierre Froumenty
+ * Auteur Mike Vandelay
+ * http://www.planet-source-code.com/vb/scripts/ShowCode.asp?txtCodeId=10317&lngWId=3
+ * 
  */
 #include <cstdlib>
 #include <iostream>
