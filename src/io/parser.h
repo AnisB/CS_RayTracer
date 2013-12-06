@@ -1,3 +1,10 @@
+/* 
+ * Auteur Florian Korsa
+ * Classe qui permet de parcrourir le fichier de scene .dat
+ * Elle est très inspirée du TP3
+ *
+ */
+ 
 #ifndef PARSER_IO
 #define PARSER_IO
 #include <string>

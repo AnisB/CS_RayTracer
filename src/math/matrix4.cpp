@@ -1,3 +1,9 @@
+
+/* 
+ * Auteur Anis Benyoub
+ * Classe qui permet de traiter de traiter des Matrix4
+ */
+ 
 #include "matrix4.h"
 
 #include <math.h>

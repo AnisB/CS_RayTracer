@@ -1,3 +1,8 @@
+/*
+ * Auteur : Anis Benyoub
+ * Classe qui permet de gérer les resources de l'application
+ *
+ */
 #ifndef RESOURCE_MANAGER
 #define RESOURCE_MANAGER
 

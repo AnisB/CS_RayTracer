@@ -1,3 +1,9 @@
+/* 
+ * Auteur Florian Korsa
+ * Classe qui permet de parcrourir le fichier de scene .dat
+ * Elle est très inspirée du TP3
+ *
+ */
 #include "parser.h"
 
 Scene* Parser::GetSceneFromFile(std::string filename)

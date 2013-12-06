@@ -1,4 +1,8 @@
-
+/*
+ * Auteur : Anis Benyoub
+ * Classe principale de l'application
+ *
+ */
 #include "renderer.h"
 
 #include <sys/time.h>

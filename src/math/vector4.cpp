@@ -1,3 +1,9 @@
+
+/* 
+ * Auteur Anis Benyoub
+ * Classe qui permet de traiter de traiter des Vector4
+ */
+ 
 #include "vector4.h"
 
 #include <math.h>

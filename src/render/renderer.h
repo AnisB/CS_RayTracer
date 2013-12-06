@@ -1,3 +1,9 @@
+/*
+ * Auteur : Anis Benyoub
+ * Classe principale de l'application
+ *
+ */
+
 #ifndef CSR_RENDERER
 #define CSR_RENDERER
 

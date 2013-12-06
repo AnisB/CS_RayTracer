@@ -1,3 +1,8 @@
+/* 
+ * Auteur Anis Benyoub
+ * Petit fichier qui regroupe quelques fonctions d'aide au développment opengl
+ *
+ */
 #ifndef RENDER_HELPERS
 #define RENDER_HELPERS
 

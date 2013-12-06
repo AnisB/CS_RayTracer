@@ -1,3 +1,8 @@
+/* 
+ * Auteur Florian Korsa
+ * Classe qui permet de gérer la scene
+ *
+ */
 #ifndef SCENE_COMMON
 #define SCENE_COMMON
 #include <vector>

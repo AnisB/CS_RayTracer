@@ -1,3 +1,8 @@
+/* 
+ * Auteur Pierre Froumenty
+ * Classe qui permet gérer l'octree
+ */
+
 #ifndef OCTREE_IO
 #define OCTREE_IO
 #include <string>

@@ -1,3 +1,10 @@
+
+/* 
+ * Auteur Anis Benyoub
+ * Classe qui permet de traiter de traiter des Matrix4
+ */
+ 
+
 #ifndef MATRIX_4
 #define MATRIX_4
 

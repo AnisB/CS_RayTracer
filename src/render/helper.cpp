@@ -1,3 +1,8 @@
+/* 
+ * Auteur Anis Benyoub
+ * Petit fichier qui regroupe quelques fonctions d'aide au développment opengl
+ *
+ */
 #include "helper.h"
 
 #include <common/defines.h>

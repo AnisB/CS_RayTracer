@@ -1,3 +1,9 @@
+/*
+ * Auteur : Anis Benyoub
+ * Classe qui permet de gérer les nuanceurs
+ *
+ */
+ 
 #ifndef SHADER_MANAGER
 #define SHADER_MANAGER
 

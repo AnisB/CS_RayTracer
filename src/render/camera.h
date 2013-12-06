@@ -1,3 +1,9 @@
+
+/* 
+ * Auteur Anis Benyoub
+ * Classe qui permet de gérer la camera
+ */
+ 
 #ifndef CAMERA
 #define CAMERA
 

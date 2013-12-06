@@ -1,3 +1,8 @@
+/*
+ * Auteur : Anis Benyoub
+ * Classe qui permet de gérer les resources de l'application
+ *
+ */
 #include "resourcemanager.h"
 
 #include <common/defines.h>

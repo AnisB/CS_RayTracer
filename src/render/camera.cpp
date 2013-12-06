@@ -1,3 +1,9 @@
+
+/* 
+ * Auteur Anis Benyoub
+ * Classe qui permet de gérer la camera
+ */
+
 #include "camera.h"
 
 #include "shadermanager.h"

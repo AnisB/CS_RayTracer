@@ -1,3 +1,10 @@
+
+/* 
+ * Auteur Anis Benyoub
+ * Classe qui permet de traiter de traiter des Matrix3
+ */
+ 
+ 
 #include "matrix3.h"
 
 
@@ -82,7 +89,7 @@ Matrix3 Matrix3::inverse(const Matrix3& parMatrix)
 
 std::ostream& operator<< (std::ostream& os, const Matrix3& obj) 
 {
-	os << "Matrix4\n("<<obj.m[0][0] <<", " <<obj.m[0][1]<<", "<<obj.m[0][2]<<",\n"
+	os << "Matrix3\n("<<obj.m[0][0] <<", " <<obj.m[0][1]<<", "<<obj.m[0][2]<<",\n"
 		<<obj.m[1][0] <<", " <<obj.m[1][1]<<", "<<obj.m[1][2]<<",\n"
 		<<obj.m[2][0] <<", " <<obj.m[2][1]<<", "<<obj.m[2][2]<<",\n"
 		<<obj.m[3][0] <<", " <<obj.m[3][1]<<", "<<obj.m[3][2]<<")";

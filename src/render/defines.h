@@ -1,6 +1,10 @@
+
+/* 
+ * Auteur Anis Benyoub
+ * Fichier qui regrouppe les includes opengl
+ */
 #ifndef RENDER_DEFINES
 #define RENDER_DEFINES
-
 
 #include <GL/glew.h>
 #define GLFW_INCLUDE_GL3

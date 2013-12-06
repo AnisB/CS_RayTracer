@@ -1,3 +1,8 @@
+/* 
+ * Auteur Florian Korsa
+ * Classe qui permet de traiter des string
+ * Très inspirée du TP3
+ */
 #ifndef __STRING_UTILS_H__
 #define __STRING_UTILS_H__
 

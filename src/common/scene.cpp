@@ -1,3 +1,8 @@
+/* 
+ * Auteur Florian Korsa
+ * Classe qui permet de gérer la scene
+ *
+ */
 #include "scene.h"
 
 void Scene::AddLight(const Light& light)

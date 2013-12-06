@@ -1,4 +1,10 @@
- #include "primitive.h"
+
+/* 
+ * Auteur Anis Benyoub
+ * Fichier qui permet de gérer les primitive en parralèle avec le glsl
+ */
+
+#include "primitive.h"
  
  
  

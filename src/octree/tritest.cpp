@@ -1,3 +1,7 @@
+
+/* 
+ * Auteur Pierre Froumenty
+ */
 #include <cstdlib>
 #include <iostream>
 #include <vector>

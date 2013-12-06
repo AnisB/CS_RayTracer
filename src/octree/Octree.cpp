@@ -1,3 +1,9 @@
+
+/* 
+ * Auteur Pierre Froumenty
+ * Classe qui permet gérer l'octree
+ */
+
 #include <octree/Octree.h>
 #include <octree/tritest.cpp>
 

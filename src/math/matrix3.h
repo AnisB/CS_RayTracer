@@ -1,3 +1,9 @@
+
+/* 
+ * Auteur Anis Benyoub
+ * Classe qui permet de traiter de traiter des Matrix3
+ */
+ 
 #ifndef MATRIX_3
 #define MATRIX_3
 

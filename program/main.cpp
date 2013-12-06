@@ -1,3 +1,8 @@
+/* 
+ * Auteur Anis Benyoub
+ * Appel du renderer avec les arguments envoyés par la ligne de commande
+ *
+ */
 #include "render/renderer.h"
 
 

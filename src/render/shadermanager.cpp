@@ -1,3 +1,8 @@
+/*
+ * Auteur : Anis Benyoub
+ * Classe qui permet de gérer les nuanceurs
+ *
+ */
 #include "shadermanager.h"
 
 #include "helper.h"

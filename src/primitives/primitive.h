@@ -1,3 +1,9 @@
+
+/* 
+ * Auteur Anis Benyoub
+ * Fichier qui permet de gérer les primitive en parralèle avec le glsl
+ */
+ 
 #ifndef PRIMITIVE
 #define PRIMITIVE
 

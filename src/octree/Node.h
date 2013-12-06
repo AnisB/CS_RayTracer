@@ -1,3 +1,9 @@
+
+/* 
+ * Auteur Pierre Froumenty
+ * Classe qui permet gérer les noeuds de l'octree
+ */
+ 
 #ifndef NODE_IO
 #define NODE_IO
 #include <string>

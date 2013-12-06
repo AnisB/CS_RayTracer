@@ -1,3 +1,8 @@
+/* 
+ * Auteur Florian Korsa
+ * Classe qui permet de traiter des string
+ * Très inspirée du TP3
+ */
 #include "stringutils.h"
 
 string CStringUtils::TrimRight( const string& Source, const string& T )

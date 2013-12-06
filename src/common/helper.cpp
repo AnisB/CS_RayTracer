@@ -1,3 +1,4 @@
+// Implémentaton de helper.h
 #include "helper.h"
 
 #include <iostream>
@@ -5,11 +6,14 @@
 
 using namespace std;
 
+
 std::string replaceAll(const std::string& parString, const std::string& parBase, const std::string& parReplace) 
 {
 	std::string result = parString;
+    // Si string nulle on renvoie la string nulle
     if(parBase.empty())
         return std::string("");
+    // On remplace
     size_t start_pos = 0;
     while((start_pos = result.find(parBase, start_pos)) != std::string::npos) 
     {
@@ -20,7 +24,6 @@ std::string replaceAll(const std::string& parString, const std::string& parBase,
 }
 
 std::vector<std::string> split(const std::string& parString, char parSeparator, std::vector<std::string> &outStringTable) 
-
 {
     std::stringstream streamObj(parString);
     std::string item;

@@ -1,3 +1,9 @@
+
+/* 
+ * Auteur Anis Benyoub
+ * Classe qui permet de traiter de traiter des Vector4
+ */
+ 
 #ifndef VECTOR4
 #define VECTOR4
 

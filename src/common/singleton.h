@@ -2,6 +2,7 @@
  * Cette classe est tirée de ma base de code personnelle (Anis)
  * Vous pouvez le retrouver sur mon github https://github.com/AnisB
  **/
+ 
 #ifndef SINGLETON
 #define SINGLETON
 
