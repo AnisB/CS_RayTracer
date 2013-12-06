@@ -218,7 +218,7 @@ void Renderer::InitShaders()
 
 	#ifndef SIMPLE
 	//Création du shader de calcul
-	FComputeShader = ShaderManager::Instance().CreateProgramC(2,FScene->m_triangles.size(),1,FScene->m_quadrics.size(),octree->m_nodes.size(),FScene->m_primitives.size(),FScene->m_materiaux.size(),FOreille );
+    FComputeShader = ShaderManager::Instance().CreateProgramC(2,FScene->m_triangles.size(),1,FScene->m_quadrics.size(),octree->m_nodes.size(),FScene->m_primitives.size(),FScene->m_materiaux.size(),FOreille );
 	//Création des texture
 	FRenderTexture = ShaderManager::Instance().GenerateTexture(512,512);
 	FTriangleTex = ShaderManager::Instance().CreateTexTriangle(FScene->m_triangles);
@@ -304,7 +304,7 @@ void Renderer::Run()
 	  glfwPollEvents ();
 	  glfwSwapBuffers (FWindow);
 	   double timeB = getTime();
-	  PRINT_ORANGE("Temps pour la frame"<<(timeB-timeA));
+      PRINT_ORANGE("FPS"<<1.0/(timeB-timeA));
 
 	}
 }
